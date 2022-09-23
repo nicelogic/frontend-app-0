@@ -1,0 +1,26 @@
+import 'package:flutter/material.dart';
+
+import 'package:app/common/theme/image_placeholder.dart';
+
+class LoginLogo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        FadeInImagePlaceholder(
+          image: AssetImage('assets/login_logo_tree.png'),
+          placeholder: Container(
+            width: 34,
+            height: 34,
+          ),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'TREE SHADE',
+          style: Theme.of(context).textTheme.headline5!.apply(color: Theme.of(context).primaryColor),
+        ),
+        const SizedBox(height: 26),
+      ],
+    );
+  }
+}

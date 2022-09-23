@@ -1,0 +1,115 @@
+
+import 'package:flutter/material.dart';
+
+import 'package:app/themes/themes.dart';
+
+class AccountField extends StatefulWidget {
+  final String? inputLabel;
+  final VoidCallback? onTap;
+  final FormFieldValidator<String> validator;
+  final TextInputType textInputType;
+  final VoidCallback? onEditingCompleted;
+
+  AccountField(
+      {
+      Key? key,
+      required this.inputLabel,
+      required this.validator,
+      this.onTap,
+      this.onEditingCompleted,
+      this.textInputType = TextInputType.text
+      })
+  : super(key: key);
+
+  @override
+  AccountFieldState createState() => AccountFieldState();
+}
+
+class AccountFieldState extends State<AccountField> {
+  final _formKey = GlobalKey<FormState>();
+  bool _isValid = false;
+  bool get isValid => _isValid;
+
+  VoidCallback? _onTap;
+  set onTap(VoidCallback onTap) => _onTap = onTap;
+  VoidCallback? _onEditingCompleted;
+  set onEditingCompleted(VoidCallback onEditingCompleted) =>
+      _onEditingCompleted = onEditingCompleted;
+
+  FocusNode _focusNode = FocusNode();
+  FocusNode get focusNode => _focusNode;
+
+  TextEditingController? _controller;
+  TextEditingController? get textController => _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _onTap = widget.onTap;
+    _onEditingCompleted = widget.onEditingCompleted;
+    _controller = TextEditingController();
+    _focusNode.addListener(() {
+      if (!_focusNode.hasFocus) {
+        setState(() {
+          _isValid = _formKey.currentState!.validate();
+        });
+      } else {
+        //when mail field focus, show the auth code
+        _onTap?.call();
+      }
+    });
+    _controller!.addListener(() {
+      setState(() {
+        _isValid = (widget.validator)(_controller!.text) == null;
+        /*only when loss focus then to valid,
+          because when editing no valid for user fell well
+          but if when loss focus's time is invalid, user come back to edit
+          and valid, we should repair error show
+          _isvalid must update state sync, but validator repair error show
+          in a async way, so we use save fun to notic on save
+          and on onSave to async validate to repair error show
+        */
+        if (_isValid) {
+          _formKey.currentState!.save();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller!.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: TextFormField(
+          decoration: InputDecoration(
+            border: const CutCornersBorder(
+              borderSide: BorderSide(width: 0.5),
+            ),
+            labelText: widget.inputLabel,
+            suffixIcon: Icon(Icons.check,
+                color: _isValid
+                    ? Theme.of(context).primaryColor
+                    : Colors.transparent),
+          ),
+          keyboardType: widget.textInputType,
+          validator: widget.validator,
+          focusNode: _focusNode,
+          controller: _controller,
+          onEditingComplete: _onEditingCompleted,
+          onSaved: (value) async {
+            await Future.delayed(Duration(microseconds: 1), () {
+              setState(() {
+                _formKey.currentState!.validate();
+              });
+            });
+          },
+        ));
+  }
+}

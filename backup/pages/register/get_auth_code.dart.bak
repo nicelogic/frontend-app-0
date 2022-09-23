@@ -1,0 +1,87 @@
+import 'package:app/common/common.dart';
+import 'package:app/pages/login/pages/register/bloc/register_bloc.dart';
+
+class GetAuthCodeField extends StatefulWidget {
+  final String? inputLabel;
+  final VoidCallback? onTap;
+  final VoidCallback? onEditingCompleted;
+
+  GetAuthCodeField(
+      {Key? key, required this.inputLabel, this.onEditingCompleted, this.onTap})
+      : super(key: key);
+
+  @override
+  GetAuthCodeFieldState createState() => GetAuthCodeFieldState();
+}
+
+class GetAuthCodeFieldState extends State<GetAuthCodeField> {
+  final _formKey = GlobalKey<FormState>();
+  String _buttonLabel = '发送验证码';
+  bool _isValid = true;
+
+  FocusNode _focusNode = FocusNode();
+  FocusNode get focusNode => _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final isMailAddrValid = Provider.of<RegisterPageData>(context, listen: true).isMailAddrValid;
+
+    return Form(
+        key: _formKey,
+        child:
+            BlocBuilder<RegisterBloc, RegisterState>(builder: (context, state) {
+          return TextFormField(
+            decoration: InputDecoration(
+                border: const CutCornersBorder(
+                  borderSide: BorderSide(width: 0.5),
+                ),
+                labelText: widget.inputLabel,
+                suffixIcon: TextButton.icon(
+                  onPressed: state.isMailAddValid && _isValid
+                      ? () async {
+                          setState(() {
+                            _isValid = false;
+                            _buttonLabel = '重新发送(30s)';
+                          });
+                          for (int i = 30; i != 00; --i) {
+                            await Future.delayed(Duration(seconds: 1), () {
+                              setState(() {
+                                _buttonLabel = '重新发送(${i - 1}s)';
+                              });
+                            });
+                          }
+                          setState(() {
+                            _buttonLabel = '重新发送';
+                            _isValid = true;
+                          });
+                        }
+                      : null,
+                  label: Text(
+                    _buttonLabel,
+                  ),
+                  icon: Icon(
+                    _isValid ? Icons.send : Icons.markunread,
+                    color:
+                        _isValid ? Theme.of(context).primaryColor : Colors.grey,
+                  ),
+                )),
+            onEditingComplete: widget.onEditingCompleted,
+            focusNode: _focusNode,
+            keyboardType: TextInputType.number,
+            validator: verifyAccount,
+            onTap: widget.onTap,
+          );
+        }));
+  }
+}

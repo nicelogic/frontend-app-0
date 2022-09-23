@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: base-web
+spec:
+  selector:
+    matchLabels:
+      app: base-web
+  replicas: 2 
+  template:
+    metadata:
+      labels:
+        app: base-web
+    spec:
+      containers:
+      - name: base-web
+        image: registry.cn-shanghai.aliyuncs.com/logic-base/base-web
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: timezone
+          mountPath: /etc/localtime
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+      volumes:
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+      # imagePullSecrets:
+      # - name: aliyun-credentials-sh

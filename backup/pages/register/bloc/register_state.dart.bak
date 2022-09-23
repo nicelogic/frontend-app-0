@@ -1,0 +1,18 @@
+class RegisterState {
+  bool _hasFocusMailField;
+  bool _isMailAddrValid;
+
+  bool get hasFocusMailField => _hasFocusMailField;
+  void setFocusMailField(bool isFocus) => _hasFocusMailField = isFocus;
+  bool get isMailAddValid => _isMailAddrValid;
+  void setIsMailAddrValid(bool isValid) => _isMailAddrValid = isValid;
+
+  RegisterState({bool hasFocus = false, bool isMailAddrValid = false})
+      : _hasFocusMailField = hasFocus,
+        _isMailAddrValid = isMailAddrValid;
+  RegisterState copyWith({bool? hasFocus, bool? isMailAddrValid}) {
+    return RegisterState(
+        hasFocus: hasFocus ?? this._hasFocusMailField,
+        isMailAddrValid: isMailAddrValid ?? this._isMailAddrValid);
+  }
+}
