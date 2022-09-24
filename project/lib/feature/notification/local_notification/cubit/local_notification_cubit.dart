@@ -1,7 +1,6 @@
 // ignore_for_file: nullable_type_in_catch_clause
 
 import 'dart:developer';
-import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';

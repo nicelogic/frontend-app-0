@@ -43,8 +43,8 @@ ThemeData _buildTheme() {
     iconTheme: _customIconTheme(base.iconTheme),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-          primary: primaryColor,
-          onPrimary: Colors.teal,
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.teal,
           shadowColor: Colors.black,
           elevation: 3),
     ),

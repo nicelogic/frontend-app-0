@@ -26,8 +26,8 @@ class MessagePage extends StatefulWidget {
   const MessagePage(
       {Key? key,
       @PathParam('chatId') required this.chatId,
-      required final this.chat,
-      required final this.currentUser})
+      required this.chat,
+      required this.currentUser})
       : super(key: key);
 
   @override
