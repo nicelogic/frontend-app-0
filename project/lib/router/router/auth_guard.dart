@@ -1,4 +1,3 @@
-import 'package:app/router/router/router.gr.dart';
 import 'package:auto_route/auto_route.dart';
 
 var isAuthenticated = false;

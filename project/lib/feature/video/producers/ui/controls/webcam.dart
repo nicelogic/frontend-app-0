@@ -32,9 +32,11 @@ class Webcam extends StatelessWidget {
           backgroundColor: MaterialStateProperty.all(Colors.white),
           overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
             if (states.contains(MaterialState.pressed)) return Colors.grey;
+            return null;
           }),
           shadowColor: MaterialStateProperty.resolveWith<Color?>((states) {
             if (states.contains(MaterialState.pressed)) return Colors.grey;
+            return null;
           }),
         ),
         onPressed: () {
@@ -58,9 +60,11 @@ class Webcam extends StatelessWidget {
         backgroundColor: MaterialStateProperty.all(Colors.white),
         overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
           if (states.contains(MaterialState.pressed)) return Colors.grey;
+          return null;
         }),
         shadowColor: MaterialStateProperty.resolveWith<Color?>((states) {
           if (states.contains(MaterialState.pressed)) return Colors.grey;
+          return null;
         }),
       ),
       onPressed: () {

@@ -13,10 +13,12 @@ class Leave extends StatelessWidget {
         padding: MaterialStateProperty.all(const EdgeInsets.all(8)),
         backgroundColor: MaterialStateProperty.all(Colors.red), // <-- Button color
         overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-          if (states.contains(MaterialState.pressed)) return Colors.red.shade900; // <-- Splash color
+          if (states.contains(MaterialState.pressed)) return Colors.red.shade900;
+          return null; // <-- Splash color
         }),
         shadowColor: MaterialStateProperty.resolveWith<Color?>((states) {
-          if (states.contains(MaterialState.pressed)) return Colors.red; // <-- Splash color
+          if (states.contains(MaterialState.pressed)) return Colors.red;
+          return null; // <-- Splash color
         }),
       ),
       onPressed: () {

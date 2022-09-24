@@ -88,9 +88,7 @@ TextTheme _buildTextTheme(TextTheme base) {
 
 const ColorScheme _colorScheme = ColorScheme(
   primary: primaryColor,
-  primaryVariant: primaryColor,
   secondary: primaryColor,
-  secondaryVariant: primaryColor,
   surface: surfaceWhite,
   background: backgroundWhite,
   error: errorRed,
