@@ -28,3 +28,19 @@ the `lib/src/localization` directory.
 To support additional languages, please visit the tutorial on
 [Internationalizing Flutter
 apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+
+## project structure
+
+* 每个微服务对应一个repository, model在repository中定义
+* feature: 各个bloc
+* screen: 每个单独的页面， 每个页面由多个widget组成
+* 各个widget在widget里面管理（这么做的好处在于查看screen的时候脉络比较清晰）
+
+## feature
+
+### setting
+
+* 每个app有默认的一份配置文件,一开始会用这个配置文件去初始化
+* 启动之后会去获取配置文件
+* 每个配置文件都有个哈希值。如果一样则没必要重新下载
+* 获取到的配置文件，下次启动app时候生效
