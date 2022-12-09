@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
   final GoRouter _router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/chat',
+    initialLocation: routePathChat,
     routes: <RouteBase>[
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
           },
           routes: <RouteBase>[
             GoRoute(
-              path: routePathMe,
+              path: routePathChat,
               builder: (BuildContext context, GoRouterState state) {
-                return const MeScreen();
+                return const ChatScreen();
               },
             ),
             GoRoute(
@@ -47,9 +47,9 @@ class MyApp extends StatelessWidget {
               },
             ),
             GoRoute(
-              path: routePathChat,
+              path: routePathMe,
               builder: (BuildContext context, GoRouterState state) {
-                return const ChatScreen();
+                return const MeScreen();
               },
             ),
           ]),

@@ -70,13 +70,13 @@ class ScaffoldWithBottomNavigationBarScreen extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0:
-        GoRouter.of(context).go(routePathChat);
+        context.go(routePathChat);
         break;
       case 1:
-        GoRouter.of(context).go(routePathContacts);
+        context.go(routePathContacts);
         break;
       case 2:
-        GoRouter.of(context).go(routePathMe);
+        context.go(routePathMe);
         break;
     }
   }
