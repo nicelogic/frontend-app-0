@@ -1,3 +1,7 @@
+import 'package:app/src/constant/constant.dart';
+import 'package:app/src/screens/contacts/contacts_screen.dart';
+import 'package:app/src/screens/me/me_screen.dart';
+import 'package:app/src/screens/message/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -6,7 +10,11 @@ import 'package:go_router/go_router.dart';
 import 'package:app/src/screens/scaffold_with_bottom_navigation_bar_screen.dart';
 import 'settings/settings_controller.dart';
 
-/// The Widget that configures your application.
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _shellNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'shell');
+
 class MyApp extends StatelessWidget {
   MyApp({
     super.key,
@@ -16,15 +24,35 @@ class MyApp extends StatelessWidget {
   final SettingsController settingsController;
 
   final GoRouter _router = GoRouter(
+    navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
-    initialLocation: '/',
+    initialLocation: '/chat',
     routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (BuildContext context, GoRouterState state) {
-          return const ScaffoldWithBottomNavigationBarScreen();
-        },
-      ),
+      ShellRoute(
+          navigatorKey: _shellNavigatorKey,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return ScaffoldWithBottomNavigationBarScreen(child: child);
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: routePathMe,
+              builder: (BuildContext context, GoRouterState state) {
+                return const MeScreen();
+              },
+            ),
+            GoRoute(
+              path: routePathContacts,
+              builder: (BuildContext context, GoRouterState state) {
+                return const ContactsScreen();
+              },
+            ),
+            GoRoute(
+              path: routePathChat,
+              builder: (BuildContext context, GoRouterState state) {
+                return const ChatScreen();
+              },
+            ),
+          ]),
     ],
   );
 
