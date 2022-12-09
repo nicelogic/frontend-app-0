@@ -40,7 +40,6 @@ apps](https://flutter.dev/docs/development/accessibility-and-localization/intern
 
 ### setting
 
-* 每个app有默认的一份配置文件,一开始会用这个配置文件去初始化
-* 启动之后会去获取配置文件
-* 每个配置文件都有个哈希值。如果一样则没必要重新下载
-* 获取到的配置文件，下次启动app时候生效
+* 本地默认配置文件，云配置文件。有云, 默认云配置文件
+* 后续支持
+* 你没办法做到始终用云。。下载是可能失败的

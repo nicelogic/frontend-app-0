@@ -1,6 +1,9 @@
 {
-  "appTitle": "app",
+  "appTitle": "warmth",
   "@appTitle": {
     "description": "The title of the application"
-  }
+  },
+  "bottomNavigationBarTabItemTitleChat": "chat",
+  "bottomNavigationBarTabItemTitleContacts": "contacts",
+  "bottomNavigationBarTabItemTitleMe": "me"
 }
