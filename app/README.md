@@ -37,3 +37,7 @@ apps](https://flutter.dev/docs/development/accessibility-and-localization/intern
 * 本地默认配置文件，云配置文件。有云, 默认云配置文件
 * 后续支持
 * 你没办法做到始终用云。。下载是可能失败的
+
+## todo
+
+* restorationId 改造
