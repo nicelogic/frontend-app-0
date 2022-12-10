@@ -1,4 +1,4 @@
-import 'package:app/src/constant/constant.dart';
+import 'package:app/src/constant/constant_route_path.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
 import 'package:app/src/screens/login/login_screen.dart';
 import 'package:app/src/screens/login/username_login_screen.dart';

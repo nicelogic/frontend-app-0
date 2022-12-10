@@ -1,4 +1,5 @@
-import 'package:app/src/constant/constant.dart';
+import 'package:app/src/constant/constant_asset_path.dart';
+import 'package:app/src/constant/constant_route_path.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,14 +11,17 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('login'), centerTitle: true),
+        appBar: AppBar(
+            title:
+                Text(AppLocalizations.of(context)!.loginScreenAppBarTitleLogin),
+            centerTitle: true),
         body: Align(
           alignment: const Alignment(0, -1 / 3),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 Image.asset(
-                  'assets/images/logo/logo.png',
+                  logoImagePath,
                   height: 120,
                 ),
                 Text(

@@ -6,6 +6,7 @@
   "bottomNavigationBarTabItemTitleChat": "chat",
   "bottomNavigationBarTabItemTitleContacts": "contacts",
   "bottomNavigationBarTabItemTitleMe": "me",
+  "loginScreenAppBarTitleLogin": "login",
   "buttonIconLabelWechatLogin": "wechat login",
 
 
