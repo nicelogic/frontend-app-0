@@ -94,7 +94,7 @@ class _LoginButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 30),
           child: ElevatedButton.icon(
             onPressed: () => {},
-            icon: const Icon(Icons.lock),
+            icon: const Icon(Icons.login),
             label: const Text(
               'register/login',
               style: TextStyle(color: Colors.white),

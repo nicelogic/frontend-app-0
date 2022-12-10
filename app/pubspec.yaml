@@ -28,6 +28,9 @@ dev_dependencies:
 
   flutter_lints: ^2.0.0
 
+  auth_repository:
+    path: ../../packages/auth_repository
+
 flutter:
   uses-material-design: true
 
