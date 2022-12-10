@@ -5,5 +5,9 @@
   },
   "bottomNavigationBarTabItemTitleChat": "chat",
   "bottomNavigationBarTabItemTitleContacts": "contacts",
-  "bottomNavigationBarTabItemTitleMe": "me"
+  "bottomNavigationBarTabItemTitleMe": "me",
+  "buttonIconLabelWechatLogin": "wechat login",
+
+
+  "lastPlaceHolder": ""
 }

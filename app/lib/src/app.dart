@@ -1,5 +1,6 @@
 import 'package:app/src/constant/constant.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
+import 'package:app/src/screens/login/login_screen.dart';
 import 'package:app/src/screens/me/me_screen.dart';
 import 'package:app/src/screens/message/chat_screen.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,14 @@ class MyApp extends StatelessWidget {
     navigatorKey: _rootNavigatorKey,
     debugLogDiagnostics: true,
     initialLocation: routePathChat,
+    redirect: (BuildContext context, GoRouterState state) {
+      // if (AuthState.of(context).isSignedIn) {
+      //   return '/signin';
+      // } else {
+      //   return null;
+      // }
+      return routePathLogin;
+    },
     routes: <RouteBase>[
       ShellRoute(
           navigatorKey: _shellNavigatorKey,
@@ -53,6 +62,9 @@ class MyApp extends StatelessWidget {
               },
             ),
           ]),
+      GoRoute(
+          path: routePathLogin,
+          builder: ((context, state) => const LoginScreen()))
     ],
   );
 
