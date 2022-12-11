@@ -1,4 +1,4 @@
-import 'package:app/src/constant/constant_asset_path.dart';
+import 'package:app/src/config/config.dart';
 import 'package:app/src/route.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,7 +21,7 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               children: [
                 Image.asset(
-                  logoImagePath,
+                  Config.instance().logoPath,
                   height: 120,
                 ),
                 Text(

@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -14,6 +15,7 @@ part 'auth_bloc.g.dart';
 class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   final String authReposiotryUrl;
   final AuthRepository _authRepository;
+  static const kLogSource = 'AuthBloc';
 
   AuthBloc({required this.authReposiotryUrl})
       : _authRepository = AuthRepository(url: authReposiotryUrl),
@@ -36,9 +38,16 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   }
 
   @override
-  AuthState? fromJson(Map<String, dynamic> json) => _$AuthStateFromJson(json);
+  AuthState? fromJson(Map<String, dynamic> json) {
+    log(name: kLogSource, 'fromJson($json)');
+    return _$AuthStateFromJson(json);
+  }
+
   @override
-  Map<String, dynamic>? toJson(AuthState state) => _$AuthStateToJson(state);
+  Map<String, dynamic>? toJson(AuthState state) {
+    log(name: kLogSource, 'toJson($state)');
+    return _$AuthStateToJson(state);
+  } 
 
   Future<void> signUpByUserName(
       {required String userName, required String password}) async {

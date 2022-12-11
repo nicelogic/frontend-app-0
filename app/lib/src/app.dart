@@ -1,3 +1,4 @@
+import 'package:app/src/config/config.dart';
 import 'package:app/src/features/auth/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,8 +17,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = AuthBloc(
-        authReposiotryUrl: "https://auth.app0.env0.luojm.com:9443/query");
+    final authBloc =
+        AuthBloc(authReposiotryUrl: Config.instance().authServiceUrl);
     return MultiBlocProvider(
         providers: [
           BlocProvider(

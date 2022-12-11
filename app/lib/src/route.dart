@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/screens/contacts/contacts_screen.dart';
