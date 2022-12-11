@@ -1,6 +1,9 @@
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/route.dart';
+import 'package:auth_repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class UserNameLoginScreen extends StatelessWidget {
   UserNameLoginScreen({super.key});
@@ -26,16 +29,25 @@ class UserNameLoginScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('username login'), centerTitle: true),
-      body: Align(
-        alignment: Alignment.center,
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(horizontal: 54),
-          children: listViewChildren,
-        ),
-      ),
-    );
+        appBar: AppBar(title: const Text('username login'), centerTitle: true),
+        body: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state.status == AuthenticationStatus.authenticated) {
+              context.go(routePathChat);
+            } else if (state.error != AuthError.none) {
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.error.name)));
+            }
+          },
+          child: Align(
+            alignment: Alignment.center,
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: 54),
+              children: listViewChildren,
+            ),
+          ),
+        ));
   }
 }
 

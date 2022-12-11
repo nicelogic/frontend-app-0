@@ -19,7 +19,12 @@ class MyApp extends StatelessWidget {
     final authBloc = AuthBloc(
         authReposiotryUrl: "https://auth.app0.env0.luojm.com:9443/query");
     return MultiBlocProvider(
-        providers: [BlocProvider(create: (_) => authBloc)],
+        providers: [
+          BlocProvider(
+            create: (_) => authBloc,
+            lazy: false,
+          )
+        ],
         child: AnimatedBuilder(
           animation: settingsController,
           builder: (BuildContext context, Widget? child) {
