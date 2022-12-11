@@ -1,11 +1,12 @@
+import 'package:app/src/features/auth/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class UserNameLoginScreen extends StatelessWidget {
-  const UserNameLoginScreen(
-      {super.key, this.usernameController, this.passwordController});
+  UserNameLoginScreen({super.key});
 
-  final TextEditingController? usernameController;
-  final TextEditingController? passwordController;
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,13 @@ class UserNameLoginScreen extends StatelessWidget {
       const SizedBox(height: 12),
       _PasswordInput(passwordController),
       _LoginButton(
-        onTap: () {},
+        onTap: () async {
+          final userName = usernameController.text;
+          final password = passwordController.text;
+          await context
+              .read<AuthBloc>()
+              .signInByUserName(userName: userName, password: password);
+        },
       ),
     ];
 
@@ -93,7 +100,7 @@ class _LoginButton extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: double.infinity),
           padding: const EdgeInsets.symmetric(vertical: 30),
           child: ElevatedButton.icon(
-            onPressed: () => {},
+            onPressed: onTap,
             icon: const Icon(Icons.login),
             label: const Text(
               'register/login',

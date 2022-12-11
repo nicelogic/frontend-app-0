@@ -1,4 +1,4 @@
-import 'package:app/src/constant/constant_route_path.dart';
+import 'package:app/src/route.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

@@ -41,3 +41,4 @@ apps](https://flutter.dev/docs/development/accessibility-and-localization/intern
 ## todo
 
 * restorationId 改造
+* settings controller -> bloc优化
