@@ -1,8 +1,9 @@
 const kSignUpByUserNameResult = 'signUpWithUserName';
-const kSignUpByUserName = r'''
-mutation signUpByUserName($userName: String!, $pwd: String!) {
-  signUpByUserName(userName: $userName, pwd: $pwd) {
-    token
+const kSignUpByUserName = '''
+mutation $kSignUpByUserNameResult(\$userName: String!, \$pwd: String!) {
+  $kSignUpByUserNameResult(userName: \$userName, pwd: \$pwd) {
+    refresh_token
+    access_token
   }
 }
 ''';

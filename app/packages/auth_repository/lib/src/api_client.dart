@@ -7,7 +7,9 @@ import 'models/models.dart' as models;
 const kLogSource = 'auth_repository';
 const kUserName = 'userName';
 const kPassword = 'pwd';
-const kToken = 'token';
+const kRefreshTokenParam = 'refreshToken';
+const kRefreshToken = 'refresh_token';
+const kAccessToken = 'access_token';
 
 class AuthApiClient {
   final GraphQLClient _graphQLClient;
@@ -39,7 +41,9 @@ class AuthApiClient {
         throw signUpResult.exception!;
       }
       final data = signUpResult.data![api.kSignUpByUserNameResult];
-      final auth = models.Auth(refreshToken: data[kToken] as String);
+      final auth = models.Auth(
+          refreshToken: data[kRefreshToken] as String,
+          accessToken: data[kAccessToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
@@ -73,7 +77,41 @@ class AuthApiClient {
         throw signInResult.exception!;
       }
       final data = signInResult.data![api.kSignInByUserNameResult];
-      final auth = models.Auth(refreshToken: data[kToken] as String);
+      final auth = models.Auth(
+          refreshToken: data[kRefreshToken] as String,
+          accessToken: data[kAccessToken] as String);
+      return auth;
+    } on ServerException catch (e) {
+      log(name: kLogSource, e.toString());
+      return const models.Auth(error: models.AuthError.networkError);
+    } on OperationException catch (e) {
+      log(name: kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return models.Auth(
+            error: models.toErrorEnum[error] ??
+                models.AuthError.serverInternalError);
+      }
+    } catch (e) {
+      log(name: kLogSource, e.toString());
+    }
+    return const models.Auth(error: models.AuthError.clientInternalError);
+  }
+
+  Future<models.Auth> refreshToken({required String refreshToken}) async {
+    try {
+      const gqlStr = api.kRefreshToken;
+      final refreshTokenResult = await _graphQLClient.query(QueryOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.networkOnly,
+          variables: <String, dynamic>{kRefreshTokenParam: refreshToken}));
+      if (refreshTokenResult.hasException) {
+        throw refreshTokenResult.exception!;
+      }
+      final data = refreshTokenResult.data![api.kRefreshTokenResult];
+      final auth = models.Auth(
+          refreshToken: data[kRefreshToken] as String,
+          accessToken: data[kAccessToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
