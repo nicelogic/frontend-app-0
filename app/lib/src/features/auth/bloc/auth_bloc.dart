@@ -25,7 +25,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
   _onAuthOk(_AuthOk event, Emitter<AuthState> emit) async {
-    emit(AuthState.authenticated(token: event.refreshToken));
+    emit(AuthState.authenticated(
+        refreshToken: event.refreshToken, accessToken: event.accessToken));
   }
 
   _onAuthError(_AuthError event, Emitter<AuthState> emit) async {
