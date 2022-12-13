@@ -1,8 +1,12 @@
 import 'error.dart';
 
 class Auth {
-  final String token;
+  final String accessToken;
+  final String refreshToken;
   final AuthError error;
 
-  const Auth({this.token = '', this.error = AuthError.none});
+  const Auth(
+      {this.refreshToken = '',
+      this.accessToken = '',
+      this.error = AuthError.none});
 }

@@ -9,9 +9,9 @@ void main() {
     final auth =
         await authRepository.signInByUserName(userName: 'test', password: 'c');
     expect(auth.error, auth_repository.AuthError.none);
-    expect(auth.token.isEmpty, false);
+    expect(auth.refreshToken.isEmpty, false);
     if (kDebugMode) {
-      print('token: ${auth.token}');
+      print('token: ${auth.refreshToken}');
     }
   });
 }

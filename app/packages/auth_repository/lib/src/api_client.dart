@@ -39,7 +39,7 @@ class AuthApiClient {
         throw signUpResult.exception!;
       }
       final data = signUpResult.data![api.kSignUpByUserNameResult];
-      final auth = models.Auth(token: data[kToken] as String);
+      final auth = models.Auth(refreshToken: data[kToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
@@ -73,7 +73,7 @@ class AuthApiClient {
         throw signInResult.exception!;
       }
       final data = signInResult.data![api.kSignInByUserNameResult];
-      final auth = models.Auth(token: data[kToken] as String);
+      final auth = models.Auth(refreshToken: data[kToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());

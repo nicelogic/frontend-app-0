@@ -25,7 +25,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
   }
   _onAuthOk(_AuthOk event, Emitter<AuthState> emit) async {
-    emit(AuthState.authenticated(token: event.token));
+    emit(AuthState.authenticated(token: event.refreshToken));
   }
 
   _onAuthError(_AuthError event, Emitter<AuthState> emit) async {
@@ -54,7 +54,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     final auth = await _authRepository.signUpByUserName(
         userName: userName, password: password);
     if (auth.error == AuthError.none) {
-      add(_AuthOk(auth.token));
+      add(_AuthOk(
+          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
     } else {
       add(_AuthError(auth.error));
     }
@@ -65,7 +66,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     final auth = await _authRepository.signInByUserName(
         userName: userName, password: password);
     if (auth.error == AuthError.none) {
-      add(_AuthOk(auth.token));
+      add(_AuthOk(
+          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
     } else {
       add(_AuthError(auth.error));
     }

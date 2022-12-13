@@ -69,6 +69,9 @@ access token访问各个service这个层面是不变的
 refresh每次使用都刷新过期时间，可以保证活跃用户一直可以使用app,不必登录
 市面上微信之类都是这种做法
 
+当前暂不支持rotation检测。所有未过期的refresh token还是可以继续刷新refresh token + access token
+理论上，新颁发了refresh token之后，后续只能使用这个refresh token来获取refresh token + access token
+优先级不高。安全要做得好，无上限的。保持接口稳定即可。后续需要再支持rotation检测
 
 #### 为什么使用access token + refresh机制
 

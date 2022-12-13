@@ -4,9 +4,10 @@ part of 'auth_bloc.dart';
 abstract class AuthEvent {}
 
 class _AuthOk extends AuthEvent {
-  final String token;
+  final String refreshToken;
+  final String accessToken;
 
-  _AuthOk(this.token);
+  _AuthOk({required this.refreshToken, required this.accessToken});
 }
 
 class _AuthError extends AuthEvent {
