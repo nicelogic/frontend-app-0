@@ -10,14 +10,16 @@ AuthState _$AuthStateFromJson(Map<String, dynamic> json) => AuthState(
       status:
           $enumDecodeNullable(_$AuthenticationStatusEnumMap, json['status']) ??
               AuthenticationStatus.unauthenticated,
-      refreshToken: json['token'] as String? ?? '',
+      refreshToken: json['refreshToken'] as String? ?? '',
+      accessToken: json['accessToken'] as String? ?? '',
       error: $enumDecodeNullable(_$AuthErrorEnumMap, json['error']) ??
           AuthError.none,
     );
 
 Map<String, dynamic> _$AuthStateToJson(AuthState instance) => <String, dynamic>{
       'status': _$AuthenticationStatusEnumMap[instance.status]!,
-      'token': instance.refreshToken,
+      'refreshToken': instance.refreshToken,
+      'accessToken': instance.accessToken,
       'error': _$AuthErrorEnumMap[instance.error]!,
     };
 
@@ -34,4 +36,6 @@ const _$AuthErrorEnumMap = {
   AuthError.userExist: 'userExist',
   AuthError.userNotExist: 'userNotExist',
   AuthError.pwdWrong: 'pwdWrong',
+  AuthError.tokenInvalid: 'tokenInvalid',
+  AuthError.tokenExpired: 'tokenExpired',
 };

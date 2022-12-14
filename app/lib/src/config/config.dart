@@ -31,4 +31,7 @@ class Config {
     log(name: kLogSource, 'logoPath($logoPath)');
     return logoPath;
   }
+
+  int get accessTokenRefreshMinutes =>
+      _configMap['access_token_refresh_minutes'] as int;
 }

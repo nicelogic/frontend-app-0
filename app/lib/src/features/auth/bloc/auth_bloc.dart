@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:app/src/config/config.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
@@ -23,8 +24,17 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     on<_AuthOk>(_onAuthOk);
     on<_AuthError>(_onAuthError);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
+    on<_AuthRefreshTokenTimerIsUp>(_onAuthRefreshTokenTimerIsUp);
 
-    //trigger a timer to refresh(refresh token & access token)
+    if (state.status == AuthenticationStatus.authenticated) {
+      log(
+          name: kLogSource,
+          'authenticated, start to refresh access & refresh token and triger timer to auto refressh');
+      add(_AuthRefreshTokenTimerIsUp());
+      Stream<_AuthRefreshTokenTimerIsUp>.periodic(
+          Duration(minutes: Config.instance().accessTokenRefreshMinutes),
+          (x) => _AuthRefreshTokenTimerIsUp());
+    }
   }
   _onAuthOk(_AuthOk event, Emitter<AuthState> emit) async {
     emit(AuthState.authenticated(
@@ -40,6 +50,31 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     emit(const AuthState.unauthenticated(error: AuthError.none));
   }
 
+  _onAuthRefreshTokenTimerIsUp(
+      _AuthRefreshTokenTimerIsUp event, Emitter<AuthState> emit) async {
+    final refreshToken = state.refreshToken;
+    log(name: kLogSource, 'refersh token use($refreshToken)');
+    final auth = await _authRepository.refreshToken(refreshToken: refreshToken);
+    if (auth.error == AuthError.none) {
+      add(_AuthOk(
+          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
+    } else if (auth.error == AuthError.tokenExpired ||
+        auth.error == AuthError.tokenInvalid) {
+      add(_AuthError(auth.error));
+    }
+  }
+
+  @override
+  void onChange(Change<AuthState> change) {
+    super.onChange(change);
+    if (change.nextState.status == AuthenticationStatus.authenticated) {
+      log(name: kLogSource, 'authenticated');
+    } else if (change.nextState.status ==
+        AuthenticationStatus.unauthenticated) {
+      log(name: kLogSource, 'unauthenticated');
+    }
+  }
+
   @override
   AuthState? fromJson(Map<String, dynamic> json) {
     log(name: kLogSource, 'fromJson($json)');
@@ -50,7 +85,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   Map<String, dynamic>? toJson(AuthState state) {
     log(name: kLogSource, 'toJson($state)');
     return _$AuthStateToJson(state);
-  } 
+  }
 
   Future<void> signUpByUserName(
       {required String userName, required String password}) async {
@@ -75,8 +110,4 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       add(_AuthError(auth.error));
     }
   }
-
-  // Future<void> refreshToken(){
-
-  // }
 }

@@ -112,3 +112,7 @@ oauth0.com:
 
 * restorationId 改造
 * settings controller -> bloc优化
+
+## cmd
+
+flutter pub run build_runner build

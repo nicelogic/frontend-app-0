@@ -7,3 +7,5 @@ services:
 
 assets:
   logo:  assets/images/logo/logo.png
+
+access_token_refresh_minutes: 180

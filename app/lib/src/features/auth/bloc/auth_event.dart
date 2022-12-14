@@ -17,3 +17,5 @@ class _AuthError extends AuthEvent {
 }
 
 class AuthLogoutRequested extends AuthEvent {}
+
+class _AuthRefreshTokenTimerIsUp extends AuthEvent {}

@@ -19,7 +19,7 @@ class AppBlocObserver extends BlocObserver {
 
   @override
   void onEvent(Bloc bloc, Object? event) {
-    log(name: kLogSource, '$event');
+    log(name: kLogSource, 'event: $event');
     super.onEvent(bloc, event);
   }
 
