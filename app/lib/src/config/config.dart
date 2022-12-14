@@ -32,6 +32,9 @@ class Config {
     return logoPath;
   }
 
-  int get accessTokenRefreshMinutes =>
-      _configMap['access_token_refresh_minutes'] as int;
+  int get accessTokenRefreshMinutes {
+    final minutes = _configMap['access_token_refresh_minutes'] as int;
+    log(name: kLogSource, 'access_token_refresh_minutes($minutes)');
+    return minutes;
+  }
 }

@@ -32,6 +32,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     if (state.status == AuthenticationStatus.authenticated) {
       log(
           name: kLogSource,
+          time: DateTime.now(),
           'authenticated, start to refresh access & refresh token and triger timer to auto refressh');
       add(_AuthRefreshTokenTimerIsUp());
       _refreshTokenTimerSubscription =
@@ -59,7 +60,10 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   _onAuthRefreshTokenTimerIsUp(
       _AuthRefreshTokenTimerIsUp event, Emitter<AuthState> emit) async {
     final refreshToken = state.refreshToken;
-    log(name: kLogSource, 'refersh token use($refreshToken)');
+    log(
+        name: kLogSource,
+        time: DateTime.now(),
+        'refersh token use($refreshToken)');
     final auth = await _authRepository.refreshToken(refreshToken: refreshToken);
     if (auth.error == AuthError.none) {
       add(_AuthOk(

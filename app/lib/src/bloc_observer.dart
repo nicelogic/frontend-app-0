@@ -14,7 +14,7 @@ class AppBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    log(name: kLogSource, '${bloc.runtimeType} $change');
+    log(name: kLogSource, 'state ${bloc.runtimeType} $change');
   }
 
   @override
