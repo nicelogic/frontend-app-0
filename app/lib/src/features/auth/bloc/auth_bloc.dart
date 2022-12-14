@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:app/src/config/config.dart';
@@ -17,6 +18,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   final String authReposiotryUrl;
   final AuthRepository _authRepository;
   static const kLogSource = 'AuthBloc';
+  StreamSubscription<_AuthRefreshTokenTimerIsUp>?
+      _refreshTokenTimerSubscription;
 
   AuthBloc({required this.authReposiotryUrl})
       : _authRepository = AuthRepository(url: authReposiotryUrl),
@@ -31,9 +34,12 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
           name: kLogSource,
           'authenticated, start to refresh access & refresh token and triger timer to auto refressh');
       add(_AuthRefreshTokenTimerIsUp());
-      Stream<_AuthRefreshTokenTimerIsUp>.periodic(
-          Duration(minutes: Config.instance().accessTokenRefreshMinutes),
-          (x) => _AuthRefreshTokenTimerIsUp());
+      _refreshTokenTimerSubscription =
+          Stream<_AuthRefreshTokenTimerIsUp>.periodic(
+              Duration(minutes: Config.instance().accessTokenRefreshMinutes),
+              (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
+        add(_AuthRefreshTokenTimerIsUp());
+      });
     }
   }
   _onAuthOk(_AuthOk event, Emitter<AuthState> emit) async {
@@ -67,11 +73,23 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   @override
   void onChange(Change<AuthState> change) {
     super.onChange(change);
-    if (change.nextState.status == AuthenticationStatus.authenticated) {
-      log(name: kLogSource, 'authenticated');
-    } else if (change.nextState.status ==
-        AuthenticationStatus.unauthenticated) {
-      log(name: kLogSource, 'unauthenticated');
+    if (change.currentState.status == AuthenticationStatus.unauthenticated &&
+        change.nextState.status == AuthenticationStatus.authenticated) {
+      log(name: kLogSource, 'unauthenticated => authenticated');
+      _refreshTokenTimerSubscription?.cancel();
+      _refreshTokenTimerSubscription =
+          Stream<_AuthRefreshTokenTimerIsUp>.periodic(
+              Duration(minutes: Config.instance().accessTokenRefreshMinutes),
+              (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
+        add(_AuthRefreshTokenTimerIsUp());
+      });
+      log(name: kLogSource, 'trigger refresh token timer');
+    } else if (change.currentState.status ==
+            AuthenticationStatus.authenticated &&
+        change.nextState.status == AuthenticationStatus.unauthenticated) {
+      log(name: kLogSource, 'authenticated => unauthenticated');
+      _refreshTokenTimerSubscription?.cancel();
+      log(name: kLogSource, 'cancel refresh token timer');
     }
   }
 
