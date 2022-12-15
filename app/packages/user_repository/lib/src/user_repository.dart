@@ -14,4 +14,15 @@ class UserRepository {
     final user = await _apiClient.me();
     return user;
   }
+
+  Future<models.Users> users({required String idOrName}) async {
+    final users = await _apiClient.users(idOrName: idOrName);
+    return users;
+  }
+
+  Future<models.User> updateUser(
+      {required Map<String, String> properties}) async {
+    final user = await _apiClient.updateUser(properties: properties);
+    return user;
+  }
 }

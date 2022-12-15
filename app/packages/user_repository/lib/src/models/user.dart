@@ -17,3 +17,11 @@ class User {
         name = '',
         data = '';
 }
+
+class Users {
+  final Map<String, User> users;
+  final UserError error;
+
+  Users({required this.users, required this.error});
+  const Users.error({required this.error}) : users = const {};
+}
