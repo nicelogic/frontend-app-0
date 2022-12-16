@@ -1,4 +1,4 @@
-import 'package:app/src/config/config.dart';
+import 'package:app/src/configs/config.dart';
 import 'package:app/src/route.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
