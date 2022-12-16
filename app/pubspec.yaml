@@ -16,6 +16,8 @@ dependencies:
     sdk: flutter
   auth_repository:
     path: packages/auth_repository
+  user_repository:
+    path: packages/user_repository
   intl: ^0.17.0
   meta: ^1.8.0
   json_annotation: ^4.7.0

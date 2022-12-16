@@ -15,13 +15,12 @@ part 'auth_state.dart';
 part 'auth_bloc.g.dart';
 
 class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
-  final String authReposiotryUrl;
   final AuthRepository _authRepository;
   static const kLogSource = 'AuthBloc';
   StreamSubscription<_AuthRefreshTokenTimerIsUp>?
       _refreshTokenTimerSubscription;
 
-  AuthBloc({required this.authReposiotryUrl})
+  AuthBloc({required final String authReposiotryUrl})
       : _authRepository = AuthRepository(url: authReposiotryUrl),
         super(const AuthState.authInitial()) {
     on<_AuthOk>(_onAuthOk);
