@@ -1,9 +1,12 @@
+const kRefreshTokenParam = 'refreshToken';
+const kRefreshToken = 'refresh_token';
+const kAccessToken = 'access_token';
 const kRefreshTokenResult = 'refreshToken';
-const kRefreshToken = r'''
-query refreshToken($refreshToken: String!){
-  refreshToken(refreshToken: $refreshToken){
-    refresh_token
-    access_token
+const kRefreshTokenGql = '''
+query refreshToken(\$$kRefreshTokenParam: String!){
+  refreshToken(refreshToken: \$$kRefreshTokenParam){
+    $kRefreshToken
+    $kAccessToken
   }
 }
 ''';
