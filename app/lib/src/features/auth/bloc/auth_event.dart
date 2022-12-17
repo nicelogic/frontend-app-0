@@ -11,7 +11,7 @@ class _AuthOk extends AuthEvent {
 }
 
 class _AuthError extends AuthEvent {
-  final AuthError error;
+  final auth_repository.AuthError error;
 
   _AuthError(this.error);
 }

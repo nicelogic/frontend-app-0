@@ -12,7 +12,7 @@ class AuthState extends Equatable {
     this.auth = const AuthInfo.empty(),
   });
   const AuthState.authInitial() : this();
-  AuthState.unauthenticated({required AuthError error})
+  AuthState.unauthenticated({required auth_repository.AuthError error})
       : this(auth: AuthInfo.error(error: error));
   AuthState.authenticated(
       {required String refreshToken, required String accessToken})

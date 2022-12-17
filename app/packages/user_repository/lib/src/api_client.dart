@@ -41,7 +41,7 @@ class ApiClient {
       return user;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
-      return const models.User.error(error: models.UserError.networkError);
+      return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
       log(name: kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
@@ -51,7 +51,7 @@ class ApiClient {
     } catch (e) {
       log(name: kLogSource, e.toString());
     }
-    return const models.User.error(error: models.UserError.clientInternalError);
+    return models.User.error(error: models.UserError.clientInternalError);
   }
 
   Future<models.Users> users({required String idOrName}) async {
@@ -110,7 +110,7 @@ class ApiClient {
       return user;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
-      return const models.User.error(error: models.UserError.networkError);
+      return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
       log(name: kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
@@ -120,6 +120,6 @@ class ApiClient {
     } catch (e) {
       log(name: kLogSource, e.toString());
     }
-    return const models.User.error(error: models.UserError.clientInternalError);
+    return models.User.error(error: models.UserError.clientInternalError);
   }
 }

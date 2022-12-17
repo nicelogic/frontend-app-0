@@ -1,13 +1,13 @@
 part of 'me_bloc.dart';
 
+@JsonSerializable(explicitToJson: true)
 class MeState extends Equatable {
-  final User me;
+  final Me me;
   const MeState(this.me);
 
   @override
   List<Object> get props => [me];
 
-  const MeState._() : me = const User.empty();
-
-  const MeState.meInitial() : this._();
+  MeState._() : me = Me.empty();
+  MeState.meInitial() : this._();
 }

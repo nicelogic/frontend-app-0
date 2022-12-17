@@ -8,7 +8,7 @@ abstract class MeEvent extends Equatable {
 }
 
 class _MeFetched extends MeEvent {
-  final User me;
+  final Me me;
   const _MeFetched(this.me);
 }
 

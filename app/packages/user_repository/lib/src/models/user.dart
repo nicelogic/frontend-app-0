@@ -11,16 +11,9 @@ class User {
       {required this.id,
       required this.name,
       required this.data,
-      required this.error});
-  const User.empty()
-      : id = '',
-        name = '',
-        data = '',
-        error = UserError.none;
-  const User.error({required this.error})
-      : id = '',
-        name = '',
-        data = '';
+      this.error = UserError.none});
+  User.error({required UserError error})
+      : this(id: '', name: '', data: '', error: error);
 }
 
 class Users {

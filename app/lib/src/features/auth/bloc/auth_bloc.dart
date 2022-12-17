@@ -7,7 +7,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:auth_repository/auth_repository.dart';
+import 'package:auth_repository/auth_repository.dart' as auth_repository;
 import '../models/models.dart';
 
 part 'auth_event.dart';
@@ -17,7 +17,7 @@ part 'auth_bloc.g.dart';
 const kLogSource = 'AuthBloc';
 
 class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
-  final AuthRepository authRepository;
+  final auth_repository.AuthRepository authRepository;
   StreamSubscription<_AuthRefreshTokenTimerIsUp>?
       _refreshTokenTimerSubscription;
 
@@ -53,7 +53,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
 
   _onAuthLogoutRequested(
       AuthLogoutRequested event, Emitter<AuthState> emit) async {
-    emit(AuthState.unauthenticated(error: AuthError.none));
+    emit(AuthState.unauthenticated(error: auth_repository.AuthError.none));
   }
 
   _onAuthRefreshTokenTimerIsUp(
@@ -64,11 +64,11 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
         time: DateTime.now(),
         '(${DateTime.now()})refersh token use($refreshToken)');
     final auth = await authRepository.refreshToken(refreshToken: refreshToken);
-    if (auth.error == AuthError.none) {
+    if (auth.error == auth_repository.AuthError.none) {
       add(_AuthOk(
           refreshToken: auth.refreshToken, accessToken: auth.accessToken));
-    } else if (auth.error == AuthError.tokenExpired ||
-        auth.error == AuthError.tokenInvalid) {
+    } else if (auth.error == auth_repository.AuthError.tokenExpired ||
+        auth.error == auth_repository.AuthError.tokenInvalid) {
       add(_AuthError(auth.error));
     }
   }
@@ -112,7 +112,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       {required String userName, required String password}) async {
     final auth = await authRepository.signUpByUserName(
         userName: userName, password: password);
-    if (auth.error == AuthError.none) {
+    if (auth.error == auth_repository.AuthError.none) {
       add(_AuthOk(
           refreshToken: auth.refreshToken, accessToken: auth.accessToken));
     } else {
@@ -124,7 +124,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       {required String userName, required String password}) async {
     final auth = await authRepository.signInByUserName(
         userName: userName, password: password);
-    if (auth.error == AuthError.none) {
+    if (auth.error == auth_repository.AuthError.none) {
       add(_AuthOk(
           refreshToken: auth.refreshToken, accessToken: auth.accessToken));
     } else {
