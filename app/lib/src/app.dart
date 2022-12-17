@@ -1,5 +1,6 @@
 import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/auth/bloc/auth_bloc.dart';
+import 'package:auth_repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -18,7 +19,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authBloc =
-        AuthBloc(authReposiotryUrl: Config.instance().authServiceUrl);
+        AuthBloc(
+        authRepository: AuthRepository(url: Config.instance().authServiceUrl));
     return MultiBlocProvider(
         providers: [
           BlocProvider(

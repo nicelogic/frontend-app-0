@@ -116,3 +116,13 @@ oauth0.com:
 ## cmd
 
 flutter pub run build_runner build
+
+## general state management mechanism
+
+* the cache level in the hydrated bloc
+  * means: graphql only use network function, no cache function
+* only auth hydrated bloc not lazy, other bloc is lazy load
+	* user see which screen that need the bloc, that bloc then load data
+* a hydrated bloc load too large data, that bloc need just load a little data
+  * need to customize load data mechanism
+  * or to split a bloc to many bloc

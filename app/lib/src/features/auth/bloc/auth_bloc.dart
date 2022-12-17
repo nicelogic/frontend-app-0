@@ -14,15 +14,15 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 part 'auth_bloc.g.dart';
 
+const kLogSource = 'AuthBloc';
+
 class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
-  final AuthRepository _authRepository;
-  static const kLogSource = 'AuthBloc';
+  final AuthRepository authRepository;
   StreamSubscription<_AuthRefreshTokenTimerIsUp>?
       _refreshTokenTimerSubscription;
 
-  AuthBloc({required final String authReposiotryUrl})
-      : _authRepository = AuthRepository(url: authReposiotryUrl),
-        super(const AuthState.authInitial()) {
+  AuthBloc({required this.authRepository})
+      : super(const AuthState.authInitial()) {
     on<_AuthOk>(_onAuthOk);
     on<_AuthError>(_onAuthError);
     on<AuthLogoutRequested>(_onAuthLogoutRequested);
@@ -63,7 +63,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
         name: kLogSource,
         time: DateTime.now(),
         '(${DateTime.now()})refersh token use($refreshToken)');
-    final auth = await _authRepository.refreshToken(refreshToken: refreshToken);
+    final auth = await authRepository.refreshToken(refreshToken: refreshToken);
     if (auth.error == AuthError.none) {
       add(_AuthOk(
           refreshToken: auth.refreshToken, accessToken: auth.accessToken));
@@ -108,9 +108,9 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     return _$AuthStateToJson(state);
   }
 
-  Future<void> signUpByUserName(
+  signUpByUserName(
       {required String userName, required String password}) async {
-    final auth = await _authRepository.signUpByUserName(
+    final auth = await authRepository.signUpByUserName(
         userName: userName, password: password);
     if (auth.error == AuthError.none) {
       add(_AuthOk(
@@ -120,9 +120,9 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> signInByUserName(
+  signInByUserName(
       {required String userName, required String password}) async {
-    final auth = await _authRepository.signInByUserName(
+    final auth = await authRepository.signInByUserName(
         userName: userName, password: password);
     if (auth.error == AuthError.none) {
       add(_AuthOk(
