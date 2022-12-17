@@ -53,12 +53,12 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
 
   _onAuthLogoutRequested(
       AuthLogoutRequested event, Emitter<AuthState> emit) async {
-    emit(const AuthState.unauthenticated(error: AuthError.none));
+    emit(AuthState.unauthenticated(error: AuthError.none));
   }
 
   _onAuthRefreshTokenTimerIsUp(
       _AuthRefreshTokenTimerIsUp event, Emitter<AuthState> emit) async {
-    final refreshToken = state.refreshToken;
+    final refreshToken = state.auth.refreshToken;
     log(
         name: kLogSource,
         time: DateTime.now(),

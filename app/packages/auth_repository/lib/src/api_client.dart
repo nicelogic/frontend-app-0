@@ -36,25 +36,25 @@ class ApiClient {
         throw signUpResult.exception!;
       }
       final data = signUpResult.data![api.kSignUpByUserNameResult];
-      final auth = models.Auth(
+      final auth = models.Auth.authenticated(
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
-      return const models.Auth(error: models.AuthError.networkError);
+      return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
       log(name: kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
-        return models.Auth(
+        return models.Auth.error(
             error: models.toErrorEnum[error] ??
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
       log(name: kLogSource, e.toString());
     }
-    return const models.Auth(error: models.AuthError.clientInternalError);
+    return const models.Auth.error(error: models.AuthError.clientInternalError);
   }
 
   Future<models.Auth> signInByUserName(
@@ -72,25 +72,25 @@ class ApiClient {
         throw signInResult.exception!;
       }
       final data = signInResult.data![api.kSignInByUserNameResult];
-      final auth = models.Auth(
+      final auth = models.Auth.authenticated(
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
-      return const models.Auth(error: models.AuthError.networkError);
+      return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
       log(name: kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
-        return models.Auth(
+        return models.Auth.error(
             error: models.toErrorEnum[error] ??
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
       log(name: kLogSource, e.toString());
     }
-    return const models.Auth(error: models.AuthError.clientInternalError);
+    return const models.Auth.error(error: models.AuthError.clientInternalError);
   }
 
   Future<models.Auth> refreshToken({required String refreshToken}) async {
@@ -104,24 +104,24 @@ class ApiClient {
         throw refreshTokenResult.exception!;
       }
       final data = refreshTokenResult.data![api.kRefreshTokenResult];
-      final auth = models.Auth(
+      final auth = models.Auth.authenticated(
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on ServerException catch (e) {
       log(name: kLogSource, e.toString());
-      return const models.Auth(error: models.AuthError.networkError);
+      return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
       log(name: kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
-        return models.Auth(
+        return models.Auth.error(
             error: models.toErrorEnum[error] ??
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
       log(name: kLogSource, e.toString());
     }
-    return const models.Auth(error: models.AuthError.clientInternalError);
+    return const models.Auth.error(error: models.AuthError.clientInternalError);
   }
 }

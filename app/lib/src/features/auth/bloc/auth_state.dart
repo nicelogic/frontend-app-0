@@ -1,27 +1,23 @@
 part of 'auth_bloc.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class AuthState extends Equatable {
   final AuthenticationStatus status;
-  final String refreshToken;
-  final String accessToken;
-  final AuthError error;
+  final Auth auth;
   @override
-  List<Object> get props => [status, refreshToken, accessToken];
+  List<Object> get props => [status, auth];
 
   const AuthState({
     this.status = AuthenticationStatus.unauthenticated,
-    this.refreshToken = '',
-    this.accessToken = '',
-    this.error = AuthError.none,
+    this.auth = const Auth.empty(),
   });
   const AuthState.authInitial() : this();
-  const AuthState.unauthenticated({required AuthError error})
-      : this(error: error);
-  const AuthState.authenticated(
+  AuthState.unauthenticated({required AuthError error})
+      : this(auth: Auth.error(error: error));
+  AuthState.authenticated(
       {required String refreshToken, required String accessToken})
       : this(
             status: AuthenticationStatus.authenticated,
-            refreshToken: refreshToken,
-            accessToken: accessToken);
+            auth: Auth.authenticated(
+                refreshToken: refreshToken, accessToken: accessToken));
 }
