@@ -1,5 +1,6 @@
-
+import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:app/src/features/me/me.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
 import 'package:app/src/screens/login/login_screen.dart';
 import 'package:app/src/screens/login/username_login_screen.dart';
@@ -7,7 +8,9 @@ import 'package:app/src/screens/me/me_screen.dart';
 import 'package:app/src/screens/message/chat_screen.dart';
 import 'package:app/src/screens/scaffold_with_bottom_navigation_bar_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:user_repository/user_repository.dart';
 
 const routePathMe = '/me';
 const routePathContacts = '/contacts';
@@ -57,17 +60,28 @@ router({required auth.AuthBloc authBloc}) => GoRouter(
               GoRoute(
                 path: routePathMe,
                 builder: (BuildContext context, GoRouterState state) {
-                  return const MeScreen();
+                  return BlocProvider(
+                      create: (_) => MeBloc(
+                          UserRepository(
+                              url: Config.instance().userServiceUrl,
+                              token: authBloc.state.auth.accessToken),
+                          authBloc),
+                      child: const MeScreen());
                 },
               ),
             ]),
         GoRoute(
             path: routePathLogin,
-            builder: ((context, state) => const LoginScreen()),
+            builder: ((context, state) {
+              return const LoginScreen();
+            }),
             routes: [
               GoRoute(
                 path: routePathLoginUserNameLogin,
-                builder: (context, state) => UserNameLoginScreen(),
+                builder: (context, state) {
+                  return BlocProvider(
+                      create: (_) => authBloc, child: UserNameLoginScreen());
+                },
               )
             ])
       ],

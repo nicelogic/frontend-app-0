@@ -7,7 +7,7 @@ part of 'me_bloc.dart';
 // **************************************************************************
 
 MeState _$MeStateFromJson(Map<String, dynamic> json) => MeState(
-      Me.fromJson(json['me'] as Map<String, dynamic>),
+      me: Me.fromJson(json['me'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$MeStateToJson(MeState instance) => <String, dynamic>{

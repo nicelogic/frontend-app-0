@@ -2,7 +2,6 @@ import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/auth/bloc/auth_bloc.dart';
 import 'package:auth_repository/auth_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'settings/settings_controller.dart';
@@ -18,17 +17,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc =
-        AuthBloc(
+    final authBloc = AuthBloc(
         authRepository: AuthRepository(url: Config.instance().authServiceUrl));
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (_) => authBloc,
-            lazy: false,
-          )
-        ],
-        child: AnimatedBuilder(
+    return AnimatedBuilder(
           animation: settingsController,
           builder: (BuildContext context, Widget? child) {
             return MaterialApp.router(
@@ -50,6 +41,6 @@ class MyApp extends StatelessWidget {
               routerConfig: router(authBloc: authBloc),
             );
           },
-        ));
+    );
   }
 }

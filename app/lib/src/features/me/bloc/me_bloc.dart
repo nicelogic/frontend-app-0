@@ -20,7 +20,7 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
   final auth.AuthBloc authBloc;
   late final StreamSubscription authBlocSubscription;
 
-  MeBloc(this.userRepository, this.authBloc) : super(MeState.meInitial()) {
+  MeBloc(this.userRepository, this.authBloc) : super(const MeState.meInitial()) {
     on<_MeFetched>(_onMeFetched);
     on<_Logout>(_onLogout);
 
@@ -46,11 +46,11 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
   }
 
   _onMeFetched(_MeFetched event, emit) async {
-    emit(event.me);
+    emit(MeState(me: event.me));
   }
 
   _onLogout(_Logout event, emit) async {
-    emit(MeState.meInitial());
+    emit(const MeState.meInitial());
   }
 
   @override

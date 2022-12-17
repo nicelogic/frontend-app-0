@@ -20,9 +20,27 @@ class Config {
 
   dynamic _serviceSection(final String name) => _configMap['services'][name];
   String get authServiceUrl {
-    final authUrl = _serviceSection('auth') as String;
-    log(name: kLogSource, 'authServiceUrl($authUrl)');
-    return authUrl;
+    final url = _serviceSection('auth') as String;
+    log(name: kLogSource, 'authServiceUrl($url)');
+    return url;
+  }
+
+  String get userServiceUrl {
+    final url = _serviceSection('user') as String;
+    log(name: kLogSource, 'userServiceUrl($url)');
+    return url;
+  }
+
+  String get contactsServiceUrl {
+    final url = _serviceSection('contacts') as String;
+    log(name: kLogSource, 'contactsServiceUrl($url)');
+    return url;
+  }
+
+  String get messageServiceUrl {
+    final url = _serviceSection('message') as String;
+    log(name: kLogSource, 'messageServiceUrl($url)');
+    return url;
   }
 
   dynamic _assetsSection(final String name) => _configMap['assets'][name];
