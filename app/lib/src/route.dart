@@ -12,6 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:user_repository/user_repository.dart';
 
+import 'features/auth/auth.dart';
+
 const routePathMe = '/me';
 const routePathContacts = '/contacts';
 const routePathChat = '/chat';
@@ -23,7 +25,7 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 final GlobalKey<NavigatorState> _shellNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-router({required auth.AuthBloc authBloc}) => GoRouter(
+router() => GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
       initialLocation: routePathChat,
@@ -31,7 +33,7 @@ router({required auth.AuthBloc authBloc}) => GoRouter(
         if (state.location == '$routePathLogin/$routePathLoginUserNameLogin') {
           return null;
         }
-        final authStatus = authBloc.state.status;
+        final authStatus = context.read<AuthBloc>().state.status;
         if (authStatus == auth.AuthenticationStatus.unauthenticated) {
           return routePathLogin;
         } else {
@@ -61,14 +63,16 @@ router({required auth.AuthBloc authBloc}) => GoRouter(
                 path: routePathMe,
                 builder: (BuildContext context, GoRouterState state) {
                   return BlocProvider(
-                      create: (_) => MeBloc(
+                        create: (context) {
+                          final authBloc = context.read<AuthBloc>();
+                          return MeBloc(
                           UserRepository(
                               url: Config.instance().userServiceUrl,
                               token: authBloc.state.auth.accessToken),
-                          authBloc),
+                              authBloc);
+                        },
                       child: const MeScreen());
-                },
-              ),
+                  })
             ]),
         GoRoute(
             path: routePathLogin,
@@ -79,8 +83,7 @@ router({required auth.AuthBloc authBloc}) => GoRouter(
               GoRoute(
                 path: routePathLoginUserNameLogin,
                 builder: (context, state) {
-                  return BlocProvider(
-                      create: (_) => authBloc, child: UserNameLoginScreen());
+                  return UserNameLoginScreen();
                 },
               )
             ])

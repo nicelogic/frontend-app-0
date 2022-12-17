@@ -126,3 +126,4 @@ flutter pub run build_runner build
 * a hydrated bloc load too large data, that bloc need just load a little data
   * need to customize load data mechanism
   * or to split a bloc to many bloc
+* Generally speaking, one bloc has its exclusive repository. if many bloc want use a repository's state, there should a top level bloc to support common state, such as auth bloc
