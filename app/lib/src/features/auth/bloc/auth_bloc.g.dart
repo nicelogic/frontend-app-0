@@ -11,8 +11,8 @@ AuthState _$AuthStateFromJson(Map<String, dynamic> json) => AuthState(
           $enumDecodeNullable(_$AuthenticationStatusEnumMap, json['status']) ??
               AuthenticationStatus.unauthenticated,
       auth: json['auth'] == null
-          ? const Auth.empty()
-          : Auth.fromJson(json['auth'] as Map<String, dynamic>),
+          ? const AuthInfo.empty()
+          : AuthInfo.fromJson(json['auth'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$AuthStateToJson(AuthState instance) => <String, dynamic>{

@@ -1,21 +1,21 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'auth.dart';
+part of 'auth_info.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Auth _$AuthFromJson(Map<String, dynamic> json) => Auth(
+AuthInfo _$AuthInfoFromJson(Map<String, dynamic> json) => AuthInfo(
       refreshToken: json['refreshToken'] as String? ?? '',
       accessToken: json['accessToken'] as String? ?? '',
       error: $enumDecodeNullable(_$AuthErrorEnumMap, json['error']) ??
           AuthError.none,
     );
 
-Map<String, dynamic> _$AuthToJson(Auth instance) => <String, dynamic>{
-      'accessToken': instance.accessToken,
+Map<String, dynamic> _$AuthInfoToJson(AuthInfo instance) => <String, dynamic>{
       'refreshToken': instance.refreshToken,
+      'accessToken': instance.accessToken,
       'error': _$AuthErrorEnumMap[instance.error]!,
     };
 
