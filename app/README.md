@@ -112,6 +112,8 @@ oauth0.com:
 
 * restorationId 改造
 * settings controller -> bloc优化
+* l10n，当前都写死为英文字符串，后续所有功能都好了之后，全面进行改造
+* local config & net config 方案全面设计，当前只使用local config
 
 ## cmd
 
@@ -128,5 +130,9 @@ flutter pub run build_runner build
   * or to split a bloc to many bloc
 * Generally speaking, one bloc has its exclusive repository. if many bloc want use a repository's state, there should a top level bloc to support common state, such as auth bloc
 
-there is a problem: if auth fail, some closed hydrated bloc can't clear their state
+
 me bloc is only needed in me screen, me->my profile screen
+
+there is a problem: if auth fail, closed hydrated bloc can't clear their state
+but can do state clear in fromJson. after load State,check state whether belong to current user
+

@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:app/src/features/auth/auth.dart' as auth;
 
@@ -21,14 +22,19 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
   final auth.AuthBloc authBloc;
   late final StreamSubscription authBlocSubscription;
 
-  MeBloc(this.userRepository, this.authBloc) : super(const MeState.meInitial()) {
+  MeBloc(this.userRepository, this.authBloc)
+      : super(const MeState.meInitial()) {
     on<_MeFetched>(_onMeFetched);
-    on<_Logout>(_onLogout);
+    on<_UnAuthenticated>(_onUnAuthenticated);
 
     authBlocSubscription = authBloc.stream.listen((authState) {
       switch (authState.status) {
         case auth.AuthenticationStatus.unauthenticated:
-          add(_Logout());
+          log(
+              name: kLogSource,
+              'auth unauthenticated, update access token empty, and add logout event');
+          userRepository.updateToken('');
+          add(_UnAuthenticated());
           break;
         case auth.AuthenticationStatus.authenticated:
           userRepository.updateToken(authState.auth.accessToken);
@@ -50,14 +56,25 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
     emit(MeState(me: event.me));
   }
 
-  _onLogout(_Logout event, emit) async {
+  _onUnAuthenticated(_UnAuthenticated event, emit) async {
     emit(const MeState.meInitial());
   }
 
   @override
   MeState? fromJson(Map<String, dynamic> json) {
     log(name: kLogSource, 'fromJson($json)');
-    return _$MeStateFromJson(json);
+    final meState = _$MeStateFromJson(json);
+    Map<String, dynamic> decodedToken =
+        JwtDecoder.decode(authBloc.state.auth.refreshToken);
+    final userId = decodedToken['user']['id'] as String;
+    log(
+        name: kLogSource,
+        'current userId($userId), cached userId(${meState.me.id})');
+    if (meState.me.id != userId) {
+      return const MeState.meInitial();
+    } else {
+      return meState;
+    }
   }
 
   @override

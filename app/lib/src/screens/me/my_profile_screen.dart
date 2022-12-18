@@ -1,11 +1,27 @@
 import 'package:app/src/configs/configs.dart';
+import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/me/me.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:user_repository/user_repository.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
+    return BlocProvider(
+        create: (_) => MeBloc(
+            UserRepository(
+                url: Config.instance().userServiceUrl,
+                token: authBloc.state.auth.accessToken),
+            authBloc),
+        child: _MyProfileScreen());
+  }
+}
+
+class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

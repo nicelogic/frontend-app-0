@@ -12,4 +12,4 @@ class _MeFetched extends MeEvent {
   const _MeFetched(this.me);
 }
 
-class _Logout extends MeEvent {}
+class _UnAuthenticated extends MeEvent {}
