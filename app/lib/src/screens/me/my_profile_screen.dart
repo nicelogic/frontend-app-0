@@ -41,7 +41,10 @@ class _MyProfileScreen extends StatelessWidget {
               onTap: () async {
                 final picker = ImagePicker();
                 final pickedImage = await picker.pickImage(
-                    source: ImageSource.gallery, maxHeight: 36, maxWidth: 36);
+                    source: ImageSource.gallery,
+                    maxHeight: 36,
+                    maxWidth: 36,
+                    requestFullMetadata: false);
                 if (pickedImage == null) {
                   return;
                 }
