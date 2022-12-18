@@ -28,6 +28,7 @@ class ApiClient {
       const gqlStr = api.kSignUpByUserName;
       final signUpResult = await _graphQLClient.mutate(MutationOptions(
           document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
           variables: <String, dynamic>{
             api.kUserName: userName,
             api.kPassword: password
@@ -63,7 +64,7 @@ class ApiClient {
       const gqlStr = api.kSignInByUserName;
       final signInResult = await _graphQLClient.query(QueryOptions(
           document: gql(gqlStr),
-          fetchPolicy: FetchPolicy.networkOnly,
+          fetchPolicy: FetchPolicy.noCache,
           variables: <String, dynamic>{
             api.kUserName: userName,
             api.kPassword: password
@@ -98,7 +99,7 @@ class ApiClient {
       const gqlStr = api.kRefreshTokenGql;
       final refreshTokenResult = await _graphQLClient.query(QueryOptions(
           document: gql(gqlStr),
-          fetchPolicy: FetchPolicy.networkOnly,
+          fetchPolicy: FetchPolicy.noCache,
           variables: <String, dynamic>{api.kRefreshTokenParam: refreshToken}));
       if (refreshTokenResult.hasException) {
         throw refreshTokenResult.exception!;

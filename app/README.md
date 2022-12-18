@@ -114,6 +114,7 @@ oauth0.com:
 * settings controller -> bloc优化
 * l10n，当前都写死为英文字符串，后续所有功能都好了之后，全面进行改造
 * local config & net config 方案全面设计，当前只使用local config
+* poc: graphql server & client support apq to save bandwidth
 
 ## cmd
 
@@ -129,10 +130,8 @@ flutter pub run build_runner build
   * need to customize load data mechanism
   * or to split a bloc to many bloc
 * Generally speaking, one bloc has its exclusive repository. if many bloc want use a repository's state, there should a top level bloc to support common state, such as auth bloc
-
-
-me bloc is only needed in me screen, me->my profile screen
-
-there is a problem: if auth fail, closed hydrated bloc can't clear their state
+* me bloc is only needed in me screen, me->my profile screen, all screen just take it's needed bloc(every time load data and update date by hydrated bloc)
+* there is a problem: if auth fail, closed hydrated bloc can't clear their state
 but can do state clear in fromJson. after load State,check state whether belong to current user
+* no select graphql cache mechanism, all query policy set nocache
 

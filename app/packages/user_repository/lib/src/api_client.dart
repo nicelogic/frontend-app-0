@@ -27,7 +27,7 @@ class ApiClient {
       const gqlStr = api.me;
       final meResult = await _graphQLClient.query(QueryOptions(
           document: gql(gqlStr),
-          fetchPolicy: FetchPolicy.networkOnly,
+          fetchPolicy: FetchPolicy.noCache,
           variables: const <String, dynamic>{}));
       if (meResult.hasException) {
         throw meResult.exception!;
@@ -59,7 +59,7 @@ class ApiClient {
       const gqlStr = api.users;
       final result = await _graphQLClient.query(QueryOptions(
           document: gql(gqlStr),
-          fetchPolicy: FetchPolicy.networkOnly,
+          fetchPolicy: FetchPolicy.noCache,
           variables: <String, dynamic>{api.idOrName: idOrName}));
       if (result.hasException) {
         throw result.exception!;
@@ -96,7 +96,7 @@ class ApiClient {
       final gqlStr = api.generateUpdateUserGql(properties);
       final result = await _graphQLClient.mutate(MutationOptions(
           document: gql(gqlStr),
-          fetchPolicy: FetchPolicy.networkOnly,
+          fetchPolicy: FetchPolicy.noCache,
           variables: properties));
       if (result.hasException) {
         throw result.exception!;
