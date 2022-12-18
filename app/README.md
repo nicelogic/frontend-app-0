@@ -27,8 +27,8 @@ apps](https://flutter.dev/docs/development/accessibility-and-localization/intern
 
 * 每个微服务对应一个repository, model在repository中定义
 * feature: 各个bloc
-* screen: 每个单独的页面， 每个页面由多个widget组成
-* 各个widget在widget里面管理（这么做的好处在于查看screen的时候脉络比较清晰）
+* screen: 每个单独的页面， 每个页面由多个widget组成. widget不单独抽出来，影响screen目录
+* 通用的(两个及以上screen需要)widget在widget里面管理（这么做的好处在于查看screen的时候脉络比较清晰）
 
 ## feature
 
