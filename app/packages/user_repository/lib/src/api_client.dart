@@ -39,7 +39,7 @@ class ApiClient {
           data: data[api.data] as String,
           error: models.UserError.none);
       return user;
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
@@ -74,7 +74,7 @@ class ApiClient {
               error: models.UserError.none)
       };
       return models.Users(users: users, error: models.UserError.none);
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return const models.Users.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
@@ -108,7 +108,7 @@ class ApiClient {
           data: data[api.data] as String,
           error: models.UserError.none);
       return user;
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {

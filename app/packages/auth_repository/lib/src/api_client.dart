@@ -41,7 +41,7 @@ class ApiClient {
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
@@ -77,7 +77,7 @@ class ApiClient {
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
@@ -109,7 +109,7 @@ class ApiClient {
           refreshToken: data[api.kRefreshToken] as String,
           accessToken: data[api.kAccessToken] as String);
       return auth;
-    } on ServerException catch (e) {
+    } on NetworkException catch (e) {
       log(name: kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {

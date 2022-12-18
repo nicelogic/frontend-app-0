@@ -134,4 +134,8 @@ flutter pub run build_runner build
 * there is a problem: if auth fail, closed hydrated bloc can't clear their state
 but can do state clear in fromJson. after load State,check state whether belong to current user
 * no select graphql cache mechanism, all query policy set nocache
+	why: 
+		* graphql cache more complex
+		* graphql need consider "__typename,id" related api design
+		* hydrate make screen own right data faster(hydrated bloc's init data) then get graphql cache, then emit state to bloc
 
