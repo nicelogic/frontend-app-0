@@ -4,6 +4,7 @@ import 'package:app/src/features/me/me.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:user_repository/user_repository.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -38,12 +39,12 @@ class _MyProfileScreen extends StatelessWidget {
               profileWidget:
                   UserAvatar(id: meState.me.id, name: meState.me.name),
               onTap: () async {
-                //   final _picker = ImagePicker();
-                //   final pickedImage = await _picker.pickImage(
-                //       source: ImageSource.gallery, maxHeight: 36, maxWidth: 36);
-                //   if (pickedImage == null) {
-                //     return;
-                //   }
+                final picker = ImagePicker();
+                final pickedImage = await picker.pickImage(
+                    source: ImageSource.gallery, maxHeight: 36, maxWidth: 36);
+                if (pickedImage == null) {
+                  return;
+                }
                 //   final imageBytes = await pickedImage.readAsBytes();
                 //   final decodeImage = p_image.decodeImage(imageBytes);
                 //   final imageData = p_image.encodePng(decodeImage!);
