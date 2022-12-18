@@ -21,3 +21,15 @@ class AuthState extends Equatable {
             auth: AuthInfo.authenticated(
                 refreshToken: refreshToken, accessToken: accessToken));
 }
+
+extension UserId on AuthState {
+  String get userId {
+    if (auth.refreshToken.isNotEmpty) {
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(auth.refreshToken);
+      final userId = decodedToken['user']['id'] as String;
+      return userId;
+    } else {
+      return '';
+    }
+  }
+}

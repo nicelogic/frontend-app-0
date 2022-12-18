@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:app/src/features/auth/auth.dart' as auth;
 
@@ -64,9 +63,7 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
   MeState? fromJson(Map<String, dynamic> json) {
     log(name: kLogSource, 'fromJson($json)');
     final meState = _$MeStateFromJson(json);
-    Map<String, dynamic> decodedToken =
-        JwtDecoder.decode(authBloc.state.auth.refreshToken);
-    final userId = decodedToken['user']['id'] as String;
+    final userId = authBloc.state.userId;
     log(
         name: kLogSource,
         'current userId($userId), cached userId(${meState.me.id})');
