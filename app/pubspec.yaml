@@ -31,7 +31,6 @@ dependencies:
   convex_bottom_bar: ^3.1.0+1
   yaml: ^3.1.1
   badges: ^2.0.3
-  jwt_decoder: ^2.0.1
 
 dev_dependencies:
   flutter_test:

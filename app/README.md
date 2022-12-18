@@ -115,6 +115,7 @@ oauth0.com:
 * l10n，当前都写死为英文字符串，后续所有功能都好了之后，全面进行改造
 * local config & net config 方案全面设计，当前只使用local config
 * poc: graphql server & client support apq to save bandwidth
+* flutter native splash
 
 ## cmd
 
@@ -139,3 +140,24 @@ but can do state clear in fromJson. after load State,check state whether belong 
 		* graphql need consider "__typename,id" related api design
 		* hydrate make screen own right data faster(hydrated bloc's init data) then get graphql cache, then emit state to bloc
 
+
+## s3 and logic
+
+upload asset use s3 repository
+then url set to logic db
+s3 asset path, control by s3 dir design
+every user has user special key
+app-0 only use app-0 bucket
+
+app-0 bucket
+	- users
+    	- user-0
+        	- avatar
+				- avatar.png
+
+follow: https://aws.amazon.com/cn/blogs/compute/uploading-to-amazon-s3-directly-from-a-web-or-mobile-application/
+then user info contain the asset's url 
+
+## image
+
+https://developer.android.com/training/multiscreen/screendensities
