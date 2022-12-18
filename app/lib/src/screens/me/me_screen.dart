@@ -53,41 +53,34 @@ class _PersonProfileForm extends StatelessWidget {
         child: Container(
             padding: const EdgeInsets.fromLTRB(20, 30, 15, 20),
             color: Colors.white,
-            child: Row(children: [
-              CircleAvatar(
-                radius: 32,
-                backgroundImage: AssetImage(Config.instance().logoPath),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Builder(builder: (context) {
-                      final name =
-                          context.select((MeBloc bloc) => bloc.state.me.name);
-                      return Text(
-                        name,
+            child: Builder(builder: (context) {
+              final meState = context.watch<MeBloc>().state;
+              return Row(children: [
+                UserAvatar(
+                    id: meState.me.id, name: meState.me.name, radius: 32),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        meState.me.name,
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w700),
-                      );
-                    }),
-                    const SizedBox(height: 10),
-                    Builder(builder: (context) {
-                      final id =
-                          context.select((MeBloc bloc) => bloc.state.me.id);
-                      return Text(
-                        'id：$id',
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'id：${meState.me.id}',
                         style: const TextStyle(
                           fontSize: 16,
                         ),
-                      );
-                    })
-                  ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(Icons.chevron_right)
-            ])));
+                const Icon(Icons.chevron_right)
+              ]);
+            })));
   }
 }
 

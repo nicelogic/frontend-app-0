@@ -1,6 +1,7 @@
 import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/me/me.dart';
+import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
@@ -34,14 +35,8 @@ class _MyProfileScreen extends StatelessWidget {
           return Column(children: [
             _ProfileForm(
               profileName: 'avatar',
-              profileWidget: CircleAvatar(
-                backgroundImage: AssetImage(Config.instance().logoPath),
-              ),
-              // profileWidget: FadeInImage.memoryNetwork(
-              //   placeholder:
-              //       Uint8List.fromList(generateDefaultUserAvatar(account.id[0])),
-              //   image: 'http://niceice.cn:9000/${account.id}/avatar.ng',
-              // ),
+              profileWidget:
+                  UserAvatar(id: meState.me.id, name: meState.me.name),
               onTap: () async {
                 //   final _picker = ImagePicker();
                 //   final pickedImage = await _picker.pickImage(
