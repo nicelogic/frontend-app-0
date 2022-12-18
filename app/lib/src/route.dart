@@ -1,20 +1,19 @@
-import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/auth/auth.dart' as auth;
-import 'package:app/src/features/me/me.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
 import 'package:app/src/screens/login/login_screen.dart';
 import 'package:app/src/screens/login/username_login_screen.dart';
 import 'package:app/src/screens/me/me_screen.dart';
+import 'package:app/src/screens/me/my_profile_screen.dart';
 import 'package:app/src/screens/message/chat_screen.dart';
 import 'package:app/src/screens/scaffold_with_bottom_navigation_bar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:user_repository/user_repository.dart';
 
 import 'features/auth/auth.dart';
 
 const routePathMe = '/me';
+const routePathMeMyProfile = 'myprofile';
 const routePathContacts = '/contacts';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
@@ -60,19 +59,18 @@ router() => GoRouter(
                 },
               ),
               GoRoute(
-                path: routePathMe,
-                builder: (BuildContext context, GoRouterState state) {
-                  return BlocProvider(
-                        create: (context) {
-                          final authBloc = context.read<AuthBloc>();
-                          return MeBloc(
-                          UserRepository(
-                              url: Config.instance().userServiceUrl,
-                              token: authBloc.state.auth.accessToken),
-                              authBloc);
-                        },
-                      child: const MeScreen());
-                  })
+                  path: routePathMe,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const MeScreen();
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                        path: routePathMeMyProfile,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: ((context, state) {
+                          return const MyProfileScreen();
+                        }))
+                  ])
             ]),
         GoRoute(
             path: routePathLogin,

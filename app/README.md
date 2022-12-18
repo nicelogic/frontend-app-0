@@ -127,3 +127,6 @@ flutter pub run build_runner build
   * need to customize load data mechanism
   * or to split a bloc to many bloc
 * Generally speaking, one bloc has its exclusive repository. if many bloc want use a repository's state, there should a top level bloc to support common state, such as auth bloc
+
+there is a problem: if auth fail, some closed hydrated bloc can't clear their state
+me bloc is only needed in me screen, me->my profile screen

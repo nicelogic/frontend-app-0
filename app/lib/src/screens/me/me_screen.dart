@@ -1,7 +1,9 @@
-import 'package:app/src/configs/config.dart';
+import 'package:app/src/configs/configs.dart';
+import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../features/me/me.dart';
 
@@ -30,7 +32,7 @@ class _PersonProfileForm extends StatelessWidget {
     context.read<MeBloc>().me();
     return InkWell(
         onTap: () {
-          // context.router.push(const PersonProfileRoute());
+          context.go('$routePathMe/$routePathMeMyProfile');
         },
         child: Container(
             padding: const EdgeInsets.fromLTRB(20, 30, 15, 20),
