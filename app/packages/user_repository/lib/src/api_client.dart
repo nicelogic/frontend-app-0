@@ -122,4 +122,35 @@ class ApiClient {
     }
     return models.User.error(error: models.UserError.clientInternalError);
   }
+
+  Future<models.Avatar> preSignedAvatarUrl() async {
+    try {
+      const gqlStr = api.preSignedAvatarUrl;
+      final result = await _graphQLClient.query(QueryOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
+          variables: const <String, dynamic>{}));
+      if (result.hasException) {
+        throw result.exception!;
+      }
+      final data = result.data![api.preSignedAvatarUrlResult];
+      final avatar = models.Avatar(
+          preSignedUrl: data[api.preSignedUrl] as String,
+          anonymousAccessUrl: data[api.anonymousAccessUrl] as String,
+          error: models.UserError.none);
+      return avatar;
+    } on NetworkException catch (e) {
+      log(name: kLogSource, e.toString());
+      return models.Avatar.error(error: models.UserError.networkError);
+    } on OperationException catch (e) {
+      log(name: kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return models.Avatar.error(error: error.parseUserServiceError());
+      }
+    } catch (e) {
+      log(name: kLogSource, e.toString());
+    }
+    return models.Avatar.error(error: models.UserError.clientInternalError);
+  }
 }

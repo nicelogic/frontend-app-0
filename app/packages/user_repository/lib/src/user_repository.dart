@@ -25,4 +25,9 @@ class UserRepository {
     final user = await _apiClient.updateUser(properties: properties);
     return user;
   }
+
+  Future<models.Avatar> preSignedAvatarUrl() async {
+    final avatar = await _apiClient.preSignedAvatarUrl();
+    return avatar;
+  }
 }

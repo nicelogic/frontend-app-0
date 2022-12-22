@@ -62,4 +62,17 @@ void main() {
     }
     expect(me.error, UserError.none);
   });
+
+  test('user repository preSignedAvatarUrl', () async {
+    final userRepository = UserRepository(
+        url: 'https://user.app0.env0.luojm.com:9443/query',
+        token:
+            'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Nzk1MDI1NzAsInVzZXIiOnsiaWQiOiJaSThrTk5RYjR2b1o0dnFiM3VkcWIifX0.lBtyGkA36K6YP2GQ9O3rXLeHCHz9Jb7KfMe3BxqoOLQG06r01BekXmb7frxxWl6J82c_gYpj1LXAS7r2PZtxCdgr-gCZgowpJzZG9hAkV_s8qXshK8EsjDaw5KRuF5ql6oMo7gJJ63GVyKD-7SZY-9L4dzPqNQTithyFhbiQxPs16T0r67qCJAvypD3Rpak2ZOrZ_-0ClyoH2Uo8UDrz3jf-SNOvdpouDM9yp6GXUoyaqTir4cM_BOwCJRcZMqr46v0oASyrHkm2U2CdxlhKqRS-NwwfFGoWvvI_9zTn7MD2OmXWNtO0XvIUHhoJQF_WnPn4gYdsXBKx3vVtu8b20A');
+    var avatar = await userRepository.preSignedAvatarUrl();
+    if (kDebugMode) {
+      print(avatar.error);
+    }
+    expect(avatar.error, UserError.none);
+    expect(avatar.preSignedUrl.isNotEmpty, true);
+  });
 }
