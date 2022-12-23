@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
@@ -5,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'my_profile/my_profile.dart';
+
+const _kLogSource = 'my_profile_screen';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -14,7 +18,8 @@ class MyProfileScreen extends StatelessWidget {
     return BlocProvider(
         create: (_) => MyProfileBloc(
             userRepository: context.read<RepositorysCubit>().userRepository,
-            authBloc: context.read<AuthBloc>()),
+            authBloc: context.read<AuthBloc>())
+          ..add(FetchMyProfile()),
         child: _MyProfileScreen());
   }
 }
@@ -22,7 +27,7 @@ class MyProfileScreen extends StatelessWidget {
 class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.read<MyProfileBloc>().add(FetchMyProfile());
+    final userRepository = context.read<RepositorysCubit>().userRepository;
     return Scaffold(
         appBar: AppBar(
           leading: const BackButton(color: Colors.white),
@@ -44,9 +49,17 @@ class _MyProfileScreen extends StatelessWidget {
                     maxWidth: 36,
                     requestFullMetadata: false);
                 if (pickedImage == null) {
+                  log('image not picked');
                   return;
                 }
-                // final avatar = await context.read<MeBloc>().userRepository.preSignedAvatarUrl();
+                log('image picked, image mimeType(${pickedImage.mimeType ?? 'null'})');
+                final avatar = await userRepository.preSignedAvatarUrl();
+                log(
+                    name: _kLogSource,
+                    'avatar presigned url(${avatar.preSignedUrl})');
+                log(
+                    name: _kLogSource,
+                    'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
                 //   final imageBytes = await pickedImage.readAsBytes();
                 //   final decodeImage = p_image.decodeImage(imageBytes);
                 //   final imageData = p_image.encodePng(decodeImage!);

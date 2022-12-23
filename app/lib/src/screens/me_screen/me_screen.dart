@@ -16,7 +16,8 @@ class MeScreen extends StatelessWidget {
     return BlocProvider(
         create: (_) => MeBloc(
             userRepository: context.read<RepositorysCubit>().userRepository,
-            authBloc: context.read<AuthBloc>()),
+            authBloc: context.read<AuthBloc>())
+          ..add(FetchMe()),
         child: _MeScreen());
   }
 }
@@ -41,7 +42,6 @@ class _MeScreen extends StatelessWidget {
 class _PersonProfileForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.read<MeBloc>().add(FetchMe());
     return InkWell(
         onTap: () {
           context.go('$routePathMe/$routePathMeMyProfile');
