@@ -6,6 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:rxdart/rxdart.dart';
 
 import '../models/models.dart';
 
@@ -21,7 +22,10 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
 
   MeBloc({required this.userRepository, required this.authBloc})
       : super(const MeState.meInitial()) {
-    on<FetchMe>(_onFetchMe);
+    on<FetchMe>(_onFetchMe,
+        transformer: (events, mapper) => events
+            .debounceTime(const Duration(seconds: 60))
+            .asyncExpand(mapper));
   }
 
   _onFetchMe(event, emit) async {
