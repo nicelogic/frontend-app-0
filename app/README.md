@@ -141,6 +141,10 @@ but can do state clear in fromJson. after load State,check state whether belong 
 		* hydrate make screen own right data faster(hydrated bloc's init data) then get graphql cache, then emit state to bloc
 
 
+* 每个页面一个自己的bloc + 全局跨页面bloc 组成该页面数据 
+  * 该页面bloc理论上只获取该页面所需数据，通过repository
+  * 该页面每次进入刷新一次数据（通过bloc transformer, debounce来屏蔽不需要的多次连续刷新）
+
 ## s3 and logic
 
 upload asset use s3 repository

@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:user_repository/user_repository.dart';
 
-import '../../features/me/me.dart';
+import 'me/me.dart';
 
 class MeScreen extends StatelessWidget {
   const MeScreen({super.key});
@@ -45,7 +45,7 @@ class _MeScreen extends StatelessWidget {
 class _PersonProfileForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.read<MeBloc>().me();
+    context.read<MeBloc>().add(FetchMe());
     return InkWell(
         onTap: () {
           context.go('$routePathMe/$routePathMeMyProfile');

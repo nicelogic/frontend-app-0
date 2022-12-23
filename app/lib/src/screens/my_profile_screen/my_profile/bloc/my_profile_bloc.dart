@@ -7,25 +7,23 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:app/src/features/auth/auth.dart' as auth;
-
 import '../models/models.dart';
 
-part 'me_event.dart';
-part 'me_state.dart';
-part 'me_bloc.g.dart';
+part 'my_profile_event.dart';
+part 'my_profile_state.dart';
+part 'my_profile_bloc.g.dart';
 
-const kLogSource = 'MeBloc';
+const kLogSource = 'my_profile_bloc';
 
-class MeBloc extends HydratedBloc<MeEvent, MeState> {
+class MyProfileBloc extends HydratedBloc<MyProfileEvent, MyProfileState> {
   final user_repository.UserRepository userRepository;
   final auth.AuthBloc authBloc;
   late final StreamSubscription authBlocSubscription;
 
-  MeBloc(this.userRepository, this.authBloc)
-      : super(const MeState.meInitial()) {
-    on<_MeFetched>(_onMeFetched);
+  MyProfileBloc(this.userRepository, this.authBloc)
+      : super(const MyProfileState.myProfileInitial()) {
     on<_UnAuthenticated>(_onUnAuthenticated);
-
+    on<FetchMyProfile>(_onFetchMyProfile);
     authBlocSubscription = authBloc.stream.listen((authState) {
       switch (authState.status) {
         case auth.AuthenticationStatus.unauthenticated:
@@ -45,43 +43,40 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
       }
     });
   }
+
   @override
   Future<void> close() {
     authBlocSubscription.cancel();
     return super.close();
   }
 
-  _onMeFetched(_MeFetched event, emit) async {
-    emit(MeState(me: event.me));
+  _onUnAuthenticated(_UnAuthenticated event, emit) async {
+    emit(const MyProfileState.myProfileInitial());
   }
 
-  _onUnAuthenticated(_UnAuthenticated event, emit) async {
-    emit(const MeState.meInitial());
+  _onFetchMyProfile(event, emit) async {
+    final me = await userRepository.me();
+    emit(MyProfileState(myProfile: MyProfile.fromUser(me)));
   }
 
   @override
-  MeState? fromJson(Map<String, dynamic> json) {
+  MyProfileState? fromJson(Map<String, dynamic> json) {
     log(name: kLogSource, 'fromJson($json)');
-    final meState = _$MeStateFromJson(json);
+    final myProfileState = _$MyProfileStateFromJson(json);
     final userId = authBloc.state.userId;
     log(
         name: kLogSource,
-        'current userId($userId), cached userId(${meState.me.id})');
-    if (meState.me.id != userId) {
-      return const MeState.meInitial();
+        'current userId($userId), cached userId(${myProfileState.myProfile.id})');
+    if (myProfileState.myProfile.id != userId) {
+      return const MyProfileState.myProfileInitial();
     } else {
-      return meState;
+      return myProfileState;
     }
   }
 
   @override
-  Map<String, dynamic>? toJson(MeState state) {
+  Map<String, dynamic>? toJson(MyProfileState state) {
     log(name: kLogSource, 'toJson($state)');
-    return _$MeStateToJson(state);
-  }
-
-  me() async {
-    final me = await userRepository.me();
-    add(_MeFetched(Me.fromUser(me)));
+    return _$MyProfileStateToJson(state);
   }
 }

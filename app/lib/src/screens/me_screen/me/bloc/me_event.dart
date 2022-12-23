@@ -13,3 +13,5 @@ class _MeFetched extends MeEvent {
 }
 
 class _UnAuthenticated extends MeEvent {}
+
+class FetchMe extends MeEvent {}
