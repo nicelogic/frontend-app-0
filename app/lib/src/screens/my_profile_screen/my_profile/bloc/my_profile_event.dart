@@ -7,6 +7,4 @@ abstract class MyProfileEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class _UnAuthenticated extends MyProfileEvent {}
-
 class FetchMyProfile extends MyProfileEvent {}

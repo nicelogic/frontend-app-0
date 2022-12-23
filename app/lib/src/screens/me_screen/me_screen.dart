@@ -1,11 +1,10 @@
-import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/repositorys/cubit/repositorys_cubit.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:user_repository/user_repository.dart';
 
 import 'me/me.dart';
 
@@ -14,13 +13,10 @@ class MeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
     return BlocProvider(
         create: (_) => MeBloc(
-            UserRepository(
-                url: Config.instance().userServiceUrl,
-                token: authBloc.state.auth.accessToken),
-            authBloc),
+            userRepository: context.read<RepositorysCubit>().userRepository,
+            authBloc: context.read<AuthBloc>()),
         child: _MeScreen());
   }
 }

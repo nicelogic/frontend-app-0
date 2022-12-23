@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -19,40 +18,10 @@ const kLogSource = 'MeBloc';
 class MeBloc extends HydratedBloc<MeEvent, MeState> {
   final user_repository.UserRepository userRepository;
   final auth.AuthBloc authBloc;
-  late final StreamSubscription authBlocSubscription;
 
-  MeBloc(this.userRepository, this.authBloc)
+  MeBloc({required this.userRepository, required this.authBloc})
       : super(const MeState.meInitial()) {
-    on<_UnAuthenticated>(_onUnAuthenticated);
     on<FetchMe>(_onFetchMe);
-
-    authBlocSubscription = authBloc.stream.listen((authState) {
-      switch (authState.status) {
-        case auth.AuthenticationStatus.unauthenticated:
-          log(
-              name: kLogSource,
-              'auth unauthenticated, update access token empty, and add logout event');
-          userRepository.updateToken('');
-          add(_UnAuthenticated());
-          break;
-        case auth.AuthenticationStatus.authenticated:
-          userRepository.updateToken(authState.auth.accessToken);
-          log(
-              name: kLogSource,
-              'auth authenticated data change, new access toke(${authState.auth.accessToken})');
-          break;
-        default:
-      }
-    });
-  }
-  @override
-  Future<void> close() {
-    authBlocSubscription.cancel();
-    return super.close();
-  }
-
-  _onUnAuthenticated(_UnAuthenticated event, emit) async {
-    emit(const MeState.meInitial());
   }
 
   _onFetchMe(event, emit) async {

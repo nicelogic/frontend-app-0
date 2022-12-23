@@ -1,10 +1,12 @@
 import 'package:app/src/configs/configs.dart';
-import 'package:app/src/features/auth/bloc/auth_bloc.dart';
+import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:auth_repository/auth_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:user_repository/user_repository.dart';
 import 'settings/settings_controller.dart';
 import 'route.dart';
 
@@ -26,6 +28,12 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
             providers: [
               BlocProvider(create: (_) => authBloc),
+              BlocProvider(
+                  create: (_) => RepositorysCubit(
+                      authBloc: authBloc,
+                      userRepository: UserRepository(
+                          url: Config.instance().userServiceUrl,
+                          token: authBloc.state.auth.accessToken)))
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',

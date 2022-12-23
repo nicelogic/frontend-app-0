@@ -1,11 +1,17 @@
+import 'dart:developer';
+
 import 'api_client.dart';
 import 'models/models.dart' as models;
+
+const _kLogSource = 'user_repository';
 
 class UserRepository {
   final ApiClient _apiClient;
 
   UserRepository({required String url, required String token})
-      : _apiClient = ApiClient(url: url, token: token);
+      : _apiClient = ApiClient(url: url, token: token) {
+    log(name: _kLogSource, 'init user repository');
+  }
   void updateToken(final String token) {
     _apiClient.token = token;
   }

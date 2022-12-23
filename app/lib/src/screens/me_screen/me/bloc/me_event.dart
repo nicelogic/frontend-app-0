@@ -7,11 +7,4 @@ abstract class MeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class _MeFetched extends MeEvent {
-  final Me me;
-  const _MeFetched(this.me);
-}
-
-class _UnAuthenticated extends MeEvent {}
-
 class FetchMe extends MeEvent {}

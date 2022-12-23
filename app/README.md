@@ -144,6 +144,8 @@ but can do state clear in fromJson. after load State,check state whether belong 
 * 每个页面一个自己的bloc + 全局跨页面bloc 组成该页面数据 
   * 该页面bloc理论上只获取该页面所需数据，通过repository
   * 该页面每次进入刷新一次数据（通过bloc transformer, debounce来屏蔽不需要的多次连续刷新）
+* 每个页面的bloc, 不再监听auth bloc unauth 的状态。只在启动的时候判断是否userid相同。这样做的好处在于如果还是之前的user.则状态仍旧保存着
+  不会丢失. 每个bloc event也不再需要unauth的event
 
 ## s3 and logic
 

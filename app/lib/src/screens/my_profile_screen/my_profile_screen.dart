@@ -1,10 +1,9 @@
-import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:user_repository/user_repository.dart';
 import 'my_profile/my_profile.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -12,13 +11,10 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = context.read<AuthBloc>();
     return BlocProvider(
         create: (_) => MyProfileBloc(
-            UserRepository(
-                url: Config.instance().userServiceUrl,
-                token: authBloc.state.auth.accessToken),
-            authBloc),
+            userRepository: context.read<RepositorysCubit>().userRepository,
+            authBloc: context.read<AuthBloc>()),
         child: _MyProfileScreen());
   }
 }
@@ -37,8 +33,7 @@ class _MyProfileScreen extends StatelessWidget {
           return Column(children: [
             _ProfileForm(
               profileName: 'avatar',
-              profileWidget:
-                  UserAvatar(
+              profileWidget: UserAvatar(
                   id: myProfileState.myProfile.id,
                   name: myProfileState.myProfile.name),
               onTap: () async {

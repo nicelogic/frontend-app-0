@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -18,40 +17,10 @@ const kLogSource = 'my_profile_bloc';
 class MyProfileBloc extends HydratedBloc<MyProfileEvent, MyProfileState> {
   final user_repository.UserRepository userRepository;
   final auth.AuthBloc authBloc;
-  late final StreamSubscription authBlocSubscription;
 
-  MyProfileBloc(this.userRepository, this.authBloc)
+  MyProfileBloc({required this.authBloc, required this.userRepository})
       : super(const MyProfileState.myProfileInitial()) {
-    on<_UnAuthenticated>(_onUnAuthenticated);
     on<FetchMyProfile>(_onFetchMyProfile);
-    authBlocSubscription = authBloc.stream.listen((authState) {
-      switch (authState.status) {
-        case auth.AuthenticationStatus.unauthenticated:
-          log(
-              name: kLogSource,
-              'auth unauthenticated, update access token empty, and add logout event');
-          userRepository.updateToken('');
-          add(_UnAuthenticated());
-          break;
-        case auth.AuthenticationStatus.authenticated:
-          userRepository.updateToken(authState.auth.accessToken);
-          log(
-              name: kLogSource,
-              'auth authenticated data change, new access toke(${authState.auth.accessToken})');
-          break;
-        default:
-      }
-    });
-  }
-
-  @override
-  Future<void> close() {
-    authBlocSubscription.cancel();
-    return super.close();
-  }
-
-  _onUnAuthenticated(_UnAuthenticated event, emit) async {
-    emit(const MyProfileState.myProfileInitial());
   }
 
   _onFetchMyProfile(event, emit) async {
