@@ -14,6 +14,9 @@ class MyProfileState extends Equatable {
 
 extension Properties on MyProfile {
   String get signature {
+    if (data.isEmpty) {
+      return "";
+    }
     Map<String, dynamic> properties = jsonDecode(data);
     final signature = properties['signature'];
     return signature;
