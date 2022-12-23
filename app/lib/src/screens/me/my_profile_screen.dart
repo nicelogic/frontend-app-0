@@ -48,18 +48,13 @@ class _MyProfileScreen extends StatelessWidget {
                 if (pickedImage == null) {
                   return;
                 }
+                // final avatar = await context.read<MeBloc>().userRepository.preSignedAvatarUrl();
                 //   final imageBytes = await pickedImage.readAsBytes();
                 //   final decodeImage = p_image.decodeImage(imageBytes);
                 //   final imageData = p_image.encodePng(decodeImage!);
                 //   final imageDataStream = ByteStream.fromBytes(imageData);
-                //   await context.read<ObjectStorageRepository>().uploadImage(
-                //         userId: account.id,
-                //         objectName: Config.instance().objectStorageUserAvatar,
-                //         data: imageDataStream,
-                //       );
-                //   ScaffoldMessenger.of(context)
-                //       .showSnackBar(const SnackBar(content: Text('头像修改成功')));
-                //
+                // ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(content: Text('avatar upload success')));
               },
             ),
             _ProfileForm(
