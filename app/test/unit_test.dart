@@ -12,4 +12,10 @@ void main() {
       expect(1 + 1, 2);
     });
   });
+
+  test('basic test', () {
+    const str = 'xxx.png';
+    expect(str.endsWith('.png'), true);
+    expect(str.endsWith('a.png'), false);
+  });
 }

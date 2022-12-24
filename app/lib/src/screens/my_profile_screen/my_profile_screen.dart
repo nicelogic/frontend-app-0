@@ -7,6 +7,8 @@ import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:user_repository/user_repository.dart';
+import 'package:http/http.dart' as http;
 import 'my_profile/my_profile.dart';
 
 const _kLogSource = 'my_profile_screen';
@@ -74,7 +76,7 @@ class _MyProfileScreen extends StatelessWidget {
         })));
   }
 
-  void _onTapAvatarProfileForm(userRepository) async {
+  void _onTapAvatarProfileForm(UserRepository userRepository) async {
     try {
       final picker = ImagePicker();
       final pickedImage = await picker.pickImage(
@@ -87,10 +89,33 @@ class _MyProfileScreen extends StatelessWidget {
         return;
       }
       final avatar = await userRepository.preSignedAvatarUrl();
+      if (avatar.error != UserError.none) {
+        log(name: _kLogSource, 'presigned avatar url error(${avatar.error})');
+        return;
+      }
       log(name: _kLogSource, 'avatar presigned url(${avatar.preSignedUrl})');
       log(
           name: _kLogSource,
           'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
+      log(name: _kLogSource, 'picked image name(${pickedImage.name}');
+      // final bool isPng = pickedImage.name.endsWith('.png');
+      // if (isPng) {
+      final response = await http.put(Uri.parse(avatar.preSignedUrl),
+          body: await pickedImage.readAsBytes());
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log(name: _kLogSource, 'response code(${response.statusCode}');
+        userRepository
+            .updateUser(properties: {"avatar_url": avatar.anonymousAccessUrl});
+      } else {
+        log(
+            name: _kLogSource,
+            'put avatar to s3 error, response code(${response.statusCode}');
+        //tip user, upload failure
+        return;
+      }
+      // } else {
+      //   log(name: _kLogSource, 'not png, will convert to png');
+      // }
       //   final imageBytes = await pickedImage.readAsBytes();
       //   final decodeImage = p_image.decodeImage(imageBytes);
       //   final imageData = p_image.encodePng(decodeImage!);
