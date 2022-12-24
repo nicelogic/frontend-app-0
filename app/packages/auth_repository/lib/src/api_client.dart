@@ -4,7 +4,7 @@ import 'package:graphql/client.dart';
 import 'api/api.dart' as api;
 import 'models/models.dart' as models;
 
-const kLogSource = 'auth_repository';
+const _kLogSource = 'auth_repository';
 
 class ApiClient {
   final GraphQLClient _graphQLClient;
@@ -42,10 +42,10 @@ class ApiClient {
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.Auth.error(
@@ -53,7 +53,7 @@ class ApiClient {
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return const models.Auth.error(error: models.AuthError.clientInternalError);
   }
@@ -78,10 +78,10 @@ class ApiClient {
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.Auth.error(
@@ -89,7 +89,7 @@ class ApiClient {
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return const models.Auth.error(error: models.AuthError.clientInternalError);
   }
@@ -110,10 +110,10 @@ class ApiClient {
           accessToken: data[api.kAccessToken] as String);
       return auth;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return const models.Auth.error(error: models.AuthError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.Auth.error(
@@ -121,7 +121,7 @@ class ApiClient {
                 models.AuthError.serverInternalError);
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return const models.Auth.error(error: models.AuthError.clientInternalError);
   }

@@ -14,7 +14,7 @@ part 'me_event.dart';
 part 'me_state.dart';
 part 'me_bloc.g.dart';
 
-const kLogSource = 'MeBloc';
+const _kLogSource = 'MeBloc';
 
 class MeBloc extends HydratedBloc<MeEvent, MeState> {
   final user_repository.UserRepository userRepository;
@@ -36,11 +36,11 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
 
   @override
   MeState? fromJson(Map<String, dynamic> json) {
-    log(name: kLogSource, 'fromJson($json)');
+    log(name: _kLogSource, 'fromJson($json)');
     final meState = _$MeStateFromJson(json);
     final userId = authBloc.state.userId;
     log(
-        name: kLogSource,
+        name: _kLogSource,
         'current userId($userId), cached userId(${meState.me.id})');
     if (meState.me.id != userId) {
       return const MeState.meInitial();
@@ -51,7 +51,7 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
 
   @override
   Map<String, dynamic>? toJson(MeState state) {
-    log(name: kLogSource, 'toJson($state)');
+    log(name: _kLogSource, 'toJson($state)');
     return _$MeStateToJson(state);
   }
 }

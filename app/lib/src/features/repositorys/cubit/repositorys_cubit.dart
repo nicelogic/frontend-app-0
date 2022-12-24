@@ -8,7 +8,7 @@ import 'package:app/src/features/auth/auth.dart' as auth;
 
 part 'repositorys_state.dart';
 
-const kLogSource = 'repositorys_cubit';
+const _kLogSource = 'repositorys_cubit';
 
 class RepositorysCubit extends Cubit<RepositorysState> {
   final auth.AuthBloc authBloc;
@@ -21,14 +21,14 @@ class RepositorysCubit extends Cubit<RepositorysState> {
       switch (authState.status) {
         case auth.AuthenticationStatus.unauthenticated:
           log(
-              name: kLogSource,
+              name: _kLogSource,
               'auth unauthenticated, update access token empty');
           userRepository.updateToken('');
           break;
         case auth.AuthenticationStatus.authenticated:
           userRepository.updateToken(authState.auth.accessToken);
           log(
-              name: kLogSource,
+              name: _kLogSource,
               'auth authenticated data change, new access toke(${authState.auth.accessToken})');
           break;
         default:

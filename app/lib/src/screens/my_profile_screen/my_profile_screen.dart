@@ -42,30 +42,33 @@ class _MyProfileScreen extends StatelessWidget {
                   id: myProfileState.myProfile.id,
                   name: myProfileState.myProfile.name),
               onTap: () async {
-                final picker = ImagePicker();
-                final pickedImage = await picker.pickImage(
-                    source: ImageSource.gallery,
-                    maxHeight: 36,
-                    maxWidth: 36,
-                    requestFullMetadata: false);
-                if (pickedImage == null) {
-                  log('image not picked');
-                  return;
+                try {
+                  final picker = ImagePicker();
+                  final pickedImage = await picker.pickImage(
+                      source: ImageSource.gallery,
+                      maxHeight: 36,
+                      maxWidth: 36,
+                      requestFullMetadata: false);
+                  if (pickedImage == null) {
+                    log(name: _kLogSource, 'image not picked');
+                    return;
+                  }
+                  final avatar = await userRepository.preSignedAvatarUrl();
+                  log(
+                      name: _kLogSource,
+                      'avatar presigned url(${avatar.preSignedUrl})');
+                  log(
+                      name: _kLogSource,
+                      'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
+                  //   final imageBytes = await pickedImage.readAsBytes();
+                  //   final decodeImage = p_image.decodeImage(imageBytes);
+                  //   final imageData = p_image.encodePng(decodeImage!);
+                  //   final imageDataStream = ByteStream.fromBytes(imageData);
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(content: Text('avatar upload success')));
+                } catch (e) {
+                  log(name: _kLogSource, e.toString());
                 }
-                log('image picked, image mimeType(${pickedImage.mimeType ?? 'null'})');
-                final avatar = await userRepository.preSignedAvatarUrl();
-                log(
-                    name: _kLogSource,
-                    'avatar presigned url(${avatar.preSignedUrl})');
-                log(
-                    name: _kLogSource,
-                    'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
-                //   final imageBytes = await pickedImage.readAsBytes();
-                //   final decodeImage = p_image.decodeImage(imageBytes);
-                //   final imageData = p_image.encodePng(decodeImage!);
-                //   final imageDataStream = ByteStream.fromBytes(imageData);
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(content: Text('avatar upload success')));
               },
             ),
             _ProfileForm(

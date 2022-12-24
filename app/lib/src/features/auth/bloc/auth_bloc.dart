@@ -15,7 +15,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 part 'auth_bloc.g.dart';
 
-const kLogSource = 'AuthBloc';
+const _kLogSource = 'AuthBloc';
 
 class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   final auth_repository.AuthRepository authRepository;
@@ -31,7 +31,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
 
     if (state.status == AuthenticationStatus.authenticated) {
       log(
-          name: kLogSource,
+          name: _kLogSource,
           time: DateTime.now(),
           '(${DateTime.now()})authenticated, start to refresh access & refresh token and triger timer to auto refressh');
       add(_AuthRefreshTokenTimerIsUp());
@@ -61,7 +61,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       _AuthRefreshTokenTimerIsUp event, Emitter<AuthState> emit) async {
     final refreshToken = state.auth.refreshToken;
     log(
-        name: kLogSource,
+        name: _kLogSource,
         time: DateTime.now(),
         '(${DateTime.now()})refersh token use($refreshToken)');
     final auth = await authRepository.refreshToken(refreshToken: refreshToken);
@@ -79,7 +79,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
     super.onChange(change);
     if (change.currentState.status == AuthenticationStatus.unauthenticated &&
         change.nextState.status == AuthenticationStatus.authenticated) {
-      log(name: kLogSource, 'unauthenticated => authenticated');
+      log(name: _kLogSource, 'unauthenticated => authenticated');
       _refreshTokenTimerSubscription?.cancel();
       _refreshTokenTimerSubscription =
           Stream<_AuthRefreshTokenTimerIsUp>.periodic(
@@ -87,25 +87,25 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
               (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
         add(_AuthRefreshTokenTimerIsUp());
       });
-      log(name: kLogSource, 'trigger refresh token timer');
+      log(name: _kLogSource, 'trigger refresh token timer');
     } else if (change.currentState.status ==
             AuthenticationStatus.authenticated &&
         change.nextState.status == AuthenticationStatus.unauthenticated) {
-      log(name: kLogSource, 'authenticated => unauthenticated');
+      log(name: _kLogSource, 'authenticated => unauthenticated');
       _refreshTokenTimerSubscription?.cancel();
-      log(name: kLogSource, 'cancel refresh token timer');
+      log(name: _kLogSource, 'cancel refresh token timer');
     }
   }
 
   @override
   AuthState? fromJson(Map<String, dynamic> json) {
-    log(name: kLogSource, 'fromJson($json)');
+    log(name: _kLogSource, 'fromJson($json)');
     return _$AuthStateFromJson(json);
   }
 
   @override
   Map<String, dynamic>? toJson(AuthState state) {
-    log(name: kLogSource, 'toJson($state)');
+    log(name: _kLogSource, 'toJson($state)');
     return _$AuthStateToJson(state);
   }
 

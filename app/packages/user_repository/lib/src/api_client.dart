@@ -4,7 +4,7 @@ import 'package:graphql/client.dart';
 import 'models/models.dart' as models;
 import 'api/api.dart' as api;
 
-const kLogSource = 'user_repository';
+const _kLogSource = 'user_repository';
 
 class ApiClient {
   late GraphQLClient _graphQLClient;
@@ -40,16 +40,16 @@ class ApiClient {
           error: models.UserError.none);
       return user;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.User.error(error: error.parseUserServiceError());
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return models.User.error(error: models.UserError.clientInternalError);
   }
@@ -75,16 +75,16 @@ class ApiClient {
       };
       return models.Users(users: users, error: models.UserError.none);
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return const models.Users.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.Users.error(error: error.parseUserServiceError());
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return const models.Users.error(
         error: models.UserError.clientInternalError);
@@ -109,16 +109,16 @@ class ApiClient {
           error: models.UserError.none);
       return user;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return models.User.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.User.error(error: error.parseUserServiceError());
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return models.User.error(error: models.UserError.clientInternalError);
   }
@@ -140,16 +140,16 @@ class ApiClient {
           error: models.UserError.none);
       return avatar;
     } on NetworkException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       return models.Avatar.error(error: models.UserError.networkError);
     } on OperationException catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.Avatar.error(error: error.parseUserServiceError());
       }
     } catch (e) {
-      log(name: kLogSource, e.toString());
+      log(name: _kLogSource, e.toString());
     }
     return models.Avatar.error(error: models.UserError.clientInternalError);
   }

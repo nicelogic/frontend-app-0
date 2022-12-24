@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:app/src/configs/configs.dart';
 import 'package:flutter/material.dart';
 
-const kLogSource = 'widget(user_avatar)';
+const _kLogSource = 'widget(user_avatar)';
 
 class UserAvatar extends StatelessWidget {
   final String id;
@@ -27,7 +27,7 @@ class UserAvatar extends StatelessWidget {
       );
       return userAvatar;
     } catch (e) {
-      log(name: kLogSource, 'has exception($e)');
+      log(name: _kLogSource, 'has exception($e)');
       return CircleAvatar(
           radius: radius,
           foregroundImage: AssetImage(Config.instance().logoPath));
