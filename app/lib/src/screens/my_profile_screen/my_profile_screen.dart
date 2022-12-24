@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
@@ -37,40 +38,11 @@ class _MyProfileScreen extends StatelessWidget {
           final myProfileState = context.watch<MyProfileBloc>().state;
           return Column(children: [
             _ProfileForm(
-              profileName: 'avatar',
-              profileWidget: UserAvatar(
-                  id: myProfileState.myProfile.id,
-                  name: myProfileState.myProfile.name),
-              onTap: () async {
-                try {
-                  final picker = ImagePicker();
-                  final pickedImage = await picker.pickImage(
-                      source: ImageSource.gallery,
-                      maxHeight: 36,
-                      maxWidth: 36,
-                      requestFullMetadata: false);
-                  if (pickedImage == null) {
-                    log(name: _kLogSource, 'image not picked');
-                    return;
-                  }
-                  final avatar = await userRepository.preSignedAvatarUrl();
-                  log(
-                      name: _kLogSource,
-                      'avatar presigned url(${avatar.preSignedUrl})');
-                  log(
-                      name: _kLogSource,
-                      'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
-                  //   final imageBytes = await pickedImage.readAsBytes();
-                  //   final decodeImage = p_image.decodeImage(imageBytes);
-                  //   final imageData = p_image.encodePng(decodeImage!);
-                  //   final imageDataStream = ByteStream.fromBytes(imageData);
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(content: Text('avatar upload success')));
-                } catch (e) {
-                  log(name: _kLogSource, e.toString());
-                }
-              },
-            ),
+                profileName: 'avatar',
+                profileWidget: UserAvatar(
+                    id: myProfileState.myProfile.id,
+                    name: myProfileState.myProfile.name),
+                onTap: () => _onTapAvatarProfileForm(userRepository)),
             _ProfileForm(
                 profileName: 'name',
                 profileWidget: Text(myProfileState.myProfile.name),
@@ -100,6 +72,34 @@ class _MyProfileScreen extends StatelessWidget {
             )
           ]);
         })));
+  }
+
+  void _onTapAvatarProfileForm(userRepository) async {
+    try {
+      final picker = ImagePicker();
+      final pickedImage = await picker.pickImage(
+          source: ImageSource.gallery,
+          maxHeight: Config.instance().profilePictureMaxHeight,
+          maxWidth: Config.instance().profilePictureMaxWidth,
+          requestFullMetadata: false);
+      if (pickedImage == null) {
+        log(name: _kLogSource, 'image not picked');
+        return;
+      }
+      final avatar = await userRepository.preSignedAvatarUrl();
+      log(name: _kLogSource, 'avatar presigned url(${avatar.preSignedUrl})');
+      log(
+          name: _kLogSource,
+          'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
+      //   final imageBytes = await pickedImage.readAsBytes();
+      //   final decodeImage = p_image.decodeImage(imageBytes);
+      //   final imageData = p_image.encodePng(decodeImage!);
+      //   final imageDataStream = ByteStream.fromBytes(imageData);
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(content: Text('avatar upload success')));
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
+    }
   }
 }
 

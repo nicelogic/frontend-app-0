@@ -9,6 +9,7 @@ class Config {
   factory Config.instance() => _instance;
 
   late YamlMap _configMap;
+  late YamlMap _uiConfigMap;
   static const _kLogSource = 'config';
 
   loadConfigs() async {
@@ -16,6 +17,10 @@ class Config {
     final configs = await services.rootBundle.loadString(configYamlPath);
     _configMap = loadYaml(configs);
     log(name: _kLogSource, 'load config success');
+
+    _uiConfigMap =
+        loadYaml(await services.rootBundle.loadString('assets/configs/ui.yml'));
+    log(name: _kLogSource, 'load ui config success');
   }
 
   dynamic _serviceSection(final String name) => _configMap['services'][name];
@@ -55,5 +60,12 @@ class Config {
     log(name: _kLogSource, 'access_token_refresh_minutes($minutes)');
     return minutes;
   }
-}
 
+  double get profilePictureMaxHeight {
+    return _uiConfigMap['profile_picture_max_height'] as double;
+  }
+
+  double get profilePictureMaxWidth {
+    return _uiConfigMap['profile_picture_max_width'] as double;
+  }
+}
