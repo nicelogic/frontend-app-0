@@ -4,12 +4,14 @@ import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
 import 'my_profile/my_profile.dart' as my_profile;
+import 'package:image/image.dart' as image_util;
 
 const _kLogSource = 'my_profile_screen';
 
@@ -43,7 +45,7 @@ class _MyProfileScreen extends StatelessWidget {
             _ProfileForm(
                 profileName: 'avatar',
                 profileWidget: UserAvatar(
-                    id: myProfileState.myProfile.id,
+                  id: myProfileState.myProfile.id,
                   name: myProfileState.myProfile.name,
                   avatarUrl: myProfileState.myProfile.avatarUrl,
                 ),
@@ -102,10 +104,15 @@ class _MyProfileScreen extends StatelessWidget {
           name: _kLogSource,
           'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
       log(name: _kLogSource, 'picked image name(${pickedImage.name}');
-      // final bool isPng = pickedImage.name.endsWith('.png');
-      // if (isPng) {
+      final bool isPng = pickedImage.name.endsWith('.png');
+      var imageBytes = await pickedImage.readAsBytes();
+      if (!isPng) {
+        log(name: _kLogSource, 'not png, will convert to png');
+        final decodeImage = image_util.decodeImage(imageBytes);
+        imageBytes = Uint8List.fromList(image_util.encodePng(decodeImage!));
+      }
       final response = await http.put(Uri.parse(avatar.preSignedUrl),
-          body: await pickedImage.readAsBytes());
+          body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
         final user = await userRepository.updateUser(properties: {
@@ -114,7 +121,6 @@ class _MyProfileScreen extends StatelessWidget {
         log(
             name: _kLogSource,
             'update user(${user.id}), avatar url(${user.avatarUrl})');
-        
       } else {
         log(
             name: _kLogSource,
@@ -122,15 +128,6 @@ class _MyProfileScreen extends StatelessWidget {
         //tip user, upload failure
         return;
       }
-      // } else {
-      //   log(name: _kLogSource, 'not png, will convert to png');
-      // }
-      //   final imageBytes = await pickedImage.readAsBytes();
-      //   final decodeImage = p_image.decodeImage(imageBytes);
-      //   final imageData = p_image.encodePng(decodeImage!);
-      //   final imageDataStream = ByteStream.fromBytes(imageData);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //     const SnackBar(content: Text('avatar upload success')));
     } catch (e) {
       log(name: _kLogSource, e.toString());
     }
