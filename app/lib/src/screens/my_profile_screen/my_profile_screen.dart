@@ -111,8 +111,8 @@ class _MyProfileScreen extends StatelessWidget {
         final decodeImage = image_util.decodeImage(imageBytes);
         imageBytes = Uint8List.fromList(image_util.encodePng(decodeImage!));
       }
-      final response = await http.put(Uri.parse(avatar.preSignedUrl),
-          body: imageBytes);
+      final response =
+          await http.put(Uri.parse(avatar.preSignedUrl), body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
         final user = await userRepository.updateUser(properties: {

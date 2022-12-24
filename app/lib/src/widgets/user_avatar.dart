@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:app/src/configs/configs.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 const _kLogSource = 'widget(user_avatar)';
@@ -22,7 +23,8 @@ class UserAvatar extends StatelessWidget {
     try {
       final userAvatar = CircleAvatar(
         radius: radius,
-        foregroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+        foregroundImage:
+            avatarUrl.isNotEmpty ? CachedNetworkImageProvider(avatarUrl) : null,
         // backgroundImage: AssetImage(Config.instance().logoPath),
         backgroundColor: Color.fromARGB(255, id.codeUnitAt(0) % 255,
             id.codeUnitAt(1) % 255, id.codeUnitAt(2) % 255),
