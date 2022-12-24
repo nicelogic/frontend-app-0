@@ -25,6 +25,8 @@ class Users {
   const Users.error({required this.error}) : users = const {};
 }
 
+const kAvatarUrl = 'avatar_url';
+
 extension UserProperties on User {
   String get signature {
     if (data.isEmpty) {
@@ -45,7 +47,7 @@ extension UserProperties on User {
     }
     try {
       Map<String, dynamic> properties = jsonDecode(data);
-      return properties['avatar_url'] as String;
+      return properties[kAvatarUrl] as String;
     } catch (e) {
       return '';
     }

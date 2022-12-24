@@ -108,8 +108,13 @@ class _MyProfileScreen extends StatelessWidget {
           body: await pickedImage.readAsBytes());
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
-        userRepository
-            .updateUser(properties: {"avatar_url": avatar.anonymousAccessUrl});
+        final user = await userRepository.updateUser(properties: {
+          user_repository.kAvatarUrl: avatar.anonymousAccessUrl
+        });
+        log(
+            name: _kLogSource,
+            'update user(${user.id}), avatar url(${user.avatarUrl})');
+        
       } else {
         log(
             name: _kLogSource,
