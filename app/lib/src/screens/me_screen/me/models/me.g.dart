@@ -9,7 +9,7 @@ part of 'me.dart';
 Me _$MeFromJson(Map<String, dynamic> json) => Me(
       id: json['id'] as String,
       name: json['name'] as String,
-      data: json['data'] as String,
+      avatarUrl: json['avatarUrl'] as String,
       error: $enumDecodeNullable(_$UserErrorEnumMap, json['error']) ??
           UserError.none,
     );
@@ -17,7 +17,7 @@ Me _$MeFromJson(Map<String, dynamic> json) => Me(
 Map<String, dynamic> _$MeToJson(Me instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'data': instance.data,
+      'avatarUrl': instance.avatarUrl,
       'error': _$UserErrorEnumMap[instance.error]!,
     };
 

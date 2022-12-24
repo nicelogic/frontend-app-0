@@ -11,14 +11,3 @@ class MyProfileState extends Equatable {
   const MyProfileState.myProfileInitial()
       : this(myProfile: const MyProfile.empty());
 }
-
-extension Properties on MyProfile {
-  String get signature {
-    if (data.isEmpty) {
-      return "";
-    }
-    Map<String, dynamic> properties = jsonDecode(data);
-    final signature = properties['signature'];
-    return signature;
-  }
-}

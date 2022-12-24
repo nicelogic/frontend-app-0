@@ -7,9 +7,9 @@ import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
-import 'my_profile/my_profile.dart';
+import 'my_profile/my_profile.dart' as my_profile;
 
 const _kLogSource = 'my_profile_screen';
 
@@ -19,10 +19,10 @@ class MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-        create: (_) => MyProfileBloc(
+        create: (_) => my_profile.MyProfileBloc(
             userRepository: context.read<RepositorysCubit>().userRepository,
             authBloc: context.read<AuthBloc>())
-          ..add(FetchMyProfile()),
+          ..add(my_profile.FetchMyProfile()),
         child: _MyProfileScreen());
   }
 }
@@ -37,13 +37,16 @@ class _MyProfileScreen extends StatelessWidget {
           title: const Text('My Profile'),
         ),
         body: Builder(builder: ((context) {
-          final myProfileState = context.watch<MyProfileBloc>().state;
+          final myProfileState =
+              context.watch<my_profile.MyProfileBloc>().state;
           return Column(children: [
             _ProfileForm(
                 profileName: 'avatar',
                 profileWidget: UserAvatar(
                     id: myProfileState.myProfile.id,
-                    name: myProfileState.myProfile.name),
+                  name: myProfileState.myProfile.name,
+                  avatarUrl: myProfileState.myProfile.avatarUrl,
+                ),
                 onTap: () => _onTapAvatarProfileForm(userRepository)),
             _ProfileForm(
                 profileName: 'name',
@@ -76,7 +79,8 @@ class _MyProfileScreen extends StatelessWidget {
         })));
   }
 
-  void _onTapAvatarProfileForm(UserRepository userRepository) async {
+  void _onTapAvatarProfileForm(
+      user_repository.UserRepository userRepository) async {
     try {
       final picker = ImagePicker();
       final pickedImage = await picker.pickImage(
@@ -89,7 +93,7 @@ class _MyProfileScreen extends StatelessWidget {
         return;
       }
       final avatar = await userRepository.preSignedAvatarUrl();
-      if (avatar.error != UserError.none) {
+      if (avatar.error != user_repository.UserError.none) {
         log(name: _kLogSource, 'presigned avatar url error(${avatar.error})');
         return;
       }

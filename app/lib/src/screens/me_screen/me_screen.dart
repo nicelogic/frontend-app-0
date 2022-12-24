@@ -53,7 +53,10 @@ class _PersonProfileForm extends StatelessWidget {
               final meState = context.watch<MeBloc>().state;
               return Row(children: [
                 UserAvatar(
-                    id: meState.me.id, name: meState.me.name, radius: 32),
+                    id: meState.me.id,
+                    name: meState.me.name,
+                    avatarUrl: meState.me.avatarUrl,
+                    radius: 32),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
