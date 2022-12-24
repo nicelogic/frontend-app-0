@@ -30,16 +30,24 @@ extension UserProperties on User {
     if (data.isEmpty) {
       return "";
     }
-    Map<String, dynamic> properties = jsonDecode(data);
-    final signature = properties['signature'];
-    return signature;
+    try {
+      Map<String, dynamic> properties = jsonDecode(data);
+      final signature = properties['signature'] as String;
+      return signature;
+    } catch (e) {
+      return '';
+    }
   }
 
   String get avatarUrl {
     if (data.isEmpty) {
       return "";
     }
-    Map<String, dynamic> properties = jsonDecode(data);
-    return properties['avatar_url'];
+    try {
+      Map<String, dynamic> properties = jsonDecode(data);
+      return properties['avatar_url'] as String;
+    } catch (e) {
+      return '';
+    }
   }
 }
