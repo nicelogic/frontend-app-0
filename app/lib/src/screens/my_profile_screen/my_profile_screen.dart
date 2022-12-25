@@ -13,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'my_profile/my_profile.dart' as my_profile;
 import 'package:image/image.dart' as image_util;
 
+import 'my_profile/my_profile.dart';
+
 const _kLogSource = 'my_profile_screen';
 
 class MyProfileScreen extends StatelessWidget {
@@ -33,6 +35,7 @@ class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userRepository = context.read<RepositorysCubit>().userRepository;
+    final myProfileBloc = context.read<MyProfileBloc>();
     return Scaffold(
         appBar: AppBar(
           leading: const BackButton(color: Colors.white),
@@ -49,7 +52,8 @@ class _MyProfileScreen extends StatelessWidget {
                   name: myProfileState.myProfile.name,
                   avatarUrl: myProfileState.myProfile.avatarUrl,
                 ),
-                onTap: () => _onTapAvatarProfileForm(userRepository)),
+                onTap: () => _onTapAvatarProfileForm(
+                    context, userRepository, myProfileBloc)),
             _ProfileForm(
                 profileName: 'name',
                 profileWidget: Text(myProfileState.myProfile.name),
@@ -82,7 +86,9 @@ class _MyProfileScreen extends StatelessWidget {
   }
 
   void _onTapAvatarProfileForm(
-      user_repository.UserRepository userRepository) async {
+      BuildContext context,
+      user_repository.UserRepository userRepository,
+      MyProfileBloc myProfileBloc) async {
     try {
       final picker = ImagePicker();
       final pickedImage = await picker.pickImage(
@@ -91,13 +97,11 @@ class _MyProfileScreen extends StatelessWidget {
           maxWidth: Config.instance().profilePictureMaxWidth,
           requestFullMetadata: false);
       if (pickedImage == null) {
-        log(name: _kLogSource, 'image not picked');
-        return;
+        throw 'image not picked';
       }
       final avatar = await userRepository.preSignedAvatarUrl();
       if (avatar.error != user_repository.UserError.none) {
-        log(name: _kLogSource, 'presigned avatar url error(${avatar.error})');
-        return;
+        throw 'presigned avatar url error(${avatar.error})';
       }
       log(name: _kLogSource, 'avatar presigned url(${avatar.preSignedUrl})');
       log(
@@ -115,21 +119,20 @@ class _MyProfileScreen extends StatelessWidget {
           await http.put(Uri.parse(avatar.preSignedUrl), body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
-        final user = await userRepository.updateUser(properties: {
-          user_repository.kAvatarUrl: avatar.anonymousAccessUrl
-        });
-        log(
-            name: _kLogSource,
-            'update user(${user.id}), avatar url(${user.avatarUrl})');
+        myProfileBloc.add(UpdateAvatarUrl(avatar.anonymousAccessUrl));
       } else {
-        log(
-            name: _kLogSource,
-            'put avatar to s3 error, response code(${response.statusCode}');
-        //tip user, upload failure
-        return;
+        throw 'put avatar to s3 error, response code(${response.statusCode}';
       }
+    } on String catch (err) {
+      log(name: _kLogSource, err);
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(err)));
     } catch (e) {
       log(name: _kLogSource, e.toString());
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 }

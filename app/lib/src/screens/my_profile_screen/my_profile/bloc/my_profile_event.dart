@@ -8,3 +8,9 @@ abstract class MyProfileEvent extends Equatable {
 }
 
 class FetchMyProfile extends MyProfileEvent {}
+
+class UpdateAvatarUrl extends MyProfileEvent {
+  final String anonymousAccessUrl;
+
+  const UpdateAvatarUrl(this.anonymousAccessUrl);
+}
