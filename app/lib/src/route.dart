@@ -1,10 +1,10 @@
 import 'package:app/src/features/auth/auth.dart' as auth;
-import 'package:app/src/screens/contacts_screen/contacts_screen.dart';
-import 'package:app/src/screens/login_screen/login_screen.dart';
-import 'package:app/src/screens/username_login_screen/username_login_screen.dart';
-import 'package:app/src/screens/me_screen/me_screen.dart';
-import 'package:app/src/screens/my_profile_screen/my_profile_screen.dart';
-import 'package:app/src/screens/chat_screen/chat_screen.dart';
+import 'package:app/src/screens/contacts_screen.dart';
+import 'package:app/src/screens/login_screen.dart';
+import 'package:app/src/screens/username_login_screen.dart';
+import 'package:app/src/screens/me_screen.dart';
+import 'package:app/src/screens/my_profile_screen.dart';
+import 'package:app/src/screens/chat_screen.dart';
 import 'package:app/src/screens/scaffold_with_bottom_navigation_bar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

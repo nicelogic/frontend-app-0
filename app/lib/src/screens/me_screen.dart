@@ -1,12 +1,11 @@
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/me/me.dart';
 import 'package:app/src/features/repositorys/cubit/repositorys_cubit.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import 'me/me.dart';
 
 class MeScreen extends StatelessWidget {
   const MeScreen({super.key});

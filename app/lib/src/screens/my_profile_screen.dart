@@ -2,8 +2,9 @@ import 'dart:developer';
 
 import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/me/me.dart';
+import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
 import 'package:app/src/features/repositorys/repositorys.dart';
-import 'package:app/src/screens/me_screen/me/me.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
-import 'my_profile/my_profile.dart' as my_profile;
 import 'package:image/image.dart' as image_util;
 
 const _kLogSource = 'my_profile_screen';
