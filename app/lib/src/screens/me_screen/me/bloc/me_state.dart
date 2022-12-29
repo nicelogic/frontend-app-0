@@ -9,5 +9,8 @@ class MeState extends Equatable {
 
   const MeState({required this.me});
   const MeState.meInitial() : this(me: const Me.empty());
-}
 
+  MeState copyWith({final Me? me}) {
+    return MeState(me: me ?? this.me);
+  }
+}

@@ -20,22 +20,11 @@ class MyProfileBloc extends HydratedBloc<MyProfileEvent, MyProfileState> {
   MyProfileBloc({required this.authBloc, required this.userRepository})
       : super(const MyProfileState.myProfileInitial()) {
     on<FetchMyProfile>(_onFetchMyProfile);
-    on<UpdateAvatarUrl>(_onUpdateAvatarUrl);
   }
 
   _onFetchMyProfile(event, emit) async {
     final me = await userRepository.me();
     emit(MyProfileState(myProfile: MyProfile.fromUser(me)));
-  }
-
-  _onUpdateAvatarUrl(UpdateAvatarUrl event, emit) async {
-    final user = await userRepository.updateUser(
-        properties: {user_repository.kAvatarUrl: event.anonymousAccessUrl});
-    log(
-        name: _kLogSource,
-        'update user(${user.id}), avatar url(${user.avatarUrl})');
-    emit(state.copyWith(state.myProfile
-        .copyWith(avatarUrl: event.anonymousAccessUrl, error: user.error)));
   }
 
   @override

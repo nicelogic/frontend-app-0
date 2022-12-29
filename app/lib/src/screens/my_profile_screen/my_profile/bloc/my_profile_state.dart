@@ -11,7 +11,7 @@ class MyProfileState extends Equatable {
   const MyProfileState.myProfileInitial()
       : this(myProfile: const MyProfile.empty());
 
-  MyProfileState copyWith(MyProfile copyWith, {final MyProfile? myProfile}) {
+  MyProfileState copyWith({final MyProfile? myProfile}) {
     return MyProfileState(myProfile: myProfile ?? this.myProfile);
   }
 }

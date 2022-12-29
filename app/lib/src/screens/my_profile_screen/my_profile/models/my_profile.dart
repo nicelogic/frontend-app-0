@@ -7,36 +7,18 @@ part 'my_profile.g.dart';
 @JsonSerializable(explicitToJson: true)
 class MyProfile extends Equatable {
   final String id;
-  final String name;
-  final String avatarUrl;
   final String signature;
   final UserError error;
 
   const MyProfile(
-      {required this.id,
-      required this.name,
-      required this.avatarUrl,
-      required this.signature,
-      this.error = UserError.none});
-  const MyProfile.empty()
-      : this(id: '', name: '', avatarUrl: '', signature: '');
+      {required this.id, required this.signature, this.error = UserError.none});
+  const MyProfile.empty() : this(id: '', signature: '');
   MyProfile.fromUser(User user)
-      : this(
-            id: user.id,
-            name: user.name,
-            error: user.error,
-            avatarUrl: user.avatarUrl,
-            signature: user.signature);
+      : this(id: user.id, error: user.error, signature: user.signature);
   MyProfile copyWith(
-      {final String? id,
-      final String? name,
-      final String? avatarUrl,
-      final String? signature,
-      final UserError? error}) {
+      {final String? id, final String? signature, final UserError? error}) {
     return MyProfile(
         id: id ?? this.id,
-        name: name ?? this.name,
-        avatarUrl: avatarUrl ?? this.avatarUrl,
         signature: signature ?? this.signature,
         error: error ?? this.error);
   }
@@ -46,5 +28,5 @@ class MyProfile extends Equatable {
   Map<String, dynamic> toJson() => _$MyProfileToJson(this);
 
   @override
-  List<Object?> get props => [id, name, avatarUrl, signature, error];
+  List<Object?> get props => [id, signature, error];
 }

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
+import 'package:app/src/screens/me_screen/me/me.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,6 @@ import 'package:http/http.dart' as http;
 import 'my_profile/my_profile.dart' as my_profile;
 import 'package:image/image.dart' as image_util;
 
-import 'my_profile/my_profile.dart';
-
 const _kLogSource = 'my_profile_screen';
 
 class MyProfileScreen extends StatelessWidget {
@@ -22,12 +21,18 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (_) => my_profile.MyProfileBloc(
-            userRepository: context.read<RepositorysCubit>().userRepository,
-            authBloc: context.read<AuthBloc>())
-          ..add(my_profile.FetchMyProfile()),
-        child: _MyProfileScreen());
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+          create: (_) => MeBloc(
+              userRepository: context.read<RepositorysCubit>().userRepository,
+              authBloc: context.read<AuthBloc>())
+            ..add(FetchMe())),
+      BlocProvider(
+          create: (_) => my_profile.MyProfileBloc(
+              userRepository: context.read<RepositorysCubit>().userRepository,
+              authBloc: context.read<AuthBloc>())
+            ..add(my_profile.FetchMyProfile())),
+    ], child: _MyProfileScreen());
   }
 }
 
@@ -35,7 +40,7 @@ class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userRepository = context.read<RepositorysCubit>().userRepository;
-    final myProfileBloc = context.read<MyProfileBloc>();
+    final meBloc = context.read<MeBloc>();
     return Scaffold(
         appBar: AppBar(
           leading: const BackButton(color: Colors.white),
@@ -44,19 +49,20 @@ class _MyProfileScreen extends StatelessWidget {
         body: Builder(builder: ((context) {
           final myProfileState =
               context.watch<my_profile.MyProfileBloc>().state;
+          final meState = context.watch<MeBloc>().state;
           return Column(children: [
             _ProfileForm(
                 profileName: 'avatar',
                 profileWidget: UserAvatar(
-                  id: myProfileState.myProfile.id,
-                  name: myProfileState.myProfile.name,
-                  avatarUrl: myProfileState.myProfile.avatarUrl,
+                  id: meState.me.id,
+                  name: meState.me.name,
+                  avatarUrl: meState.me.avatarUrl,
                 ),
-                onTap: () => _onTapAvatarProfileForm(
-                    context, userRepository, myProfileBloc)),
+                onTap: () =>
+                    _onTapAvatarProfileForm(context, userRepository, meBloc)),
             _ProfileForm(
                 profileName: 'name',
-                profileWidget: Text(myProfileState.myProfile.name),
+                profileWidget: Text(meState.me.name),
                 onTap: () {
                   // context.router.push(EditPersonProfileRoute(
                   //     inputLabel: Config.instance().pleaseInputNewName,
@@ -64,7 +70,7 @@ class _MyProfileScreen extends StatelessWidget {
                 }),
             _ProfileForm(
               profileName: 'id',
-              profileWidget: Text(myProfileState.myProfile.id),
+              profileWidget: Text(meState.me.id),
               onTap: () {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
@@ -85,10 +91,8 @@ class _MyProfileScreen extends StatelessWidget {
         })));
   }
 
-  void _onTapAvatarProfileForm(
-      BuildContext context,
-      user_repository.UserRepository userRepository,
-      MyProfileBloc myProfileBloc) async {
+  void _onTapAvatarProfileForm(BuildContext context,
+      user_repository.UserRepository userRepository, MeBloc meBloc) async {
     try {
       final picker = ImagePicker();
       final pickedImage = await picker.pickImage(
@@ -119,7 +123,7 @@ class _MyProfileScreen extends StatelessWidget {
           await http.put(Uri.parse(avatar.preSignedUrl), body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
-        myProfileBloc.add(UpdateAvatarUrl(avatar.anonymousAccessUrl));
+        meBloc.add(UpdateAvatarUrl(avatar.anonymousAccessUrl));
       } else {
         throw 'put avatar to s3 error, response code(${response.statusCode}';
       }

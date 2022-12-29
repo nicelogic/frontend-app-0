@@ -21,16 +21,29 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
 
   MeBloc({required this.userRepository, required this.authBloc})
       : super(const MeState.meInitial()) {
-    on<FetchMe>(_onFetchMe,
+    on<FetchMe>(
+      _onFetchMe,
       // transformer: (events, mapper) => events
       //     .debounceTime(const Duration(seconds: 60))
       //     .asyncExpand(mapper)
     );
+    on<UpdateAvatarUrl>(_onUpdateAvatarUrl);
   }
 
   _onFetchMe(event, emit) async {
     final me = await userRepository.me();
     emit(MeState(me: Me.fromUser(me)));
+  }
+
+  _onUpdateAvatarUrl(UpdateAvatarUrl event, emit) async {
+    final user = await userRepository.updateUser(
+        properties: {user_repository.kAvatarUrl: event.anonymousAccessUrl});
+    log(
+        name: _kLogSource,
+        'update user(${user.id}), avatar url(${user.avatarUrl})');
+    emit(state.copyWith(
+        me: state.me
+            .copyWith(avatarUrl: event.anonymousAccessUrl, error: user.error)));
   }
 
   @override

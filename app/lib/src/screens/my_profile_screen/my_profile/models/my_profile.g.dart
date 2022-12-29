@@ -8,8 +8,6 @@ part of 'my_profile.dart';
 
 MyProfile _$MyProfileFromJson(Map<String, dynamic> json) => MyProfile(
       id: json['id'] as String,
-      name: json['name'] as String,
-      avatarUrl: json['avatarUrl'] as String,
       signature: json['signature'] as String,
       error: $enumDecodeNullable(_$UserErrorEnumMap, json['error']) ??
           UserError.none,
@@ -17,8 +15,6 @@ MyProfile _$MyProfileFromJson(Map<String, dynamic> json) => MyProfile(
 
 Map<String, dynamic> _$MyProfileToJson(MyProfile instance) => <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
-      'avatarUrl': instance.avatarUrl,
       'signature': instance.signature,
       'error': _$UserErrorEnumMap[instance.error]!,
     };

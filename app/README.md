@@ -141,9 +141,10 @@ but can do state clear in fromJson. after load State,check state whether belong 
 		* hydrate make screen own right data faster(hydrated bloc's init data) then get graphql cache, then emit state to bloc
 
 
-* 每个页面一个自己的bloc + 全局跨页面bloc 组成该页面数据 
-  * 该页面bloc理论上只获取该页面所需数据，通过repository
-  * 该页面每次进入刷新一次数据（通过bloc transformer, debounce来屏蔽不需要的多次连续刷新）
+* 一个页面可以取 n * feature bloc 去构建自己的数据
+  * feature bloc的粒度尽量小, 这样各个页面需要取的数据就会尽量少
+  * 该页面bloc理论上只获取该页面所需数据
+  * 该页面每次进入刷新一次数据(通过远程，而非本地。这样其他多终端可刷新页面同步数据)（通过bloc transformer, debounce来屏蔽不需要的多次连续刷新）
 * 每个页面的bloc, 不再监听auth bloc unauth 的状态。只在启动的时候判断是否userid相同。这样做的好处在于如果还是之前的user.则状态仍旧保存着
   不会丢失. 每个bloc event也不再需要unauth的event
 

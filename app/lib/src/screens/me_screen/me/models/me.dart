@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:user_repository/user_repository.dart';
@@ -24,6 +23,17 @@ class Me extends Equatable {
             name: user.name,
             avatarUrl: user.avatarUrl,
             error: user.error);
+  Me copyWith(
+      {final String? id,
+      final String? name,
+      final String? avatarUrl,
+      final UserError? error}) {
+    return Me(
+        id: id ?? this.id,
+        name: name ?? this.name,
+        avatarUrl: avatarUrl ?? this.avatarUrl,
+        error: error ?? this.error);
+  }
 
   factory Me.fromJson(Map<String, dynamic> json) => _$MeFromJson(json);
   Map<String, dynamic> toJson() => _$MeToJson(this);

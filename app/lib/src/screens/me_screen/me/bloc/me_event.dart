@@ -8,3 +8,9 @@ abstract class MeEvent extends Equatable {
 }
 
 class FetchMe extends MeEvent {}
+
+class UpdateAvatarUrl extends MeEvent {
+  final String anonymousAccessUrl;
+
+  const UpdateAvatarUrl(this.anonymousAccessUrl);
+}
