@@ -8,12 +8,12 @@ void main() {
     final userRepository = UserRepository(
         url: 'https://user.app0.env0.luojm.com:9443/query',
         token:
-            'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Nzg4OTU5MjMsInVzZXIiOnsiaWQiOiJaSThrTk5RYjR2b1o0dnFiM3VkcWIifX0.cGOHCHG5usUlL53DmpQxScHZiNYWDA-BWYYaO7Fk2iCIGXyhlavxNEonUDmDQKnTDltrlHIbWoraKWl9Ort-fpNkTLnk041TxU12PI9Mv4HADMMqJQ_r0574y5GDlBD5ru6xzqonGIsBECACoK0zxShMIJ3LE_jPb8ZDbGZzLHfeWWffK3Fo1dJ3wR9IAAZZAum3wfnnYZjRyZg2KYA9sNPbKwMHLnrsDpcdohI5SJinYp63v8kq_zJumiOJQJ209EHBRsip3g6HisHMZttMNxi_iMEsoLZtIMbh0tkFPkTN_K7qXe6Ic8GXD5Pn1cxWr7MLJ6O-qlzTX8q9T3dYHQ');
+            'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzI1MTE4NzMsInVzZXIiOnsiaWQiOiJaSThrTk5RYjR2b1o0dnFiM3VkcWIifX0.AyGPuB0P7jjAdvEHY_uA6OyNvbXa_tv2HXXaOoIhYrzbv-JjiDf8XPmjTY4EejqGdRXfHY21gPwdXq34uM8XsL5L0lQPz77Eu4NCmR_wy0FeVDpq3ZljP4xCat7oBOSZ-U-IsAtoxwXkloTeTQAbnmOQUou83RR9kuPFQb91-oof3iPOsRblE8Y2kqKuGjbRQVhbSpvjo6-AWzvEtugXynDlhQ0pbOTI2mKwaOnMOOY4xnRA4oU3i-09XTIFnJeVyM-dfEJ2NzHhOHBSBEbfaKz2sJSN4gwUJ5DubZWS3r6PlvuCe5p9UOkWVAJh981MKv52UDxxKmoLn28n5nkkEQ');
     final user = await userRepository.me();
     if (kDebugMode) {
       print('user id(${user.id}),name(${user.name}), data(${user.data}');
     }
-    expect(user.name, 'test');
+    expect(user.name, 'test1test');
   });
 
   test('user repository users', () async {
