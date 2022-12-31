@@ -1,10 +1,10 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/src/widgets/widgets.dart' as widgets;
 import 'package:image_picker/image_picker.dart' as image_picker;
+import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:app/src/configs/configs.dart' as configs;
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/features/me/me.dart' as me;
@@ -12,7 +12,6 @@ import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
 import 'package:app/src/features/repositorys/repositorys.dart' as repositorys;
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as image_util;
 
 const _kLogSource = 'my_profile_screen';
 
@@ -136,6 +135,11 @@ class _MyProfileScreen extends StatelessWidget {
       if (pickedImage == null) {
         throw 'image not picked';
       }
+      final croppedImage =
+          await _cropImage(context: context, pickedImage: pickedImage);
+      if (croppedImage == null) {
+        throw 'image not cropped';
+      }
       final avatar = await userRepository.preSignedAvatarUrl();
       if (avatar.error != user_repository.UserError.none) {
         throw 'presigned avatar url error(${avatar.error})';
@@ -145,13 +149,7 @@ class _MyProfileScreen extends StatelessWidget {
           name: _kLogSource,
           'avatar anonymousAccessUrl(${avatar.anonymousAccessUrl})');
       log(name: _kLogSource, 'picked image name(${pickedImage.name}');
-      final bool isPng = pickedImage.name.endsWith('.png');
-      var imageBytes = await pickedImage.readAsBytes();
-      if (!isPng) {
-        log(name: _kLogSource, 'not png, will convert to png');
-        final decodeImage = image_util.decodeImage(imageBytes);
-        imageBytes = Uint8List.fromList(image_util.encodePng(decodeImage!));
-      }
+      final imageBytes = await croppedImage.readAsBytes();
       final response =
           await http.put(Uri.parse(avatar.preSignedUrl), body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -171,6 +169,49 @@ class _MyProfileScreen extends StatelessWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(e.toString())));
     }
+  }
+
+  Future<image_cropper.CroppedFile?> _cropImage(
+      {required BuildContext context,
+      required image_picker.XFile pickedImage}) async {
+    final maxHeight = configs.Config.instance().profilePictureMaxHeight.toInt();
+    final maxWidth = configs.Config.instance().profilePictureMaxWidth.toInt();
+    final croppedFile = await image_cropper.ImageCropper().cropImage(
+      sourcePath: pickedImage.path,
+      compressFormat: image_cropper.ImageCompressFormat.png,
+      compressQuality: 100,
+      aspectRatioPresets: [
+        image_cropper.CropAspectRatioPreset.square,
+      ],
+      cropStyle: image_cropper.CropStyle.circle,
+      maxHeight: maxHeight,
+      maxWidth: maxWidth,
+      uiSettings: [
+        image_cropper.AndroidUiSettings(
+            toolbarTitle: 'Cropper',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: image_cropper.CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        image_cropper.IOSUiSettings(
+          title: 'Cropper',
+        ),
+        image_cropper.WebUiSettings(
+          context: context,
+          presentStyle: image_cropper.CropperPresentStyle.dialog,
+          boundary: image_cropper.CroppieBoundary(
+            width: maxWidth,
+            height: maxHeight,
+          ),
+          viewPort: image_cropper.CroppieViewPort(
+              width: maxWidth, height: maxHeight, type: 'circle'),
+          enableExif: true,
+          enableZoom: true,
+          showZoomer: true,
+        ),
+      ],
+    );
+    return croppedFile;
   }
 }
 
