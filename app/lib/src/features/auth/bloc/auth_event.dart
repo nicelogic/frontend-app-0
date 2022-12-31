@@ -16,6 +16,20 @@ class _AuthError extends AuthEvent {
   _AuthError(this.error);
 }
 
+class AuthSignInByUserName extends AuthEvent {
+  final String userName;
+  final String pwd;
+
+  AuthSignInByUserName(this.userName, this.pwd);
+}
+
+class AuthSignUpByUserName extends AuthEvent {
+  final String userName;
+  final String pwd;
+
+  AuthSignUpByUserName(this.userName, this.pwd);
+}
+
 class AuthLogoutRequested extends AuthEvent {}
 
 class _AuthRefreshTokenTimerIsUp extends AuthEvent {}

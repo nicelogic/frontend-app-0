@@ -21,9 +21,9 @@ class UserNameLoginScreen extends StatelessWidget {
         onTap: () async {
           final userName = usernameController.text;
           final password = passwordController.text;
-          await context
+          context
               .read<AuthBloc>()
-              .signInByUserName(userName: userName, password: password);
+              .add(AuthSignInByUserName(userName, password));
         },
       ),
     ];

@@ -24,9 +24,11 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
 
   AuthBloc({required this.authRepository})
       : super(const AuthState.authInitial()) {
+    on<AuthSignInByUserName>(_onSignInByUserName);
+    on<AuthSignUpByUserName>(_onSignUpByUserName);
+    on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<_AuthOk>(_onAuthOk);
     on<_AuthError>(_onAuthError);
-    on<AuthLogoutRequested>(_onAuthLogoutRequested);
     on<_AuthRefreshTokenTimerIsUp>(_onAuthRefreshTokenTimerIsUp);
 
     if (state.status == AuthenticationStatus.authenticated) {
@@ -43,6 +45,31 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       });
     }
   }
+
+  _onSignUpByUserName(
+      AuthSignUpByUserName event, Emitter<AuthState> emit) async {
+    final auth = await authRepository.signUpByUserName(
+        userName: event.userName, password: event.pwd);
+    if (auth.error == auth_repository.AuthError.none) {
+      add(_AuthOk(
+          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
+    } else {
+      add(_AuthError(auth.error));
+    }
+  }
+
+  _onSignInByUserName(
+      AuthSignInByUserName event, Emitter<AuthState> emit) async {
+    final auth = await authRepository.signInByUserName(
+        userName: event.userName, password: event.pwd);
+    if (auth.error == auth_repository.AuthError.none) {
+      add(_AuthOk(
+          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
+    } else {
+      add(_AuthError(auth.error));
+    }
+  }
+
   _onAuthOk(_AuthOk event, Emitter<AuthState> emit) async {
     emit(AuthState.authenticated(
         refreshToken: event.refreshToken, accessToken: event.accessToken));
@@ -107,29 +134,5 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   Map<String, dynamic>? toJson(AuthState state) {
     log(name: _kLogSource, 'toJson($state)');
     return _$AuthStateToJson(state);
-  }
-
-  signUpByUserName(
-      {required String userName, required String password}) async {
-    final auth = await authRepository.signUpByUserName(
-        userName: userName, password: password);
-    if (auth.error == auth_repository.AuthError.none) {
-      add(_AuthOk(
-          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
-    } else {
-      add(_AuthError(auth.error));
-    }
-  }
-
-  signInByUserName(
-      {required String userName, required String password}) async {
-    final auth = await authRepository.signInByUserName(
-        userName: userName, password: password);
-    if (auth.error == auth_repository.AuthError.none) {
-      add(_AuthOk(
-          refreshToken: auth.refreshToken, accessToken: auth.accessToken));
-    } else {
-      add(_AuthError(auth.error));
-    }
   }
 }
