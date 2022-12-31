@@ -44,7 +44,7 @@ class LoginScreen extends StatelessWidget {
 
 final _loginButtonStyle = ElevatedButton.styleFrom(
   alignment: Alignment.centerLeft,
-  minimumSize: const Size(160, 35),
+  minimumSize: const Size(180, 35),
 );
 
 class _WechatLoginButton extends StatelessWidget {
