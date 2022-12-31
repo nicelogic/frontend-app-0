@@ -37,6 +37,14 @@ class UserNameLoginScreen extends StatelessWidget {
             } else if (state.auth.error != AuthError.none) {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.auth.error.name)));
+              if (state.auth.error == AuthError.userNotExist) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(const SnackBar(
+                      content: Text('will auto register this username')));
+                context.read<AuthBloc>().add(AuthSignUpByUserName(
+                    usernameController.text, passwordController.text));
+              }
             }
           },
           child: Align(

@@ -26,4 +26,17 @@ void main() {
           'refresh token result: access token: ${refreshTokenResult.accessToken}');
     }
   });
+
+  test('auth repository sign up by user name', () async {
+    final authRepository = auth_repository.AuthRepository(
+        url: 'https://auth.app0.env0.luojm.com:9443/query');
+    final auth =
+        await authRepository.signUpByUserName(userName: 'test6', password: 'c');
+    expect(auth.error, auth_repository.AuthError.none);
+    expect(auth.refreshToken.isEmpty, false);
+    if (kDebugMode) {
+      print('sign in result: refresh token: ${auth.refreshToken}');
+      print('sign in result: access token: ${auth.accessToken}');
+    }
+  });
 }

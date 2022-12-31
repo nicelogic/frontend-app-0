@@ -1,4 +1,4 @@
-const kSignUpByUserNameResult = 'signUpWithUserName';
+const kSignUpByUserNameResult = 'signUpByUserName';
 const kSignUpByUserName = '''
 mutation $kSignUpByUserNameResult(\$userName: String!, \$pwd: String!) {
   $kSignUpByUserNameResult(userName: \$userName, pwd: \$pwd) {
