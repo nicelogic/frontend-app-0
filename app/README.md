@@ -168,3 +168,18 @@ then user info contain the asset's url
 ## image
 
 https://developer.android.com/training/multiscreen/screendensities
+
+## android special modify
+
+frontend-app-0/app/android/app/src/main/AndroidManifest.xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.app">
+   <application
+   ###加了这一块，package:   image_cropper: ^3.0.1
+           <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+    </application>
+	###
+</manifest>
