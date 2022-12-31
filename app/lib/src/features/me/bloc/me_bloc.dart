@@ -41,9 +41,10 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
     log(
         name: _kLogSource,
         'update user(${user.id}), avatar url(${user.avatarUrl})');
-    emit(state.copyWith(
-        me: state.me
-            .copyWith(avatarUrl: event.anonymousAccessUrl, error: user.error)));
+    user.error != user_repository.UserError.none
+        ? emit(state.copyWith(me: state.me.copyWith(error: user.error)))
+        : emit(state.copyWith(
+            me: state.me.copyWith(avatarUrl: event.anonymousAccessUrl)));
   }
 
   @override
