@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:app/src/configs/configs.dart';
-import 'package:app/src/features/auth/auth.dart';
-import 'package:app/src/features/me/me.dart';
-import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
-import 'package:app/src/features/repositorys/repositorys.dart';
-import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:app/src/widgets/widgets.dart' as widgets;
+import 'package:image_picker/image_picker.dart' as image_picker;
+import 'package:app/src/configs/configs.dart' as configs;
+import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:app/src/features/me/me.dart' as me;
+import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
+import 'package:app/src/features/repositorys/repositorys.dart' as repositorys;
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as image_util;
@@ -23,14 +23,16 @@ class MyProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
       BlocProvider(
-          create: (_) => MeBloc(
-              userRepository: context.read<RepositorysCubit>().userRepository,
-              authBloc: context.read<AuthBloc>())
-            ..add(FetchMe())),
+          create: (_) => me.MeBloc(
+              userRepository:
+                  context.read<repositorys.RepositorysCubit>().userRepository,
+              authBloc: context.read<auth.AuthBloc>())
+            ..add(me.FetchMe())),
       BlocProvider(
           create: (_) => my_profile.MyProfileBloc(
-              userRepository: context.read<RepositorysCubit>().userRepository,
-              authBloc: context.read<AuthBloc>())
+              userRepository:
+                  context.read<repositorys.RepositorysCubit>().userRepository,
+              authBloc: context.read<auth.AuthBloc>())
             ..add(my_profile.FetchMyProfile())),
     ], child: _MyProfileScreen());
   }
@@ -39,66 +41,75 @@ class MyProfileScreen extends StatelessWidget {
 class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final userRepository = context.read<RepositorysCubit>().userRepository;
-    final meBloc = context.read<MeBloc>();
+    final userRepository =
+        context.read<repositorys.RepositorysCubit>().userRepository;
+    final meBloc = context.read<me.MeBloc>();
     return Scaffold(
         appBar: AppBar(
           leading: const BackButton(color: Colors.white),
           title: const Text('My Profile'),
         ),
-        body: Builder(builder: ((context) {
-          final myProfileState =
-              context.watch<my_profile.MyProfileBloc>().state;
-          final meState = context.watch<MeBloc>().state;
-          return Column(children: [
-            _ProfileForm(
-                profileName: 'avatar',
-                profileWidget: UserAvatar(
-                  id: meState.me.id,
-                  name: meState.me.name,
-                  avatarUrl: meState.me.avatarUrl,
+        body: MultiBlocListener(
+            listeners: [
+              BlocListener<me.MeBloc, me.MeState>(listener: (context, state) {
+                // if(state.me.error != )
+              }),
+              BlocListener<my_profile.MyProfileBloc, my_profile.MyProfileState>(
+                  listener: (context, state) {}),
+            ],
+            child: Builder(builder: ((context) {
+              final myProfileState =
+                  context.watch<my_profile.MyProfileBloc>().state;
+              final meState = context.watch<me.MeBloc>().state;
+              return Column(children: [
+                _ProfileForm(
+                    profileName: 'avatar',
+                    profileWidget: widgets.UserAvatar(
+                      id: meState.me.id,
+                      name: meState.me.name,
+                      avatarUrl: meState.me.avatarUrl,
+                    ),
+                    onTap: () => _onTapAvatarProfileForm(
+                        context, userRepository, meBloc)),
+                _ProfileForm(
+                    profileName: 'name',
+                    profileWidget: Text(meState.me.name),
+                    onTap: () {
+                      // context.router.push(EditPersonProfileRoute(
+                      //     inputLabel: Config.instance().pleaseInputNewName,
+                      //     accountJsonKey: kName));
+                    }),
+                _ProfileForm(
+                  profileName: 'id',
+                  profileWidget: Text(meState.me.id),
+                  onTap: () {
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(
+                          const SnackBar(content: Text('id can not change')));
+                  },
                 ),
-                onTap: () =>
-                    _onTapAvatarProfileForm(context, userRepository, meBloc)),
-            _ProfileForm(
-                profileName: 'name',
-                profileWidget: Text(meState.me.name),
-                onTap: () {
-                  // context.router.push(EditPersonProfileRoute(
-                  //     inputLabel: Config.instance().pleaseInputNewName,
-                  //     accountJsonKey: kName));
-                }),
-            _ProfileForm(
-              profileName: 'id',
-              profileWidget: Text(meState.me.id),
-              onTap: () {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                      const SnackBar(content: Text('id can not change')));
-              },
-            ),
-            _ProfileForm(
-              profileName: 'signature',
-              profileWidget: Text(myProfileState.myProfile.signature),
-              onTap: () {
-                // context.router.push(EditPersonProfileRoute(
-                //     inputLabel: Config.instance().pleaseInputNewSignature,
-                //     accountJsonKey: kSignature));
-              },
-            )
-          ]);
-        })));
+                _ProfileForm(
+                  profileName: 'signature',
+                  profileWidget: Text(myProfileState.myProfile.signature),
+                  onTap: () {
+                    // context.router.push(EditPersonProfileRoute(
+                    //     inputLabel: Config.instance().pleaseInputNewSignature,
+                    //     accountJsonKey: kSignature));
+                  },
+                )
+              ]);
+            }))));
   }
 
   void _onTapAvatarProfileForm(BuildContext context,
-      user_repository.UserRepository userRepository, MeBloc meBloc) async {
+      user_repository.UserRepository userRepository, me.MeBloc meBloc) async {
     try {
-      final picker = ImagePicker();
+      final picker = image_picker.ImagePicker();
       final pickedImage = await picker.pickImage(
-          source: ImageSource.gallery,
-          maxHeight: Config.instance().profilePictureMaxHeight,
-          maxWidth: Config.instance().profilePictureMaxWidth,
+          source: image_picker.ImageSource.gallery,
+          maxHeight: configs.Config.instance().profilePictureMaxHeight,
+          maxWidth: configs.Config.instance().profilePictureMaxWidth,
           requestFullMetadata: false);
       if (pickedImage == null) {
         throw 'image not picked';
@@ -123,7 +134,7 @@ class _MyProfileScreen extends StatelessWidget {
           await http.put(Uri.parse(avatar.preSignedUrl), body: imageBytes);
       if (response.statusCode == 200 || response.statusCode == 201) {
         log(name: _kLogSource, 'response code(${response.statusCode}');
-        meBloc.add(UpdateAvatarUrl(avatar.anonymousAccessUrl));
+        meBloc.add(me.UpdateAvatarUrl(avatar.anonymousAccessUrl));
       } else {
         throw 'put avatar to s3 error, response code(${response.statusCode}';
       }
