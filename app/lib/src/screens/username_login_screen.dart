@@ -36,7 +36,8 @@ class UserNameLoginScreen extends StatelessWidget {
               context.go(routePathChat);
             } else if (state.auth.error != AuthError.none) {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.auth.error.name)));
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(state.auth.error.name)));
               if (state.auth.error == AuthError.userNotExist) {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()

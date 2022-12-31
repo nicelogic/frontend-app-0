@@ -52,10 +52,22 @@ class _MyProfileScreen extends StatelessWidget {
         body: MultiBlocListener(
             listeners: [
               BlocListener<me.MeBloc, me.MeState>(listener: (context, state) {
-                // if(state.me.error != )
+                if (state.me.error != user_repository.UserError.none) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                        SnackBar(content: Text(state.me.error.name)));
+                }
               }),
               BlocListener<my_profile.MyProfileBloc, my_profile.MyProfileState>(
-                  listener: (context, state) {}),
+                  listener: (context, state) {
+                if (state.myProfile.error != user_repository.UserError.none) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                        SnackBar(content: Text(state.myProfile.error.name)));
+                }
+              }),
             ],
             child: Builder(builder: ((context) {
               final myProfileState =
