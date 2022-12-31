@@ -183,3 +183,16 @@ frontend-app-0/app/android/app/src/main/AndroidManifest.xml
     </application>
 	###
 </manifest>
+
+## web special modify
+
+frontend-app-0/app/web/index.html
+<head>
+
+   ###加了这一块，package:   image_cropper: ^3.0.1
+  <!-- Croppie -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.css" />
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+
+</head>
