@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,7 +49,10 @@ class _EditNameScreen extends StatelessWidget {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                       const SnackBar(content: Text('update name success')));
+                //workaround: pop never rebuild previous screen, use pushReplacement to rigger rebuild
+                //if use pushReplacement directly, there will has 2 previous screen
                 context.pop();
+                context.pushReplacement('$routePathMe/$routePathMyProfile');
               }),
         ],
         child: Scaffold(
