@@ -89,7 +89,7 @@ class _SettingsForm extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () {
-          // context.router.push(const SettingsRoute());
+          context.go('$routePathMe/$routePathSettings');
         },
         child: const ItemCard(label: 'settings', iconData: Icons.settings));
   }
