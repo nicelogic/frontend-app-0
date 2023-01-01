@@ -16,13 +16,12 @@ class EditNameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider(
-          create: (_) => me.MeBloc(
-              userRepository:
-                  context.read<repositorys.RepositorysCubit>().userRepository,
-              authBloc: context.read<auth.AuthBloc>())),
-    ], child: _EditNameScreen());
+    return BlocProvider(
+        create: (_) => me.MeBloc(
+            userRepository:
+                context.read<repositorys.RepositorysCubit>().userRepository,
+            authBloc: context.read<auth.AuthBloc>()),
+        child: _EditNameScreen());
   }
 }
 

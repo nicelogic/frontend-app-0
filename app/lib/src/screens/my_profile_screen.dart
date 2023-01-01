@@ -27,8 +27,7 @@ class MyProfileScreen extends StatelessWidget {
           create: (_) => me.MeBloc(
               userRepository:
                   context.read<repositorys.RepositorysCubit>().userRepository,
-              authBloc: context.read<auth.AuthBloc>())
-            ..add(me.FetchMe())),
+              authBloc: context.read<auth.AuthBloc>())),
       BlocProvider(
           create: (_) => my_profile.MyProfileBloc(
               userRepository:
@@ -42,8 +41,7 @@ class MyProfileScreen extends StatelessWidget {
 class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final userRepository =
-        context.read<repositorys.RepositorysCubit>().userRepository;
+    context.read<me.MeBloc>().add(me.FetchMe());
     return Scaffold(
         appBar: AppBar(
           title: const Text('My Profile'),
@@ -92,7 +90,7 @@ class _MyProfileScreen extends StatelessWidget {
                       avatarUrl: meState.me.avatarUrl,
                     ),
                     onTap: () => _onTapAvatarProfileForm(
-                        context, userRepository, context.read<me.MeBloc>())),
+                        context, context.read<repositorys.RepositorysCubit>().userRepository, context.read<me.MeBloc>())),
                 _ProfileForm(
                     profileName: 'name',
                     profileWidget: Text(meState.me.name),
