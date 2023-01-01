@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:app/src/route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/src/widgets/widgets.dart' as widgets;
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart' as image_picker;
 import 'package:image_cropper/image_cropper.dart' as image_cropper;
 import 'package:app/src/configs/configs.dart' as configs;
@@ -42,10 +44,8 @@ class _MyProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userRepository =
         context.read<repositorys.RepositorysCubit>().userRepository;
-    final meBloc = context.read<me.MeBloc>();
     return Scaffold(
         appBar: AppBar(
-          leading: const BackButton(color: Colors.white),
           title: const Text('My Profile'),
         ),
         body: MultiBlocListener(
@@ -82,6 +82,7 @@ class _MyProfileScreen extends StatelessWidget {
               final myProfileState =
                   context.watch<my_profile.MyProfileBloc>().state;
               final meState = context.watch<me.MeBloc>().state;
+              log(name: _kLogSource, 'curName: ${meState.me.name}');
               return Column(children: [
                 _ProfileForm(
                     profileName: 'avatar',
@@ -91,14 +92,13 @@ class _MyProfileScreen extends StatelessWidget {
                       avatarUrl: meState.me.avatarUrl,
                     ),
                     onTap: () => _onTapAvatarProfileForm(
-                        context, userRepository, meBloc)),
+                        context, userRepository, context.read<me.MeBloc>())),
                 _ProfileForm(
                     profileName: 'name',
                     profileWidget: Text(meState.me.name),
                     onTap: () {
-                      // context.router.push(EditPersonProfileRoute(
-                      //     inputLabel: Config.instance().pleaseInputNewName,
-                      //     accountJsonKey: kName));
+                      context.go(
+                          '$routePathMe/$routePathMyProfile/$routePathEditName');
                     }),
                 _ProfileForm(
                   profileName: 'id',

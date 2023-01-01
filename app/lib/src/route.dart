@@ -1,5 +1,6 @@
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/screens/contacts_screen.dart';
+import 'package:app/src/screens/edit_name_screen.dart';
 import 'package:app/src/screens/login_screen.dart';
 import 'package:app/src/screens/username_login_screen.dart';
 import 'package:app/src/screens/me_screen.dart';
@@ -13,11 +14,12 @@ import 'package:go_router/go_router.dart';
 import 'features/auth/auth.dart';
 
 const routePathMe = '/me';
-const routePathMeMyProfile = 'myprofile';
+const routePathMyProfile = 'my_profile';
+const routePathEditName = 'edit_name';
 const routePathContacts = '/contacts';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
-const routePathLoginUserNameLogin = 'usernamelogin';
+const routePathLoginUserNameLogin = 'username_login';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -65,11 +67,18 @@ router() => GoRouter(
                   },
                   routes: <RouteBase>[
                     GoRoute(
-                        path: routePathMeMyProfile,
+                        path: routePathMyProfile,
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: ((context, state) {
                           return const MyProfileScreen();
-                        }))
+                        }),
+                        routes: <RouteBase>[
+                          GoRoute(
+                              path: routePathEditName,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: ((context, state) =>
+                                  const EditNameScreen()))
+                        ])
                   ])
             ]),
         GoRoute(

@@ -43,7 +43,7 @@ class _PersonProfileForm extends StatelessWidget {
     context.read<MeBloc>().add(FetchMe());
     return InkWell(
         onTap: () {
-          context.go('$routePathMe/$routePathMeMyProfile');
+          context.go('$routePathMe/$routePathMyProfile');
         },
         child: Container(
             padding: const EdgeInsets.fromLTRB(20, 30, 15, 20),

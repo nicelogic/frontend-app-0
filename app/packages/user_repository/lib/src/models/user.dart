@@ -26,6 +26,7 @@ class Users {
 }
 
 const kAvatarUrl = 'avatar_url';
+const kName = 'name';
 
 extension UserProperties on User {
   String get signature {

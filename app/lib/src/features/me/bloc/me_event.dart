@@ -11,6 +11,10 @@ class FetchMe extends MeEvent {}
 
 class UpdateAvatarUrl extends MeEvent {
   final String anonymousAccessUrl;
-
   const UpdateAvatarUrl(this.anonymousAccessUrl);
+}
+
+class UpdateName extends MeEvent {
+  final String name;
+  const UpdateName(this.name);
 }

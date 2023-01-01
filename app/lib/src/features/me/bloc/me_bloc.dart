@@ -28,6 +28,7 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
       //     .asyncExpand(mapper)
     );
     on<UpdateAvatarUrl>(_onUpdateAvatarUrl);
+    on<UpdateName>(_onUpdateName);
   }
 
   _onFetchMe(event, emit) async {
@@ -43,8 +44,17 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
         'update user(${user.id}), avatar url(${user.avatarUrl})');
     user.error != user_repository.UserError.none
         ? emit(state.copyWith(me: state.me.copyWith(error: user.error)))
-        : emit(state.copyWith(
-            me: state.me.copyWith(avatarUrl: event.anonymousAccessUrl)));
+        : emit(
+            state.copyWith(me: state.me.copyWith(avatarUrl: user.avatarUrl)));
+  }
+
+  _onUpdateName(UpdateName event, emit) async {
+    final user = await userRepository
+        .updateUser(properties: {user_repository.kName: event.name});
+    log(name: _kLogSource, 'update user(${user.id}), name(${user.name})');
+    user.error != user_repository.UserError.none
+        ? emit(state.copyWith(me: state.me.copyWith(error: user.error)))
+        : emit(state.copyWith(me: state.me.copyWith(name: user.name)));
   }
 
   @override
