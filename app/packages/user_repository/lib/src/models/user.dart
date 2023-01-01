@@ -27,6 +27,7 @@ class Users {
 
 const kAvatarUrl = 'avatar_url';
 const kName = 'name';
+const kSignature = 'signature';
 
 extension UserProperties on User {
   String get signature {
@@ -35,7 +36,7 @@ extension UserProperties on User {
     }
     try {
       Map<String, dynamic> properties = jsonDecode(data);
-      final signature = properties['signature'] as String;
+      final signature = properties[kSignature] as String;
       return signature;
     } catch (e) {
       return '';

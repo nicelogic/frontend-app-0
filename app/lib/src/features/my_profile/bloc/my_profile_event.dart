@@ -9,3 +9,8 @@ abstract class MyProfileEvent extends Equatable {
 
 class FetchMyProfile extends MyProfileEvent {}
 
+class UpdateSignature extends MyProfileEvent {
+  final String signature;
+
+  const UpdateSignature(this.signature);
+}

@@ -1,6 +1,7 @@
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/screens/contacts_screen.dart';
 import 'package:app/src/screens/edit_name_screen.dart';
+import 'package:app/src/screens/edit_signature_screen.dart';
 import 'package:app/src/screens/login_screen.dart';
 import 'package:app/src/screens/username_login_screen.dart';
 import 'package:app/src/screens/me_screen.dart';
@@ -16,6 +17,7 @@ import 'features/auth/auth.dart';
 const routePathMe = '/me';
 const routePathMyProfile = 'my_profile';
 const routePathEditName = 'edit_name';
+const routePathEditSignature = 'edit_signature';
 const routePathContacts = '/contacts';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
@@ -77,7 +79,12 @@ router() => GoRouter(
                               path: routePathEditName,
                               parentNavigatorKey: _rootNavigatorKey,
                               builder: ((context, state) =>
-                                  const EditNameScreen()))
+                                  const EditNameScreen())),
+                          GoRoute(
+                              path: routePathEditSignature,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: ((context, state) =>
+                                  const EditSignatureScreen()))
                         ])
                   ])
             ]),

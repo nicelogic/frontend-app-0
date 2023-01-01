@@ -80,7 +80,6 @@ class _MyProfileScreen extends StatelessWidget {
               final myProfileState =
                   context.watch<my_profile.MyProfileBloc>().state;
               final meState = context.watch<me.MeBloc>().state;
-              log(name: _kLogSource, 'curName: ${meState.me.name}');
               return Column(children: [
                 _ProfileForm(
                     profileName: 'avatar',
@@ -90,10 +89,16 @@ class _MyProfileScreen extends StatelessWidget {
                       avatarUrl: meState.me.avatarUrl,
                     ),
                     onTap: () => _onTapAvatarProfileForm(
-                        context, context.read<repositorys.RepositorysCubit>().userRepository, context.read<me.MeBloc>())),
+                        context,
+                        context
+                            .read<repositorys.RepositorysCubit>()
+                            .userRepository,
+                        context.read<me.MeBloc>())),
                 _ProfileForm(
                     profileName: 'name',
-                    profileWidget: Text(meState.me.name),
+                    profileWidget: Text(meState.me.name.isEmpty
+                        ? 'please set name'
+                        : meState.me.name),
                     onTap: () {
                       context.go(
                           '$routePathMe/$routePathMyProfile/$routePathEditName');
@@ -112,9 +117,8 @@ class _MyProfileScreen extends StatelessWidget {
                   profileName: 'signature',
                   profileWidget: Text(myProfileState.myProfile.signature),
                   onTap: () {
-                    // context.router.push(EditPersonProfileRoute(
-                    //     inputLabel: Config.instance().pleaseInputNewSignature,
-                    //     accountJsonKey: kSignature));
+                    context.go(
+                        '$routePathMe/$routePathMyProfile/$routePathEditSignature');
                   },
                 )
               ]);

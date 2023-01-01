@@ -62,7 +62,9 @@ class _PersonProfileForm extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        meState.me.name,
+                        meState.me.name.isEmpty
+                            ? 'please set name'
+                            : meState.me.name,
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.w700),
                       ),
