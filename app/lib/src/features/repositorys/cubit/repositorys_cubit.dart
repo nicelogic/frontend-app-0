@@ -3,7 +3,9 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:user_repository/user_repository.dart' as user_repository;
+import 'package:contacts_repository/contacts_repository.dart'
+    as contacts_repository;
 import 'package:app/src/features/auth/auth.dart' as auth;
 
 part 'repositorys_state.dart';
@@ -12,24 +14,31 @@ const _kLogSource = 'repositorys_cubit';
 
 class RepositorysCubit extends Cubit<RepositorysState> {
   final auth.AuthBloc authBloc;
-  final UserRepository userRepository;
+  final user_repository.UserRepository userRepository;
+  final contacts_repository.ContactsRepository contactsRepository;
   late final StreamSubscription authBlocSubscription;
 
-  RepositorysCubit({required this.authBloc, required this.userRepository})
+  RepositorysCubit(
+      {required this.authBloc,
+      required this.userRepository,
+      required this.contactsRepository})
       : super(RepositorysInitial()) {
     authBlocSubscription = authBloc.stream.listen((authState) {
       switch (authState.status) {
         case auth.AuthenticationStatus.unauthenticated:
           log(
               name: _kLogSource,
-              'auth unauthenticated, update access token empty');
+              'auth unauthenticated, all repositorys update access token empty');
           userRepository.updateToken('');
+          contactsRepository.updateToken('');
           break;
         case auth.AuthenticationStatus.authenticated:
-          userRepository.updateToken(authState.auth.accessToken);
+          final accessToken = authState.auth.accessToken;
+          userRepository.updateToken(accessToken);
+          contactsRepository.updateToken(accessToken);
           log(
               name: _kLogSource,
-              'auth authenticated data change, new access toke(${authState.auth.accessToken})');
+              'auth authenticated data change, new access toke(${authState.auth.accessToken}), all repositorys update token');
           break;
         default:
       }

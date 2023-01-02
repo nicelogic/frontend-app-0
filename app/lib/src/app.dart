@@ -2,6 +2,7 @@ import 'package:app/src/configs/configs.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:auth_repository/auth_repository.dart';
+import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final authBloc = AuthBloc(
         authRepository: AuthRepository(url: Config.instance().authServiceUrl));
+    final accessToken = authBloc.state.auth.accessToken;
     return AnimatedBuilder(
       animation: settingsController,
       builder: (BuildContext context, Widget? child) {
@@ -33,7 +35,10 @@ class MyApp extends StatelessWidget {
                       authBloc: authBloc,
                       userRepository: UserRepository(
                           url: Config.instance().userServiceUrl,
-                          token: authBloc.state.auth.accessToken)))
+                          token: accessToken),
+                      contactsRepository: ContactsRepository(
+                          url: Config.instance().contactsServiceUrl,
+                          token: accessToken)))
             ],
             child: MaterialApp.router(
               restorationScopeId: 'app',
