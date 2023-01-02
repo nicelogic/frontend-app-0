@@ -1,0 +1,2 @@
+library contacts_repository;
+
