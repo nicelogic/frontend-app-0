@@ -1,4 +1,5 @@
 import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:app/src/screens/contacts/add_contacts_screen.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
 import 'package:app/src/screens/me/edit_name_screen.dart';
 import 'package:app/src/screens/me/edit_signature_screen.dart';
@@ -21,6 +22,7 @@ const routePathEditName = 'edit_name';
 const routePathEditSignature = 'edit_signature';
 const routePathSettings = 'settings';
 const routePathContacts = '/contacts';
+const routePathAddContacts = 'add_contacts';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
 const routePathLoginUserNameLogin = 'username_login';
@@ -59,11 +61,19 @@ router() => GoRouter(
                 },
               ),
               GoRoute(
-                path: routePathContacts,
-                builder: (BuildContext context, GoRouterState state) {
-                  return const ContactsScreen();
-                },
-              ),
+                  path: routePathContacts,
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const ContactsScreen();
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: routePathAddContacts,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: ((context, state) {
+                        return const AddContactsScreen();
+                      }),
+                    )
+                  ]),
               GoRoute(
                   path: routePathMe,
                   builder: (BuildContext context, GoRouterState state) {

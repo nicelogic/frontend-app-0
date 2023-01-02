@@ -1,4 +1,6 @@
+import 'package:app/src/route.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ContactsScreen extends StatelessWidget {
   const ContactsScreen({super.key});
@@ -17,14 +19,15 @@ class ContactsScreen extends StatelessWidget {
               ),
               onSelected: (String value) {
                 switch (value) {
-                  case '发起群聊':
+                  case 'New Chat':
                     break;
-                  case '添加朋友':
+                  case 'Add Contacts':
+                    context.go('$routePathContacts/$routePathAddContacts');
                     break;
                 }
               },
               itemBuilder: (BuildContext context) {
-                return {'发起群聊', '添加朋友'}.map((String choice) {
+                return {'New Chat', 'Add Contacts'}.map((String choice) {
                   return PopupMenuItem<String>(
                     value: choice,
                     child: Text(choice),
@@ -39,7 +42,7 @@ class ContactsScreen extends StatelessWidget {
               color: Colors.grey[200],
               padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),
               child: const Center(
-                child: Text('联系人'),
+                child: Text('Contacts'),
               )),
         ]));
   }
