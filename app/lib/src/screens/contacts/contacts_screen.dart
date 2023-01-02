@@ -9,13 +9,11 @@ class ContactsScreen extends StatelessWidget {
         appBar: AppBar(
           title: const Text(
             '通讯录',
-            style: TextStyle(color: Colors.white),
           ),
           actions: [
             PopupMenuButton<String>(
               icon: const Icon(
                 Icons.add_circle_outline,
-                color: Colors.white,
               ),
               onSelected: (String value) {
                 switch (value) {
