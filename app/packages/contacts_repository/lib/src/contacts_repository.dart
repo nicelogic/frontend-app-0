@@ -45,4 +45,11 @@ class ContactsRepository {
         contactsId: contactsId, isAgree: isAgree, remarkName: remarkName);
     return error;
   }
+
+  Future<models.ContactsConnection> contacts(
+      {required int first, final String? after}) async {
+    final contactsConnection =
+        await _apiClient.contacts(first: first, after: after);
+    return contactsConnection;
+  }
 }

@@ -81,8 +81,7 @@ class ApiClient {
       log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
-        return models.AddContactsApplyConnection.error(
-            error.parseError());
+        return models.AddContactsApplyConnection.error(error.parseError());
       }
     } catch (e) {
       log(name: _kLogSource, e.toString());
@@ -123,5 +122,35 @@ class ApiClient {
       log(name: _kLogSource, e.toString());
     }
     return models.ContactsError.clientInternalError;
+  }
+
+  Future<models.ContactsConnection> contacts(
+      {required int first, final String? after}) async {
+    try {
+      const gqlStr = api.contacts;
+      final result = await _graphQLClient.query(QueryOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
+          variables: <String, dynamic>{api.first: first, api.after: after}));
+      if (result.hasException) {
+        throw result.exception!;
+      }
+      final data = result.data![api.contactsResult] as Map<String, dynamic>;
+      final contactsConnection = models.toContactsConnection(data);
+      return contactsConnection;
+    } on NetworkException catch (e) {
+      log(name: _kLogSource, e.toString());
+      return models.ContactsConnection.error(models.ContactsError.networkError);
+    } on OperationException catch (e) {
+      log(name: _kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return models.ContactsConnection.error(error.parseError());
+      }
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
+    }
+    return models.ContactsConnection.error(
+        models.ContactsError.clientInternalError);
   }
 }

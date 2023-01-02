@@ -112,4 +112,25 @@ void main() {
     }
     expect(test1Error == ContactsError.none, true);
   });
+
+  test('test contacts repository: query contacts', () async {
+    const testToken =
+        'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NzI2OTAxNzgsInVzZXIiOnsiaWQiOiJ2OWNlMHBxNXZ2dnNrNCJ9fQ.bgizFow1-zRxsYl0GK64XuGCI_iqlANcat0iJdlM3vu0WBoWXHNczjf57zEPZ3MU0hE7ll5W_jb2WCyMZEazbYogz-l_57EKLF5islN4UgWTONjplyxd1MN3BKrLFUPPXjm7qDe_1UbjCOGjD1G21Tdr5Mcw6VMa9qdan8DT7j3qORe8L1g5Opu8hXp3wOEKUa2LenXCSIC_2MRoklEE_peYPozkGsVj1p2jjEqDQneh0GHPPzw2JHb_bWiWzgtgXabeYnNDECWnaSgGQ7GvcUZsYgx2S8vkz0ar9RxTC8kB_rFnMLSeeoUdEkfy_SOv_t4wcYJvhvm_PaX4TGz_LQ';
+    const test1Id = 'PKhB8wqChcyYPR';
+    final contactsRepository = ContactsRepository(
+        url: 'https://contacts.app0.env0.luojm.com:9443/query',
+        token: testToken);
+    final connection = await contactsRepository.contacts(first: 100);
+    if (kDebugMode) {
+      print('result($connection)');
+    }
+    expect(connection.error, ContactsError.none);
+    expect(connection.totalCount, 1);
+    expect(connection.pageInfo.hasNextPage, false);
+    expect(connection.edges.length, 1);
+    expect(connection.edges[0].cursour, null);
+    expect(connection.edges[0].node.id, test1Id);
+    expect(connection.edges[0].node.remarkName, 'test1');
+  });
+
 }
