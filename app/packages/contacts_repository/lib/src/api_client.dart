@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ffi';
 
 import 'package:graphql/client.dart';
 import 'models/models.dart' as models;
@@ -23,11 +22,38 @@ class ApiClient {
     );
   }
 
-  // Future<Bool> applyAddContacts() async {
-    
-
-
-
-  //   return true;
-  // }
+  Future<models.ContactsError> applyAddContacts(
+      {required String userName,
+      required String contactsId,
+      required String remarkName,
+      required String message}) async {
+    try {
+      const gqlStr = api.kApplyAddContacts;
+      final result = await _graphQLClient.mutate(MutationOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
+          variables: {
+            api.userName: userName,
+            api.contactsId: contactsId,
+            api.remarkName: remarkName,
+            api.message: message
+          }));
+      if (result.hasException) {
+        throw result.exception!;
+      }
+      return models.ContactsError.none;
+    } on NetworkException catch (e) {
+      log(name: _kLogSource, e.toString());
+      return models.ContactsError.networkError;
+    } on OperationException catch (e) {
+      log(name: _kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return error.parseUserServiceError();
+      }
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
+    }
+    return models.ContactsError.clientInternalError;
+  }
 }

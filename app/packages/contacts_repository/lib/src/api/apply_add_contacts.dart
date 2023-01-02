@@ -1,15 +1,20 @@
 const kApplyAddContactsResult = 'applyAddContacts';
+const userName = 'userName';
+const contactsId = 'contactsId';
+const remarkName = 'remarkName';
+const message = 'message';
 const kApplyAddContacts = '''
-mutation $kApplyAddContactsResult(\$contactsId: ID!
-  												\$userName: String!
-													\$remarkName: String!
-													\$message: String!) {
+mutation $kApplyAddContactsResult(
+                          \$$userName: String!
+                          \$$contactsId: ID!
+													\$$remarkName: String!
+													\$$message: String!) {
   $kApplyAddContactsResult(
     input: {
-      contactsId: \$contactsId
-      userName: \$userName
-      remarkName: \$remarkName
-			message: \$message
+      $userName: \$$userName
+      $contactsId: \$$contactsId
+      $remarkName: \$$remarkName
+			$message: \$$message
     }
   )
 }
