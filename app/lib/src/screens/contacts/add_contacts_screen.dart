@@ -1,5 +1,8 @@
+import 'package:app/src/features/query_contacts/query_contacts.dart';
+import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class AddContactsScreen extends StatelessWidget {
@@ -7,7 +10,12 @@ class AddContactsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _AddContactsScreen();
+    return MultiBlocProvider(providers: [
+      BlocProvider<QueryContactsCubit>(
+          create: (BuildContext context) => QueryContactsCubit(
+                userRepository: context.read<RepositorysCubit>().userRepository,
+              ))
+    ], child: _AddContactsScreen());
   }
 }
 
@@ -28,7 +36,12 @@ class _AddContactsScreen extends StatelessWidget {
             openAxisAlignment: 0.0,
             width: isPortrait ? 600 : 500,
             debounceDelay: const Duration(milliseconds: 500),
-            onQueryChanged: (query) {},
+            onQueryChanged: (query) {
+              final idOrName = query;
+              context
+                  .read<QueryContactsCubit>()
+                  .queryContacts(idOrName: idOrName);
+            },
             // Specify a custom transition to be used for
             // animating between opened and closed stated.
             transition: CircularFloatingSearchBarTransition(),
@@ -46,8 +59,8 @@ class _AddContactsScreen extends StatelessWidget {
             ],
             builder: (context, transition) {
               // final addedContacts = [];
-              final contacts = [];
-
+              final contactsState = context.watch<QueryContactsCubit>().state;
+              final contacts = contactsState.queriedContactsList;
               return ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Material(
@@ -61,10 +74,10 @@ class _AddContactsScreen extends StatelessWidget {
                           child: Column(children: [
                             Row(children: <Widget>[
                               const SizedBox(width: 20),
-                              const UserAvatar(
-                                id: '',
-                                name: '',
-                                avatarUrl: '',
+                              UserAvatar(
+                                id: contact.id,
+                                name: contact.name,
+                                avatarUrl: contact.avatarUrl,
                                 radius: 34,
                               ),
                               const SizedBox(width: 20),
