@@ -35,4 +35,14 @@ class ContactsRepository {
         await _apiClient.addContactsApplys(first: first, after: after);
     return connection;
   }
+
+  Future<models.ContactsError> replyAddContacts({
+    required String contactsId,
+    required bool isAgree,
+    required String remarkName,
+  }) async {
+    final error = await _apiClient.replyAddContacts(
+        contactsId: contactsId, isAgree: isAgree, remarkName: remarkName);
+    return error;
+  }
 }

@@ -49,7 +49,7 @@ class ApiClient {
       log(name: _kLogSource, e.toString());
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
-        return error.parseUserServiceError();
+        return error.parseError();
       }
     } catch (e) {
       log(name: _kLogSource, e.toString());
@@ -82,12 +82,46 @@ class ApiClient {
       if (e.graphqlErrors.isNotEmpty) {
         final error = e.graphqlErrors[0].message;
         return models.AddContactsApplyConnection.error(
-            error.parseUserServiceError());
+            error.parseError());
       }
     } catch (e) {
       log(name: _kLogSource, e.toString());
     }
     return models.AddContactsApplyConnection.error(
         models.ContactsError.clientInternalError);
+  }
+
+  Future<models.ContactsError> replyAddContacts({
+    required String contactsId,
+    required bool isAgree,
+    required String remarkName,
+  }) async {
+    try {
+      const gqlStr = api.replyAddContacts;
+      final result = await _graphQLClient.mutate(MutationOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
+          variables: {
+            api.contactsId: contactsId,
+            api.isAgree: isAgree,
+            api.remarkName: remarkName,
+          }));
+      if (result.hasException) {
+        throw result.exception!;
+      }
+      return models.ContactsError.none;
+    } on NetworkException catch (e) {
+      log(name: _kLogSource, e.toString());
+      return models.ContactsError.networkError;
+    } on OperationException catch (e) {
+      log(name: _kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return error.parseError();
+      }
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
+    }
+    return models.ContactsError.clientInternalError;
   }
 }
