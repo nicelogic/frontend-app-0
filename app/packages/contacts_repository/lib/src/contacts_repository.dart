@@ -52,4 +52,11 @@ class ContactsRepository {
         await _apiClient.contacts(first: first, after: after);
     return contactsConnection;
   }
+
+  Future<models.ContactsError> removeContacts({
+    required String contactsId,
+  }) async {
+    final error = _apiClient.removeContacts(contactsId: contactsId);
+    return error;
+  }
 }

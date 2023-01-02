@@ -153,4 +153,34 @@ class ApiClient {
     return models.ContactsConnection.error(
         models.ContactsError.clientInternalError);
   }
+
+  Future<models.ContactsError> removeContacts({
+    required String contactsId,
+  }) async {
+    try {
+      const gqlStr = api.removeContacts;
+      final result = await _graphQLClient.mutate(MutationOptions(
+          document: gql(gqlStr),
+          fetchPolicy: FetchPolicy.noCache,
+          variables: {
+            api.contactsId: contactsId,
+          }));
+      if (result.hasException) {
+        throw result.exception!;
+      }
+      return models.ContactsError.none;
+    } on NetworkException catch (e) {
+      log(name: _kLogSource, e.toString());
+      return models.ContactsError.networkError;
+    } on OperationException catch (e) {
+      log(name: _kLogSource, e.toString());
+      if (e.graphqlErrors.isNotEmpty) {
+        final error = e.graphqlErrors[0].message;
+        return error.parseError();
+      }
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
+    }
+    return models.ContactsError.clientInternalError;
+  }
 }
