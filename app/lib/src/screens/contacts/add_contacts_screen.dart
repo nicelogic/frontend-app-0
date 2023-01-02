@@ -61,6 +61,7 @@ class _AddContactsScreen extends StatelessWidget {
               // final addedContacts = [];
               final contactsState = context.watch<QueryContactsCubit>().state;
               final contacts = contactsState.queriedContactsList;
+              //need delete me & added contacts
               return ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Material(
