@@ -28,4 +28,11 @@ class ContactsRepository {
         message: message);
     return error;
   }
+
+  Future<models.AddContactsApplyConnection> addContactsApplys(
+      {required int first, final String? after}) async {
+    final connection =
+        await _apiClient.addContactsApplys(first: first, after: after);
+    return connection;
+  }
 }
