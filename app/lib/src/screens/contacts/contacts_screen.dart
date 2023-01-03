@@ -2,6 +2,7 @@ import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
+import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +25,18 @@ class ContactsScreen extends StatelessWidget {
 class _ContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<AddContactsApplysCubit, AddContactsApplysState>(
+              listenWhen: (previous, current) =>
+                  current.error != ContactsError.none,
+              listener: (context, state) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(state.error.name)));
+              }),
+        ],
+        child: Scaffold(
         appBar: AppBar(
           title: const Text(
             'Contacts',
@@ -72,6 +84,6 @@ class _ContactsScreen extends StatelessWidget {
               child: const Center(
                 child: Text('Contacts'),
               )),
-        ]));
+            ])));
   }
 }
