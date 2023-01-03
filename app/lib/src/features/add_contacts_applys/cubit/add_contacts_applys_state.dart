@@ -7,7 +7,7 @@ class AddContactsApplysState extends Equatable {
       {required this.addContactsApplys, this.error = ContactsError.none});
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [addContactsApplys, error];
 }
 
 class AddContactsApplysInitial extends AddContactsApplysState {

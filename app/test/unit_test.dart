@@ -4,7 +4,11 @@
 // writing unit tests, visit
 // https://flutter.dev/docs/cookbook/testing/unit/introduction
 
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 
 void main() {
   group('Plus Operator', () {
@@ -13,9 +17,24 @@ void main() {
     });
   });
 
-  test('basic test', () {
-    const str = 'xxx.png';
-    expect(str.endsWith('.png'), true);
-    expect(str.endsWith('a.png'), false);
+  test('basic list equatable', () {
+    final nowTime = DateTime.now();
+    final state1 = AddContactsApplysState(addContactsApplys: [
+      AddContactsApply(
+          userId: '1', contactsId: '2', message: '3', updateTime: nowTime),
+      AddContactsApply(
+          userId: '1', contactsId: '2', message: '3', updateTime: nowTime)
+    ]);
+    final state2 = AddContactsApplysState(addContactsApplys: [
+      AddContactsApply(
+          userId: '1', contactsId: '2', message: '3', updateTime: nowTime),
+      AddContactsApply(
+          userId: '2', contactsId: '2', message: '3', updateTime: nowTime)
+    ]);
+    final isEuqatable = state1 == state2;
+    if (kDebugMode) {
+      log('is equatable($isEuqatable)');
+    }
+    expect(isEuqatable, false);
   });
 }
