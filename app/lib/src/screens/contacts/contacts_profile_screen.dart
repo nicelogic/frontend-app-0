@@ -18,7 +18,6 @@ class ContactProfileScreenState extends State<ContactsProfileScreen> {
     return Scaffold(
         appBar: AppBar(
             leading: CloseButton(color: Theme.of(context).primaryColor),
-            backgroundColor: Colors.white,
             elevation: 0),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -26,7 +25,6 @@ class ContactProfileScreenState extends State<ContactsProfileScreen> {
             children: <Widget>[
               Container(
                   padding: const EdgeInsets.fromLTRB(1, 10, 15, 20),
-                  color: Colors.white,
                   child: Row(children: [
                     const SizedBox(width: 20),
                     UserAvatar(

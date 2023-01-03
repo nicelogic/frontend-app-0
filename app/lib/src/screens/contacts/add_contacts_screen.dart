@@ -1,8 +1,10 @@
 import 'package:app/src/features/query_contacts/query_contacts.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
+import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 
@@ -119,7 +121,15 @@ class _AddContactsScreen extends StatelessWidget {
                               ]),
                             ),
                             onTap: () {
-                              //  context.router.push(StrangerProfileRoute( contact: contact,));
+                              context.goNamed(routePathContactsProfile,
+                                  queryParams: {
+                                    routePathContactsProfileQueryParamId:
+                                        contact.id,
+                                    routePathContactsProfileQueryParamName:
+                                        contact.name,
+                                    routePathContactsProfileQueryParamAavatrUrl:
+                                        contact.avatarUrl
+                                  });
                             },
                           )
                       ]),

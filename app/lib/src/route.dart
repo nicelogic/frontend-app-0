@@ -1,5 +1,7 @@
 import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:app/src/features/query_contacts/models/queried_contacts.dart';
 import 'package:app/src/screens/contacts/add_contacts_screen.dart';
+import 'package:app/src/screens/contacts/contacts_profile_screen.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
 import 'package:app/src/screens/me/edit_name_screen.dart';
 import 'package:app/src/screens/me/edit_signature_screen.dart';
@@ -23,6 +25,10 @@ const routePathEditSignature = 'edit_signature';
 const routePathSettings = 'settings';
 const routePathContacts = '/contacts';
 const routePathAddContacts = 'add_contacts';
+const routePathContactsProfile = 'contacts_profile';
+const routePathContactsProfileQueryParamId = 'id';
+const routePathContactsProfileQueryParamName = 'name';
+const routePathContactsProfileQueryParamAavatrUrl = 'avatar_url';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
 const routePathLoginUserNameLogin = 'username_login';
@@ -67,12 +73,32 @@ router() => GoRouter(
                   },
                   routes: <RouteBase>[
                     GoRoute(
-                      path: routePathAddContacts,
-                      parentNavigatorKey: _rootNavigatorKey,
-                      builder: ((context, state) {
-                        return const AddContactsScreen();
-                      }),
-                    )
+                        path: routePathAddContacts,
+                        parentNavigatorKey: _rootNavigatorKey,
+                        builder: ((context, state) {
+                          return const AddContactsScreen();
+                        }),
+                        routes: <RouteBase>[
+                          GoRoute(
+                              name: routePathContactsProfile,
+                              path: routePathContactsProfile,
+                              parentNavigatorKey: _rootNavigatorKey,
+                              builder: ((context, state) {
+                                final id = state.queryParams[
+                                        routePathContactsProfileQueryParamId]
+                                    as String;
+                                final name = state.queryParams[
+                                        routePathContactsProfileQueryParamName]
+                                    as String;
+                                final avatarUrl = state.queryParams[
+                                        routePathContactsProfileQueryParamAavatrUrl]
+                                    as String;
+                                return ContactsProfileScreen(
+                                  contacts:
+                                      QueriedContacts(id, name, avatarUrl),
+                                );
+                              })),
+                        ])
                   ]),
               GoRoute(
                   path: routePathMe,
