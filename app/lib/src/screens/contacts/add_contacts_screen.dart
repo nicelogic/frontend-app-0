@@ -38,9 +38,11 @@ class _AddContactsScreen extends StatelessWidget {
             debounceDelay: const Duration(milliseconds: 500),
             onQueryChanged: (query) {
               final idOrName = query;
-              context
-                  .read<QueryContactsCubit>()
-                  .queryContacts(idOrName: idOrName);
+              if (idOrName.trim().isNotEmpty) {
+                context
+                    .read<QueryContactsCubit>()
+                    .queryContacts(idOrName: idOrName);
+              }
             },
             // Specify a custom transition to be used for
             // animating between opened and closed stated.
@@ -93,7 +95,7 @@ class _AddContactsScreen extends StatelessWidget {
                                           // fontWeight: FontWeight.w500
                                         )),
                                     const SizedBox(height: 10),
-                                    Text('昵称： ${contact.name}')
+                                    Text('name： ${contact.name}')
                                   ])),
                             ]),
                             // if (contact != searchContacts.last)
