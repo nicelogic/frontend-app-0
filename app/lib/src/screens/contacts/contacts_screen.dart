@@ -1,11 +1,27 @@
+import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
+import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ContactsScreen extends StatelessWidget {
   const ContactsScreen({super.key});
 
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+          create: (_) => AddContactsApplysCubit(
+              contactsRepository:
+                  context.read<RepositorysCubit>().contactsRepository)
+            ..fetchAddContactsApplys()),
+    ], child: _ContactsScreen());
+  }
+}
+
+class _ContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,13 +55,17 @@ class ContactsScreen extends StatelessWidget {
           ],
         ),
         body: Column(children: [
-          InkWell(
-              onTap: () {},
-              child: const ItemCard(
-                label: 'New Friends',
-                iconData: Icons.person_add,
-                badgeValue: '1',
-              )),
+          Builder(builder: (context) {
+            final state = context.watch<AddContactsApplysCubit>().state;
+            final addContactsApplysCount = state.addContactsApplys.length;
+            return InkWell(
+                onTap: () {},
+                child: ItemCard(
+                  label: 'New Friends',
+                  iconData: Icons.person_add,
+                  badgeValue: addContactsApplysCount.toString(),
+                ));
+          }),
           Container(
               color: Colors.grey[200],
               padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),

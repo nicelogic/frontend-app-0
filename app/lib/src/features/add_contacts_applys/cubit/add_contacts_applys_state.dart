@@ -10,6 +10,19 @@ class AddContactsApplysState extends Equatable {
   List<Object> get props => [addContactsApplys, error];
 }
 
+AddContactsApplysState fromConnection(AddContactsApplyConnection connection) {
+  List<AddContactsApply> addContactsApplys = [];
+  for (var edge in connection.edges) {
+    addContactsApplys.add(AddContactsApply(
+        userId: edge.node.userId,
+        contactsId: edge.node.contactsId,
+        message: edge.node.message,
+        updateTime: edge.node.updateTime));
+  }
+  return AddContactsApplysState(
+      addContactsApplys: addContactsApplys, error: connection.error);
+}
+
 class AddContactsApplysInitial extends AddContactsApplysState {
   AddContactsApplysInitial() : super(addContactsApplys: []);
 }

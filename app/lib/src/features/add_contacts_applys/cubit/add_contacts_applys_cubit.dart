@@ -11,6 +11,8 @@ class AddContactsApplysCubit extends Cubit<AddContactsApplysState> {
       : super(AddContactsApplysInitial());
 
   fetchAddContactsApplys() async {
-    final connection = contactsRepository.addContactsApplys(first: 1000);
+    final connection = await contactsRepository.addContactsApplys(first: 1000);
+    final addContactsApplysState = fromConnection(connection);
+    emit(addContactsApplysState);
   }
 }
