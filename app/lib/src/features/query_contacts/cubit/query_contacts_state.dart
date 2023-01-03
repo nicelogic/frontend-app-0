@@ -13,5 +13,5 @@ class QueryContactsState extends Equatable {
 }
 
 class QueryContactsInitial extends QueryContactsState {
-  const QueryContactsInitial() : super(queriedContactsList: const []);
+  const QueryContactsInitial({required super.queriedContactsList});
 }

@@ -14,7 +14,7 @@ class QueryContactsCubit extends Cubit<QueryContactsState> {
   final UserRepository userRepository;
 
   QueryContactsCubit({required this.userRepository})
-      : super(const QueryContactsInitial());
+      : super(const QueryContactsInitial(queriedContactsList: []));
 
   queryContacts({required String idOrName}) async {
     final users = await userRepository.users(idOrName: idOrName);
