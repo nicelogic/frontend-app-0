@@ -1,4 +1,5 @@
 import 'package:app/src/route.dart';
+import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -10,7 +11,7 @@ class ContactsScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text(
-            '通讯录',
+            'Contacts',
           ),
           actions: [
             PopupMenuButton<String>(
@@ -38,6 +39,13 @@ class ContactsScreen extends StatelessWidget {
           ],
         ),
         body: Column(children: [
+          InkWell(
+              onTap: () {},
+              child: const ItemCard(
+                label: 'New Friends',
+                iconData: Icons.person_add,
+                badgeValue: '1',
+              )),
           Container(
               color: Colors.grey[200],
               padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),
