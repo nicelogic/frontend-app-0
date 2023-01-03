@@ -62,7 +62,6 @@ class _EditSignatureScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.save),
-                  color: Colors.white,
                   onPressed: () {
                     final updatedSignature = _controller.text;
                     log(name: _kLogSource, 'update signature: $updatedSignature');

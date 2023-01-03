@@ -125,7 +125,6 @@ class _LoginButton extends StatelessWidget {
             icon: const Icon(Icons.login),
             label: const Text(
               'register/login',
-              style: TextStyle(color: Colors.white),
             ),
           )),
     );

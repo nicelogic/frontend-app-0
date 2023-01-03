@@ -61,7 +61,6 @@ class _EditNameScreen extends StatelessWidget {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.save),
-                  color: Colors.white,
                   onPressed: () {
                     final updatedName = _controller.text;
                     log(name: _kLogSource, 'update name: $updatedName');

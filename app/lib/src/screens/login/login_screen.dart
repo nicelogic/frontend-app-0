@@ -55,7 +55,6 @@ class _WechatLoginButton extends StatelessWidget {
     return ElevatedButton.icon(
       label: const Text(
         'wechat login',
-        style: TextStyle(color: Colors.white),
       ),
       icon: const Icon(FontAwesomeIcons.weixin, color: Colors.green),
       onPressed: () => debugPrint('begin login'),
@@ -75,7 +74,6 @@ class _UserNameLoginButton extends StatelessWidget {
         icon: const Icon(FontAwesomeIcons.circleUser, color: Colors.yellow),
         label: const Text(
           'username login',
-          style: TextStyle(color: Colors.white),
         ),
         style: _loginButtonStyle);
   }

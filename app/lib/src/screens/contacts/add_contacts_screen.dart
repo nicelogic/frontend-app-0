@@ -98,13 +98,13 @@ class _AddContactsScreen extends StatelessWidget {
                                     Text('name： ${contact.name}')
                                   ])),
                             ]),
-                            // if (contact != searchContacts.last)
-                            //   const Divider(
-                            //     height: 20,
-                            //     thickness: 1,
-                            //     indent: 20,
-                            //     endIndent: 20,
-                            //   ),
+                            if (contact != contacts.last)
+                              const Divider(
+                                height: 20,
+                                thickness: 1,
+                                indent: 20,
+                                endIndent: 20,
+                              ),
                           ]),
                         ),
                         onTap: () {
