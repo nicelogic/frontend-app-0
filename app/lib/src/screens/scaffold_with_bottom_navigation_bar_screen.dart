@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:app/src/route.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+
+const _kLogSource = 'ScaffoldWithBottomNavigationBarScreen';
 
 class ScaffoldWithBottomNavigationBarScreen extends StatelessWidget {
   const ScaffoldWithBottomNavigationBarScreen({required this.child, Key? key})
@@ -54,15 +58,19 @@ class ScaffoldWithBottomNavigationBarScreen extends StatelessWidget {
   }
 
   static int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).location;
-    if (location.startsWith(routePathChat)) {
-      return 0;
-    }
-    if (location.startsWith(routePathContacts)) {
-      return 1;
-    }
-    if (location.startsWith(routePathMe)) {
-      return 2;
+    try {
+      final String location = GoRouterState.of(context).location;
+      if (location.startsWith(routePathChat)) {
+        return 0;
+      }
+      if (location.startsWith(routePathContacts)) {
+        return 1;
+      }
+      if (location.startsWith(routePathMe)) {
+        return 2;
+      }
+    } catch (e) {
+      log(name: _kLogSource, e.toString());
     }
     return 0;
   }
