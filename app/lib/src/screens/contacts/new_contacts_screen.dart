@@ -12,9 +12,10 @@ class NewContactsScreen extends StatelessWidget {
     return MultiBlocProvider(providers: [
       BlocProvider(
           create: (_) => AddContactsApplysCubit(
-              contactsRepository:
-                  context.read<RepositorysCubit>().contactsRepository)
-            ..fetchAddContactsApplys()),
+                contactsRepository:
+                    context.read<RepositorysCubit>().contactsRepository,
+                userRepository: context.read<RepositorysCubit>().userRepository,
+              )..fetchAddContactsApplys()),
     ], child: _NewContactsScreen());
   }
 }
@@ -43,8 +44,8 @@ class _NewContactsScreen extends StatelessWidget {
                           const SizedBox(width: 20),
                           UserAvatar(
                             id: addContactsApply.userId,
-                            name: '',
-                            avatarUrl: '',
+                            name: addContactsApply.userName,
+                            avatarUrl: addContactsApply.userAvatarUrl,
                             radius: 34,
                           ),
                           const SizedBox(width: 20),
@@ -57,7 +58,7 @@ class _NewContactsScreen extends StatelessWidget {
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500)),
                                 const SizedBox(height: 10),
-                                const Text('name： name')
+                                Text('name： ${addContactsApply.userName}')
                               ])),
                           TextButton(
                             style: TextButton.styleFrom(

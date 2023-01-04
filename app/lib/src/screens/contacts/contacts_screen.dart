@@ -16,7 +16,8 @@ class ContactsScreen extends StatelessWidget {
       BlocProvider(
           create: (_) => AddContactsApplysCubit(
               contactsRepository:
-                  context.read<RepositorysCubit>().contactsRepository)
+                  context.read<RepositorysCubit>().contactsRepository,
+              userRepository: context.read<RepositorysCubit>().userRepository)
             ..fetchAddContactsApplys()),
     ], child: _ContactsScreen());
   }

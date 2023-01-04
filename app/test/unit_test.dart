@@ -21,15 +21,19 @@ void main() {
     final nowTime = DateTime.now();
     final state1 = AddContactsApplysState(addContactsApplys: [
       AddContactsApply(
-          userId: '1', message: '3', updateTime: nowTime),
-      AddContactsApply(
-          userId: '1', message: '3', updateTime: nowTime)
+          userId: '1',
+          userName: '',
+          userAvatarUrl: '',
+          message: '3',
+          updateTime: nowTime),
     ]);
     final state2 = AddContactsApplysState(addContactsApplys: [
       AddContactsApply(
-          userId: '1', message: '3', updateTime: nowTime),
-      AddContactsApply(
-          userId: '2', message: '3', updateTime: nowTime)
+          userId: '2',
+          userName: '',
+          userAvatarUrl: '',
+          message: '3',
+          updateTime: nowTime)
     ]);
     final isEuqatable = state1 == state2;
     if (kDebugMode) {

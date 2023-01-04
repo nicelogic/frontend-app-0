@@ -10,16 +10,32 @@ class AddContactsApplysState extends Equatable {
   List<Object> get props => [addContactsApplys, error];
 }
 
-AddContactsApplysState fromConnection(AddContactsApplyConnection connection) {
+Future<AddContactsApplysState> fromConnection(
+    {required AddContactsApplyConnection connection,
+    required UserRepository userRepository}) async {
   List<AddContactsApply> addContactsApplys = [];
+  var error = connection.error;
+  if (error != ContactsError.none) {
+    return AddContactsApplysState(addContactsApplys: const [], error: error);
+  }
   for (var edge in connection.edges) {
-    addContactsApplys.add(AddContactsApply(
-        userId: edge.node.userId,
-        message: edge.node.message,
-        updateTime: edge.node.updateTime));
+    final users = await userRepository.users(idOrName: edge.node.userId);
+    if (users.error != UserError.none) {
+      error = ContactsError.clientInternalError;
+      return AddContactsApplysState(addContactsApplys: const [], error: error);
+    }
+    if (users.users.isNotEmpty) {
+      final user = users.users.entries.elementAt(0).value;
+      addContactsApplys.add(AddContactsApply(
+          userId: edge.node.userId,
+          userName: user.name,
+          userAvatarUrl: user.avatarUrl,
+          message: edge.node.message,
+          updateTime: edge.node.updateTime));
+    }
   }
   return AddContactsApplysState(
-      addContactsApplys: addContactsApplys, error: connection.error);
+      addContactsApplys: addContactsApplys, error: error);
 }
 
 class AddContactsApplysInitial extends AddContactsApplysState {
