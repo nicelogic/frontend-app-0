@@ -8,4 +8,5 @@ services:
 assets:
   logo:  assets/images/logo/logo.png
 
-access_token_refresh_minutes: 180
+token_refresh_minutes: 180
+fail_condition_token_refresh_seconds: 30

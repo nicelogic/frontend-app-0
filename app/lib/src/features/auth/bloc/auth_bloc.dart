@@ -21,6 +21,8 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
   final auth_repository.AuthRepository authRepository;
   StreamSubscription<_AuthRefreshTokenTimerIsUp>?
       _refreshTokenTimerSubscription;
+  StreamSubscription<_AuthRefreshTokenTimerIsUp>?
+      _failConditionRefreshTokenTimerSubscription;
 
   AuthBloc({required this.authRepository})
       : super(const AuthState.authInitial()) {
@@ -39,7 +41,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       add(_AuthRefreshTokenTimerIsUp());
       _refreshTokenTimerSubscription =
           Stream<_AuthRefreshTokenTimerIsUp>.periodic(
-              Duration(minutes: Config.instance().accessTokenRefreshMinutes),
+              Duration(minutes: Config.instance().tokenRefreshMinutes),
               (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
         add(_AuthRefreshTokenTimerIsUp());
       });
@@ -93,11 +95,25 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
         '(${DateTime.now()})refersh token use($refreshToken)');
     final auth = await authRepository.refreshToken(refreshToken: refreshToken);
     if (auth.error == auth_repository.AuthError.none) {
+      _failConditionRefreshTokenTimerSubscription?.cancel();
       add(_AuthOk(
           refreshToken: auth.refreshToken, accessToken: auth.accessToken));
     } else if (auth.error == auth_repository.AuthError.tokenExpired ||
         auth.error == auth_repository.AuthError.tokenInvalid) {
       add(_AuthError(auth.error));
+    } else {
+      log(
+          name: _kLogSource,
+          time: DateTime.now(),
+          '(${DateTime.now()}) fail condition(${auth.error}), trigger ${Config.instance().failConditionTokenRefreshSeconds} seconds timer to refresh token');
+      _failConditionRefreshTokenTimerSubscription?.cancel();
+      _failConditionRefreshTokenTimerSubscription =
+          Stream<_AuthRefreshTokenTimerIsUp>.periodic(
+              Duration(
+                  seconds: Config.instance().failConditionTokenRefreshSeconds),
+              (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
+        add(_AuthRefreshTokenTimerIsUp());
+      });
     }
   }
 
@@ -110,7 +126,7 @@ class AuthBloc extends HydratedBloc<AuthEvent, AuthState> {
       _refreshTokenTimerSubscription?.cancel();
       _refreshTokenTimerSubscription =
           Stream<_AuthRefreshTokenTimerIsUp>.periodic(
-              Duration(minutes: Config.instance().accessTokenRefreshMinutes),
+              Duration(minutes: Config.instance().tokenRefreshMinutes),
               (x) => _AuthRefreshTokenTimerIsUp()).listen((event) {
         add(_AuthRefreshTokenTimerIsUp());
       });

@@ -55,10 +55,16 @@ class Config {
     return logoPath;
   }
 
-  int get accessTokenRefreshMinutes {
-    final minutes = _configMap['access_token_refresh_minutes'] as int;
-    log(name: _kLogSource, 'access_token_refresh_minutes($minutes)');
+  int get tokenRefreshMinutes {
+    final minutes = _configMap['token_refresh_minutes'] as int;
+    log(name: _kLogSource, 'token_refresh_minutes($minutes)');
     return minutes;
+  }
+
+  int get failConditionTokenRefreshSeconds{
+    final seconds = _configMap['fail_condition_token_refresh_seconds'] as int;
+    log(name: _kLogSource, 'fail_condition_token_refresh_seconds($seconds)');
+    return seconds;
   }
 
   double get profilePictureMaxHeight {

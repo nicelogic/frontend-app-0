@@ -89,7 +89,7 @@ refresh每次使用都刷新过期时间，可以保证活跃用户一直可以�
 我们可以通过一些方法检测到攻击者，然后通过refresh token撤掉的方式，让攻击者无权使用
 关于这点，就不是安全范畴的事情了，而是app政治范畴了
 
-另外：refresh token, 每2个小时（默认）才会发送给server, 攻击者要等那么长时间去获取到破解
+另外：refresh token, 每4个小时（默认）才会发送给server, 攻击者要等那么长时间去获取到破解
 而如果是长期的access token的机制，则每个请求都会带有access token
 (虽然使用了https，可以保证很难被破解)
 但是这样让安全性更高了
@@ -146,7 +146,15 @@ but can do state clear in fromJson. after load State,check state whether belong 
   * 该页面bloc理论上只获取该页面所需数据
   * 该页面每次进入刷新一次数据(通过远程，而非本地。这样其他多终端可刷新页面同步数据)（通过bloc transformer, debounce来屏蔽不需要的多次连续刷新）
 * 每个页面的bloc, 不再监听auth bloc unauth 的状态。只在启动的时候判断是否userid相同。这样做的好处在于如果还是之前的user.则状态仍旧保存着
-  不会丢失. 每个bloc event也不再需要unauth的event
+  不会丢失. 每个bloc event也不再需要unauth的event. repositorysCubit负责管理更新所有repository的access token
+  每个Bloc/cubit如果api调用失败当前不会触发状态变成unauth. 
+  TODO: 刷新失败也不会重试（此处因为其他原因导致的刷新失败，应该触发每分钟刷新一次）(真机断网启动，1分钟去刷新一次，而后重连网络,一旦刷新成功，取消定时器)
+  bloc observer出现token invalid/token expired不需要变更状态为unauth。因为启动的时候会检测到refresh token是否过期从而退到登录状态
+        其他原因不必到登录状态。4小时到了，刷新失败情况，就不让用api. 推到登录页面也没用。此时就是刷新不到token。
+  而长期不用的情况才需要退到登录状态。启动的时候检测足矣。不必每个api都去判断一下.启动若能刷新到token,后面4小时到之前，3小时就开始刷了。刷不到token你退出去也
+  登录不了了，用不了。还不如就是用户界面。可以看离线的消息。也就是用户TOken invalid/过期只影响他使用app新服务器功能。离线消息还是可以浏览。
+  长时间不用的情况，登录的时候检测，退出到登录界面
+        
 
 ## s3 and logic
 
