@@ -3,6 +3,7 @@ import 'package:app/src/features/query_contacts/models/queried_contacts.dart';
 import 'package:app/src/screens/contacts/add_contacts_screen.dart';
 import 'package:app/src/screens/contacts/contacts_profile_screen.dart';
 import 'package:app/src/screens/contacts/contacts_screen.dart';
+import 'package:app/src/screens/contacts/new_contacts_screen.dart';
 import 'package:app/src/screens/me/edit_name_screen.dart';
 import 'package:app/src/screens/me/edit_signature_screen.dart';
 import 'package:app/src/screens/me/settings_screen.dart';
@@ -29,6 +30,7 @@ const routePathContactsProfile = 'contacts_profile';
 const routePathContactsProfileQueryParamId = 'id';
 const routePathContactsProfileQueryParamName = 'name';
 const routePathContactsProfileQueryParamAavatrUrl = 'avatar_url';
+const routePathNewContacts = 'new_contacts';
 const routePathChat = '/chat';
 const routePathLogin = '/login';
 const routePathLoginUserNameLogin = 'username_login';
@@ -98,7 +100,14 @@ router() => GoRouter(
                                       QueriedContacts(id, name, avatarUrl),
                                 );
                               })),
-                        ])
+                        ]),
+                    GoRoute(
+                      path: routePathNewContacts,
+                      parentNavigatorKey: _rootNavigatorKey,
+                      builder: ((context, state) {
+                        return const NewContactsScreen();
+                      }),
+                    )
                   ]),
               GoRoute(
                   path: routePathMe,

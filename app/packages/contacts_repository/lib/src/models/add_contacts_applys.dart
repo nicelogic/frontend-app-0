@@ -5,7 +5,7 @@ import 'error.dart';
 const String _kLogSource = 'contacts_repository';
 
 class PageInfo {
-  String endCursor;
+  String? endCursor;
   bool hasNextPage;
 
   PageInfo(this.endCursor, this.hasNextPage);
@@ -53,20 +53,22 @@ AddContactsApplyConnection toAddContactsApplyConnection(
   try {
     totalCount = addContactsApplyConnection['totalCount'] as int;
     final pageInfoJson = addContactsApplyConnection['pageInfo'];
-    pageInfo.endCursor = pageInfoJson['endCursor'] as String;
+    pageInfo.endCursor = pageInfoJson['endCursor'] as String?;
     pageInfo.hasNextPage = pageInfoJson['hasNextPage'] as bool;
 
     final edgesJson = addContactsApplyConnection['edges'];
-    for (var edgeJson in edgesJson) {
-      final cursor = edgeJson['cursor'] as String?;
-      final nodeJson = edgeJson['node'];
-      final userId = nodeJson['userId'] as String;
-      final contactsId = nodeJson['contactsId'] as String;
-      final message = nodeJson['message'] as String;
-      final updateTime = nodeJson['updateTime'] as String;
-      edges.add(Edge(
-          Node(userId, contactsId, message, DateTime.parse(updateTime)),
-          cursor));
+    if (edgesJson != null) {
+      for (var edgeJson in edgesJson) {
+        final cursor = edgeJson['cursor'] as String?;
+        final nodeJson = edgeJson['node'];
+        final userId = nodeJson['userId'] as String;
+        final contactsId = nodeJson['contactsId'] as String;
+        final message = nodeJson['message'] as String;
+        final updateTime = nodeJson['updateTime'] as String;
+        edges.add(Edge(
+            Node(userId, contactsId, message, DateTime.parse(updateTime)),
+            cursor));
+      }
     }
   } catch (e) {
     log(name: _kLogSource, e.toString());
