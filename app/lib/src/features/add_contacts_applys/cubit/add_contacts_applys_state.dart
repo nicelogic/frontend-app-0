@@ -15,7 +15,6 @@ AddContactsApplysState fromConnection(AddContactsApplyConnection connection) {
   for (var edge in connection.edges) {
     addContactsApplys.add(AddContactsApply(
         userId: edge.node.userId,
-        contactsId: edge.node.contactsId,
         message: edge.node.message,
         updateTime: edge.node.updateTime));
   }
