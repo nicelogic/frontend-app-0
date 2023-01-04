@@ -1,6 +1,7 @@
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
+import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,70 +24,114 @@ class NewContactsScreen extends StatelessWidget {
 class _NewContactsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('New Contacts'),
-        ),
-        body: Builder(builder: (context) {
-          final state = context.watch<AddContactsApplysCubit>().state;
-          return ListView.builder(
-              itemCount: state.addContactsApplys.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final addContactsApply =
-                    state.addContactsApplys.elementAt(index);
-                return InkWell(
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),
-                    child: Column(children: [
-                      Row(
-                        children: <Widget>[
-                          const SizedBox(width: 20),
-                          UserAvatar(
-                            id: addContactsApply.userId,
-                            name: addContactsApply.userName,
-                            avatarUrl: addContactsApply.userAvatarUrl,
-                            radius: 34,
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<AddContactsApplysCubit, AddContactsApplysState>(
+              listenWhen: (previous, current) =>
+                  current.error != ContactsError.none,
+              listener: (context, state) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(state.error.name)));
+              }),
+        ],
+        child: Scaffold(
+            appBar: AppBar(
+              title: const Text('New Contacts'),
+            ),
+            body: Builder(builder: (context) {
+              final state = context.watch<AddContactsApplysCubit>().state;
+              return ListView.builder(
+                  itemCount: state.addContactsApplys.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    final addContactsApply =
+                        state.addContactsApplys.entries.elementAt(index).value;
+                    return InkWell(
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),
+                        child: Column(children: [
+                          Row(
+                            children: <Widget>[
+                              const SizedBox(width: 20),
+                              UserAvatar(
+                                id: addContactsApply.userId,
+                                name: addContactsApply.userName,
+                                avatarUrl: addContactsApply.userAvatarUrl,
+                                radius: 34,
+                              ),
+                              const SizedBox(width: 20),
+                              Expanded(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                    Text(addContactsApply.userId,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500)),
+                                    const SizedBox(height: 10),
+                                    Text('name： ${addContactsApply.userName}')
+                                  ])),
+                              if ([
+                                ReplyAddContactsStatus.agree,
+                                ReplyAddContactsStatus.none
+                              ].contains(
+                                  addContactsApply.replyAddContactsStatus))
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    textStyle: const TextStyle(fontSize: 15),
+                                  ),
+                                  onPressed: addContactsApply
+                                              .replyAddContactsStatus ==
+                                          ReplyAddContactsStatus.agree
+                                      ? null
+                                      : () {
+                                          context
+                                              .read<AddContactsApplysCubit>()
+                                              .agree(
+                                                  contactsId:
+                                                      addContactsApply.userId,
+                                                  remarkName: addContactsApply
+                                                      .userName);
+                                        },
+                                  child: const Text('agree'),
+                                ),
+                              if ([
+                                ReplyAddContactsStatus.reject,
+                                ReplyAddContactsStatus.none
+                              ].contains(
+                                  addContactsApply.replyAddContactsStatus))
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    textStyle: const TextStyle(fontSize: 15),
+                                  ),
+                                  onPressed: addContactsApply
+                                              .replyAddContactsStatus ==
+                                          ReplyAddContactsStatus.reject
+                                      ? null
+                                      : () {
+                                          context
+                                              .read<AddContactsApplysCubit>()
+                                              .reject(
+                                                  contactsId:
+                                                      addContactsApply.userId);
+                                        },
+                                  child: const Text('reject'),
+                                ),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                Text(addContactsApply.userId,
-                                    style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500)),
-                                const SizedBox(height: 10),
-                                Text('name： ${addContactsApply.userName}')
-                              ])),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              textStyle: const TextStyle(fontSize: 15),
+                          if (index != (state.addContactsApplys.length - 1))
+                            const Divider(
+                              height: 20,
+                              thickness: 1,
+                              indent: 20,
+                              endIndent: 20,
                             ),
-                            onPressed: () async {},
-                            child: const Text('agree'),
-                          ),
-                          TextButton(
-                            style: TextButton.styleFrom(
-                              textStyle: const TextStyle(fontSize: 15),
-                            ),
-                            onPressed: () async {},
-                            child: const Text('reject'),
-                          ),
-                        ],
+                        ]),
                       ),
-                      if (index != (state.addContactsApplys.length - 1))
-                        const Divider(
-                          height: 20,
-                          thickness: 1,
-                          indent: 20,
-                          endIndent: 20,
-                        ),
-                    ]),
-                  ),
-                );
-              });
-        }));
+                    );
+                  });
+            })));
   }
 }

@@ -19,22 +19,24 @@ void main() {
 
   test('basic list equatable', () {
     final nowTime = DateTime.now();
-    final state1 = AddContactsApplysState(addContactsApplys: [
-      AddContactsApply(
+    final state1 = AddContactsApplysState(addContactsApplys: {
+      '1': AddContactsApply(
           userId: '1',
           userName: '',
           userAvatarUrl: '',
           message: '3',
-          updateTime: nowTime),
-    ]);
-    final state2 = AddContactsApplysState(addContactsApplys: [
-      AddContactsApply(
+          updateTime: nowTime,
+          replyAddContactsStatus: ReplyAddContactsStatus.none),
+    });
+    final state2 = AddContactsApplysState(addContactsApplys: {
+      '2': AddContactsApply(
           userId: '2',
           userName: '',
           userAvatarUrl: '',
           message: '3',
-          updateTime: nowTime)
-    ]);
+          updateTime: nowTime,
+          replyAddContactsStatus: ReplyAddContactsStatus.none)
+    });
     final isEuqatable = state1 == state2;
     if (kDebugMode) {
       log('is equatable($isEuqatable)');

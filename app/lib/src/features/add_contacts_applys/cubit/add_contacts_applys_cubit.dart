@@ -15,8 +15,40 @@ class AddContactsApplysCubit extends Cubit<AddContactsApplysState> {
 
   fetchAddContactsApplys() async {
     final connection = await contactsRepository.addContactsApplys(first: 1000);
-    final addContactsApplysState = await
-        fromConnection(connection: connection, userRepository: userRepository);
+    final addContactsApplysState = await fromConnection(
+        connection: connection, userRepository: userRepository);
     emit(addContactsApplysState);
+  }
+
+  agree({required String contactsId, required String remarkName}) async {
+    final contactsError = await contactsRepository.replyAddContacts(
+        contactsId: contactsId, isAgree: true, remarkName: remarkName);
+    if (contactsError == ContactsError.none) {
+      final addContactsApplys = Map.of(state.addContactsApplys);
+      final addContactsApply = addContactsApplys[contactsId]
+          ?.copyWith(replyAddContactsStatus: ReplyAddContactsStatus.agree);
+      if (addContactsApply != null) {
+        addContactsApplys[contactsId] = addContactsApply;
+      }
+      emit(state.copyWith(addContactsApplys: addContactsApplys));
+    } else {
+      emit(state.copyWith(error: contactsError));
+    }
+  }
+
+  reject({required String contactsId}) async {
+    final contactsError = await contactsRepository.replyAddContacts(
+        contactsId: contactsId, isAgree: false, remarkName: '');
+    if (contactsError == ContactsError.none) {
+      final addContactsApplys = Map.of(state.addContactsApplys);
+      final addContactsApply = addContactsApplys[contactsId]
+          ?.copyWith(replyAddContactsStatus: ReplyAddContactsStatus.reject);
+      if (addContactsApply != null) {
+        addContactsApplys[contactsId] = addContactsApply;
+      }
+      emit(state.copyWith(addContactsApplys: addContactsApplys));
+    } else {
+      emit(state.copyWith(error: contactsError));
+    }
   }
 }
