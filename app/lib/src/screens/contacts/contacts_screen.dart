@@ -1,5 +1,6 @@
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 import 'package:app/src/features/auth/auth.dart';
+import 'package:app/src/features/contacts/contacts.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
@@ -7,6 +8,8 @@ import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ContactsScreen extends StatelessWidget {
   const ContactsScreen({super.key});
@@ -21,6 +24,11 @@ class ContactsScreen extends StatelessWidget {
               userRepository: context.read<RepositorysCubit>().userRepository,
               authBloc: context.read<AuthBloc>())
             ..fetchAddContactsApplys()),
+      BlocProvider(
+          create: (_) => ContactsCubit(
+              contactsRepository:
+                  context.read<RepositorysCubit>().contactsRepository,
+              authBloc: context.read<AuthBloc>()))
     ], child: _ContactsScreen());
   }
 }
@@ -94,6 +102,128 @@ class _ContactsScreen extends StatelessWidget {
                   child: const Center(
                     child: Text('Contacts'),
                   )),
+              Expanded(
+                  child: ContactsListView(
+                contactsRepository:
+                    context.read<RepositorysCubit>().contactsRepository,
+                userRepository: context.read<RepositorysCubit>().userRepository,
+              )),
             ])));
+  }
+}
+
+class ContactsListView extends StatefulWidget {
+  final ContactsRepository contactsRepository;
+  final UserRepository userRepository;
+  const ContactsListView(
+      {super.key,
+      required this.contactsRepository,
+      required this.userRepository});
+
+  @override
+  ContactsListViewState createState() => ContactsListViewState();
+}
+
+class ContactsListViewState extends State<ContactsListView> {
+  static const _pageSize = 20;
+
+  final PagingController<String, Contacts> _pagingController =
+      PagingController(firstPageKey: '');
+
+  @override
+  void initState() {
+    _pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
+    super.initState();
+  }
+
+  Future<void> _fetchPage(String pageKey) async {
+    try {
+      final newItemsConnection = await widget.contactsRepository
+          .contacts(first: _pageSize, after: pageKey.isEmpty ? null : pageKey);
+      final newItems = await Stream.fromIterable(newItemsConnection.edges)
+          .asyncMap((e) async {
+        final users = await widget.userRepository.users(idOrName: e.node.id);
+        var avatarUrl = '';
+        if (users.users.isNotEmpty) {
+          final user = users.users[e.node.id] as User;
+          avatarUrl = user.avatarUrl;
+        }
+        return Contacts(
+            id: e.node.id, name: e.node.remarkName, avatarUrl: avatarUrl);
+      }).toList();
+      final hasNextPage = newItemsConnection.pageInfo.hasNextPage;
+      if (hasNextPage) {
+        final nextPageKey = newItemsConnection.pageInfo.endCursor;
+        _pagingController.appendPage(newItems, nextPageKey);
+      } else {
+        _pagingController.appendLastPage(newItems);
+      }
+    } catch (error) {
+      _pagingController.error = error;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      PagedListView<String, Contacts>.separated(
+        separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
+        pagingController: _pagingController,
+        builderDelegate: PagedChildBuilderDelegate<Contacts>(
+          itemBuilder: (context, item, index) => contactItem(context, item),
+        ),
+      );
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
+  }
+
+  Widget contactItem(BuildContext context, Contacts contacts) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding:
+            const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  UserAvatar(
+                    id: contacts.id,
+                    name: contacts.name,
+                    avatarUrl: contacts.avatarUrl,
+                    radius: 28,
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            contacts.name,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(
+                            height: 6,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
