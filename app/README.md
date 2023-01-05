@@ -205,3 +205,7 @@ frontend-app-0/app/web/index.html
   <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
 
 </head>
+
+## packages alternative
+
+https://pub.dev/packages/search_choices

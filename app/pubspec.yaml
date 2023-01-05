@@ -31,6 +31,7 @@ dependencies:
   bloc_concurrency: ^0.2.0
   flutter_bloc: ^8.1.1
   hydrated_bloc: ^9.0.0
+  infinite_scroll_pagination: ^3.2.0
   font_awesome_flutter: ^10.3.0
   convex_bottom_bar: ^3.1.0+1
   yaml: ^3.1.1
