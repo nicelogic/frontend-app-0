@@ -1,23 +1,18 @@
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
-import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NewContactsScreen extends StatelessWidget {
-  const NewContactsScreen({super.key});
+  final AddContactsApplysCubit addContactsApplysCubit;
+
+  const NewContactsScreen({required this.addContactsApplysCubit, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(providers: [
-      BlocProvider(
-          create: (_) => AddContactsApplysCubit(
-                contactsRepository:
-                    context.read<RepositorysCubit>().contactsRepository,
-                userRepository: context.read<RepositorysCubit>().userRepository,
-              )..fetchAddContactsApplys()),
-    ], child: _NewContactsScreen());
+    return BlocProvider.value(
+        value: addContactsApplysCubit, child: _NewContactsScreen());
   }
 }
 

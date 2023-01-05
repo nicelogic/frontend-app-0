@@ -42,6 +42,14 @@ Future<AddContactsApplysState> fromConnection(
           message: edge.node.message,
           updateTime: edge.node.updateTime,
           replyAddContactsStatus: ReplyAddContactsStatus.none);
+    } else {
+      addContactsApplys[edge.node.userId] = AddContactsApply(
+          userId: edge.node.userId,
+          userName: '',
+          userAvatarUrl: '',
+          message: edge.node.message,
+          updateTime: edge.node.updateTime,
+          replyAddContactsStatus: ReplyAddContactsStatus.none);
     }
   }
   return AddContactsApplysState(

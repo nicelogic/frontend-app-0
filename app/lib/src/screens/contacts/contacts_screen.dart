@@ -70,10 +70,15 @@ class _ContactsScreen extends StatelessWidget {
             body: Column(children: [
               Builder(builder: (context) {
                 final state = context.watch<AddContactsApplysCubit>().state;
-                final addContactsApplysCount = state.addContactsApplys.length;
+                final addContactsApplysCount = state.addContactsApplys.entries
+                    .where((element) =>
+                        element.value.replyAddContactsStatus ==
+                        ReplyAddContactsStatus.none)
+                    .length;
                 return InkWell(
                     onTap: () {
-                      context.go('$routePathContacts/$routePathNewContacts');
+                      context.go('$routePathContacts/$routePathNewContacts',
+                          extra: context.read<AddContactsApplysCubit>());
                     },
                     child: ItemCard(
                       label: 'New Friends',

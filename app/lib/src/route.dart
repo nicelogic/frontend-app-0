@@ -1,3 +1,4 @@
+import 'package:app/src/features/add_contacts_applys/cubit/add_contacts_applys_cubit.dart';
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/features/query_contacts/models/queried_contacts.dart';
 import 'package:app/src/screens/contacts/add_contacts_screen.dart';
@@ -105,7 +106,10 @@ router() => GoRouter(
                       path: routePathNewContacts,
                       parentNavigatorKey: _rootNavigatorKey,
                       builder: ((context, state) {
-                        return const NewContactsScreen();
+                        final addContactsApplysCubit =
+                            state.extra as AddContactsApplysCubit;
+                        return NewContactsScreen(
+                            addContactsApplysCubit: addContactsApplysCubit);
                       }),
                     )
                   ]),
