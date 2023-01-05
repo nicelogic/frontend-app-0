@@ -6,22 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
-import 'package:app/src/features/repositorys/repositorys.dart' as repositorys;
-import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:user_repository/user_repository.dart' as user_repository;
 
 const String _kLogSource = 'EditSignatureScreen';
 
 class EditSignatureScreen extends StatelessWidget {
-  const EditSignatureScreen({super.key});
+  final my_profile.MyProfileBloc myProfileBloc;
+  const EditSignatureScreen({required this.myProfileBloc, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (_) => my_profile.MyProfileBloc(
-            userRepository:
-                context.read<repositorys.RepositorysCubit>().userRepository,
-            authBloc: context.read<auth.AuthBloc>()),
+    return BlocProvider.value(
+        value: myProfileBloc,
         child: _EditSignatureScreen());
   }
 }
@@ -48,12 +44,10 @@ class _EditSignatureScreen extends StatelessWidget {
               listener: (context, state) {
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                      const SnackBar(content: Text('update signature success')));
-                //workaround: pop never rebuild previous screen, use pushReplacement to rigger rebuild
-                //if use pushReplacement directly, there will has 2 previous screen
-                context.pop();
-                context.pushReplacement('$routePathMe/$routePathMyProfile');
+                  ..showSnackBar(const SnackBar(
+                      content: Text('update signature success')));
+                context.go('$routePathMe/$routePathMyProfile',
+                    extra: context.read<my_profile.MyProfileBloc>());
               }),
         ],
         child: Scaffold(
@@ -64,8 +58,12 @@ class _EditSignatureScreen extends StatelessWidget {
                   icon: const Icon(Icons.save),
                   onPressed: () {
                     final updatedSignature = _controller.text;
-                    log(name: _kLogSource, 'update signature: $updatedSignature');
-                    context.read<my_profile.MyProfileBloc>().add(my_profile.UpdateSignature(updatedSignature));
+                    log(
+                        name: _kLogSource,
+                        'update signature: $updatedSignature');
+                    context
+                        .read<my_profile.MyProfileBloc>()
+                        .add(my_profile.UpdateSignature(updatedSignature));
                   },
                 )
               ],

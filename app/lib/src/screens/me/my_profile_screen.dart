@@ -18,16 +18,13 @@ import 'package:http/http.dart' as http;
 const _kLogSource = 'my_profile_screen';
 
 class MyProfileScreen extends StatelessWidget {
-  const MyProfileScreen({super.key});
+  final me.MeBloc meBloc;
+  const MyProfileScreen({required this.meBloc, super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(providers: [
-      BlocProvider(
-          create: (_) => me.MeBloc(
-              userRepository:
-                  context.read<repositorys.RepositorysCubit>().userRepository,
-              authBloc: context.read<auth.AuthBloc>())),
+      BlocProvider.value(value: meBloc),
       BlocProvider(
           create: (_) => my_profile.MyProfileBloc(
               userRepository:
@@ -41,7 +38,6 @@ class MyProfileScreen extends StatelessWidget {
 class _MyProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    context.read<me.MeBloc>().add(me.FetchMe());
     return Scaffold(
         appBar: AppBar(
           title: const Text('My Profile'),
@@ -101,7 +97,8 @@ class _MyProfileScreen extends StatelessWidget {
                         : meState.me.name),
                     onTap: () {
                       context.go(
-                          '$routePathMe/$routePathMyProfile/$routePathEditName');
+                          '$routePathMe/$routePathMyProfile/$routePathEditName',
+                          extra: context.read<me.MeBloc>());
                     }),
                 _ProfileForm(
                   profileName: 'id',
@@ -118,7 +115,8 @@ class _MyProfileScreen extends StatelessWidget {
                   profileWidget: Text(myProfileState.myProfile.signature),
                   onTap: () {
                     context.go(
-                        '$routePathMe/$routePathMyProfile/$routePathEditSignature');
+                        '$routePathMe/$routePathMyProfile/$routePathEditSignature',
+                        extra: context.read<my_profile.MyProfileBloc>());
                   },
                 )
               ]);

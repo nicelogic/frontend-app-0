@@ -6,22 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app/src/features/me/me.dart' as me;
-import 'package:app/src/features/repositorys/repositorys.dart' as repositorys;
-import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:user_repository/user_repository.dart' as user_repository;
 
 const String _kLogSource = 'EditNameScreen';
 
 class EditNameScreen extends StatelessWidget {
-  const EditNameScreen({super.key});
+  final me.MeBloc meBloc;
+  const EditNameScreen({required this.meBloc, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (_) => me.MeBloc(
-            userRepository:
-                context.read<repositorys.RepositorysCubit>().userRepository,
-            authBloc: context.read<auth.AuthBloc>()),
+    return BlocProvider.value(value: meBloc,
         child: _EditNameScreen());
   }
 }
@@ -49,10 +44,8 @@ class _EditNameScreen extends StatelessWidget {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                       const SnackBar(content: Text('update name success')));
-                //workaround: pop never rebuild previous screen, use pushReplacement to rigger rebuild
-                //if use pushReplacement directly, there will has 2 previous screen
-                context.pop();
-                context.pushReplacement('$routePathMe/$routePathMyProfile');
+                context.go('$routePathMe/$routePathMyProfile',
+                    extra: context.read<me.MeBloc>());
               }),
         ],
         child: Scaffold(

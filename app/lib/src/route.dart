@@ -1,5 +1,6 @@
 import 'package:app/src/features/add_contacts_applys/cubit/add_contacts_applys_cubit.dart';
 import 'package:app/src/features/auth/auth.dart' as auth;
+import 'package:app/src/features/my_profile/my_profile.dart';
 import 'package:app/src/features/query_contacts/models/queried_contacts.dart';
 import 'package:app/src/screens/contacts/add_contacts_screen.dart';
 import 'package:app/src/screens/contacts/contacts_profile_screen.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'features/auth/auth.dart';
+import 'features/me/me.dart';
 
 const routePathMe = '/me';
 const routePathMyProfile = 'my_profile';
@@ -123,19 +125,25 @@ router() => GoRouter(
                         path: routePathMyProfile,
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: ((context, state) {
-                          return const MyProfileScreen();
+                          // if (state.extra is MeBloc) {
+                            return MyProfileScreen(
+                              meBloc: state.extra as MeBloc,
+                            );
+                          // } 
                         }),
                         routes: <RouteBase>[
                           GoRoute(
                               path: routePathEditName,
                               parentNavigatorKey: _rootNavigatorKey,
-                              builder: ((context, state) =>
-                                  const EditNameScreen())),
+                              builder: ((context, state) => EditNameScreen(
+                                    meBloc: state.extra as MeBloc,
+                                  ))),
                           GoRoute(
                               path: routePathEditSignature,
                               parentNavigatorKey: _rootNavigatorKey,
-                              builder: ((context, state) =>
-                                  const EditSignatureScreen()))
+                              builder: ((context, state) => EditSignatureScreen(
+                                    myProfileBloc: state.extra as MyProfileBloc,
+                                  )))
                         ]),
                     GoRoute(
                         path: routePathSettings,
