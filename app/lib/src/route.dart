@@ -135,9 +135,11 @@ router() => GoRouter(
                           GoRoute(
                               path: routePathEditName,
                               parentNavigatorKey: _rootNavigatorKey,
-                              builder: ((context, state) => EditNameScreen(
-                                    meBloc: state.extra as MeBloc,
-                                  ))),
+                              builder: ((context, state) {
+                                return EditNameScreen(
+                                  meBloc: state.extra as MeBloc,
+                                );
+                              })),
                           GoRoute(
                               path: routePathEditSignature,
                               parentNavigatorKey: _rootNavigatorKey,
