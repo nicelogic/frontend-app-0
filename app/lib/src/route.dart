@@ -126,10 +126,10 @@ router() => GoRouter(
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: ((context, state) {
                           // if (state.extra is MeBloc) {
-                            return MyProfileScreen(
-                              meBloc: state.extra as MeBloc,
-                            );
-                          // } 
+                          return MyProfileScreen(
+                            meBloc: state.extra as MeBloc,
+                          );
+                          // }
                         }),
                         routes: <RouteBase>[
                           GoRoute(
@@ -141,9 +141,11 @@ router() => GoRouter(
                           GoRoute(
                               path: routePathEditSignature,
                               parentNavigatorKey: _rootNavigatorKey,
-                              builder: ((context, state) => EditSignatureScreen(
-                                    myProfileBloc: state.extra as MyProfileBloc,
-                                  )))
+                              builder: ((context, state) {
+                                return EditSignatureScreen(
+                                  myProfileBloc: state.extra as MyProfileBloc,
+                                );
+                              }))
                         ]),
                     GoRoute(
                         path: routePathSettings,
