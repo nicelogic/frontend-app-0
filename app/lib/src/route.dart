@@ -18,6 +18,7 @@ import 'package:app/src/screens/scaffold_with_bottom_navigation_bar_screen.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tuple/tuple.dart';
 
 import 'features/auth/auth.dart';
 import 'features/me/me.dart';
@@ -125,11 +126,17 @@ router() => GoRouter(
                         path: routePathMyProfile,
                         parentNavigatorKey: _rootNavigatorKey,
                         builder: ((context, state) {
-                          // if (state.extra is MeBloc) {
-                          return MyProfileScreen(
-                            meBloc: state.extra as MeBloc,
-                          );
-                          // }
+                          if (state.extra is Tuple2<MeBloc, MyProfileBloc>) {
+                            final tupleBlocs =
+                                state.extra as Tuple2<MeBloc, MyProfileBloc>;
+                            return MyProfileScreen(
+                              meBloc: tupleBlocs.item1,
+                            );
+                          } else {
+                            return MyProfileScreen(
+                              meBloc: state.extra as MeBloc,
+                            );
+                          }
                         }),
                         routes: <RouteBase>[
                           GoRoute(
@@ -144,8 +151,11 @@ router() => GoRouter(
                               path: routePathEditSignature,
                               parentNavigatorKey: _rootNavigatorKey,
                               builder: ((context, state) {
+                                final tupleBlocs = state.extra
+                                    as Tuple2<MeBloc, MyProfileBloc>;
                                 return EditSignatureScreen(
-                                  myProfileBloc: state.extra as MyProfileBloc,
+                                  myProfileBloc: tupleBlocs.item2,
+                                  meBloc: tupleBlocs.item1,
                                 );
                               }))
                         ]),

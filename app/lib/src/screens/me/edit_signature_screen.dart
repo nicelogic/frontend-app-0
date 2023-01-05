@@ -1,24 +1,29 @@
 import 'dart:developer';
 
+import 'package:app/src/features/me/me.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
+import 'package:tuple/tuple.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 
 const String _kLogSource = 'EditSignatureScreen';
 
 class EditSignatureScreen extends StatelessWidget {
   final my_profile.MyProfileBloc myProfileBloc;
-  const EditSignatureScreen({required this.myProfileBloc, super.key});
+  final MeBloc meBloc;
+  const EditSignatureScreen(
+      {required this.myProfileBloc, required this.meBloc, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-        value: myProfileBloc,
-        child: _EditSignatureScreen());
+    return MultiBlocProvider(providers: [
+      BlocProvider.value(value: myProfileBloc),
+      BlocProvider.value(value: meBloc),
+    ], child: _EditSignatureScreen());
   }
 }
 
@@ -47,7 +52,9 @@ class _EditSignatureScreen extends StatelessWidget {
                   ..showSnackBar(const SnackBar(
                       content: Text('update signature success')));
                 context.go('$routePathMe/$routePathMyProfile',
-                    extra: context.read<my_profile.MyProfileBloc>());
+                    extra: Tuple2<MeBloc, my_profile.MyProfileBloc>(
+                        context.read<MeBloc>(),
+                        context.read<my_profile.MyProfileBloc>()));
               }),
         ],
         child: Scaffold(

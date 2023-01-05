@@ -12,6 +12,7 @@ import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:app/src/features/me/me.dart' as me;
 import 'package:app/src/features/my_profile/my_profile.dart' as my_profile;
 import 'package:app/src/features/repositorys/repositorys.dart' as repositorys;
+import 'package:tuple/tuple.dart';
 import 'package:user_repository/user_repository.dart' as user_repository;
 import 'package:http/http.dart' as http;
 
@@ -116,7 +117,12 @@ class _MyProfileScreen extends StatelessWidget {
                   onTap: () {
                     context.go(
                         '$routePathMe/$routePathMyProfile/$routePathEditSignature',
-                        extra: context.read<my_profile.MyProfileBloc>());
+                        extra: Tuple2<me.MeBloc, my_profile.MyProfileBloc>(
+                            //work around: route to my edit signature
+                            //will rebuild: my_profile(meBloc)
+                            //which will fix by future goroute
+                            context.read<me.MeBloc>(),
+                            context.read<my_profile.MyProfileBloc>()));
                   },
                 )
               ]);
