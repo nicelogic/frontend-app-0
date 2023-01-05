@@ -1,4 +1,5 @@
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
+import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/route.dart';
 import 'package:app/src/widgets/widgets.dart';
@@ -17,7 +18,8 @@ class ContactsScreen extends StatelessWidget {
           create: (_) => AddContactsApplysCubit(
               contactsRepository:
                   context.read<RepositorysCubit>().contactsRepository,
-              userRepository: context.read<RepositorysCubit>().userRepository)
+              userRepository: context.read<RepositorysCubit>().userRepository,
+              authBloc: context.read<AuthBloc>())
             ..fetchAddContactsApplys()),
     ], child: _ContactsScreen());
   }

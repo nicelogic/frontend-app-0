@@ -1,11 +1,15 @@
 import 'package:equatable/equatable.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'add_contacts_applys.g.dart';
 
 enum ReplyAddContactsStatus {
   none,
   agree,
-  reject,
+  ignore,
 }
 
+@JsonSerializable(explicitToJson: true)
 class AddContactsApply extends Equatable {
   final String userId;
   final String userName;
@@ -39,8 +43,7 @@ class AddContactsApply extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [
+  List<Object?> get props => [
         userId,
         userName,
         userAvatarUrl,
@@ -48,4 +51,8 @@ class AddContactsApply extends Equatable {
         updateTime,
         replyAddContactsStatus
       ];
+
+  factory AddContactsApply.fromJson(Map<String, dynamic> json) =>
+      _$AddContactsApplyFromJson(json);
+  Map<String, dynamic> toJson() => _$AddContactsApplyToJson(this);
 }

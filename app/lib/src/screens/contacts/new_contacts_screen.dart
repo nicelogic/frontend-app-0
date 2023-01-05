@@ -93,7 +93,7 @@ class _NewContactsScreen extends StatelessWidget {
                                   child: const Text('agree'),
                                 ),
                               if ([
-                                ReplyAddContactsStatus.reject,
+                                ReplyAddContactsStatus.ignore,
                                 ReplyAddContactsStatus.none
                               ].contains(
                                   addContactsApply.replyAddContactsStatus))
@@ -103,7 +103,7 @@ class _NewContactsScreen extends StatelessWidget {
                                   ),
                                   onPressed: addContactsApply
                                               .replyAddContactsStatus ==
-                                          ReplyAddContactsStatus.reject
+                                          ReplyAddContactsStatus.ignore
                                       ? null
                                       : () {
                                           context
@@ -112,7 +112,7 @@ class _NewContactsScreen extends StatelessWidget {
                                                   contactsId:
                                                       addContactsApply.userId);
                                         },
-                                  child: const Text('reject'),
+                                  child: const Text('ignore'),
                                 ),
                             ],
                           ),

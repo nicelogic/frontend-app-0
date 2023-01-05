@@ -19,7 +19,7 @@ void main() {
 
   test('basic list equatable', () {
     final nowTime = DateTime.now();
-    final state1 = AddContactsApplysState(addContactsApplys: {
+    final state1 = AddContactsApplysState(userId: '1', addContactsApplys: {
       '1': AddContactsApply(
           userId: '1',
           userName: '',
@@ -28,7 +28,7 @@ void main() {
           updateTime: nowTime,
           replyAddContactsStatus: ReplyAddContactsStatus.none),
     });
-    final state2 = AddContactsApplysState(addContactsApplys: {
+    final state2 = AddContactsApplysState(userId: '1', addContactsApplys: {
       '2': AddContactsApply(
           userId: '2',
           userName: '',

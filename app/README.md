@@ -2,6 +2,10 @@
 
 [toc]
 
+## cmd
+
+flutter pub run build_runner build
+
 ## principle
 
 * flutter favorite package可以用, 其他能不用尽量不用
@@ -117,9 +121,6 @@ oauth0.com:
 * poc: graphql server & client support apq to save bandwidth
 * flutter native splash
 
-## cmd
-
-flutter pub run build_runner build
 
 ## general state management mechanism
 
