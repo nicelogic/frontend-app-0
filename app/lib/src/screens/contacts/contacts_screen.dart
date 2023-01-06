@@ -3,7 +3,7 @@ import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/contacts/contacts.dart';
 import 'package:app/src/features/repositorys/repositorys.dart';
 import 'package:app/src/route.dart';
-import 'package:app/src/widgets/widgets.dart';
+import 'package:app/src/widgets/widgets.dart' as widgets;
 import 'package:contacts_repository/contacts_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -90,7 +90,7 @@ class _ContactsScreen extends StatelessWidget {
                       context.go('$routePathContacts/$routePathNewContacts',
                           extra: context.read<AddContactsApplysCubit>());
                     },
-                    child: ItemCard(
+                    child: widgets.ItemCard(
                       label: 'New Friends',
                       iconData: Icons.person_add,
                       badgeValue: addContactsApplysCount.toString(),
@@ -142,6 +142,9 @@ class ContactsListViewState extends State<ContactsListView> {
     try {
       final newItemsConnection = await widget.contactsRepository
           .contacts(first: _pageSize, after: pageKey.isEmpty ? null : pageKey);
+      if (newItemsConnection.error != ContactsError.none) {
+        throw newItemsConnection.error;
+      }
       final newItems = await Stream.fromIterable(newItemsConnection.edges)
           .asyncMap((e) async {
         final users = await widget.userRepository.users(idOrName: e.node.id);
@@ -166,31 +169,43 @@ class ContactsListViewState extends State<ContactsListView> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      PagedListView<String, Contacts>.separated(
+  Widget build(BuildContext context) => RefreshIndicator(
+      onRefresh: () => Future.sync(
+            () => _pagingController.refresh(),
+          ),
+      child: PagedListView<String, Contacts>.separated(
         // separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
         separatorBuilder: (context, index) => const Divider(),
-
         padding: const EdgeInsets.all(16),
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<Contacts>(
-          itemBuilder: (context, item, index) => contactItem(context, item),
+          // animateTransitions: true,
+          itemBuilder: (context, item, index) => ContactsItem(contacts: item),
           noItemsFoundIndicatorBuilder: ((context) =>
-              const Center(child: Text(''))),
-          // firstPageErrorIndicatorBuilder: (context) => FirstPageErrorIndicator(
-          //   error: _pagingController.error,
-          //   onTryAgain: () => _pagingController.refresh(),
-          // ),
+              const widgets.FirstPageExceptionIndicator(
+                  title: "don't have any friends yet")),
+          firstPageErrorIndicatorBuilder: (context) =>
+              widgets.FirstPageExceptionIndicator(
+            title: 'Load contacts failed',
+            message: _pagingController.error.toString(),
+            onTryAgain: () => _pagingController.refresh(),
+          ),
         ),
-      );
+      ));
 
   @override
   void dispose() {
     _pagingController.dispose();
     super.dispose();
   }
+}
 
-  Widget contactItem(BuildContext context, Contacts contacts) {
+class ContactsItem extends StatelessWidget {
+  final Contacts contacts;
+  const ContactsItem({super.key, required this.contacts});
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -201,7 +216,7 @@ class ContactsListViewState extends State<ContactsListView> {
             Expanded(
               child: Row(
                 children: <Widget>[
-                  UserAvatar(
+                  widgets.UserAvatar(
                     id: contacts.id,
                     name: contacts.name,
                     avatarUrl: contacts.avatarUrl,

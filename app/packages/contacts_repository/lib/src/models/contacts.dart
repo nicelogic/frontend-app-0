@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'error.dart';
 
 class ContactsPageInfo {
-  String endCursor;
+  String? endCursor;
   bool hasNextPage;
 
   ContactsPageInfo(this.endCursor, this.hasNextPage);
@@ -50,16 +50,18 @@ ContactsConnection toContactsConnection(
   try {
     totalCount = contactsConnection['totalCount'] as int;
     final pageInfoJson = contactsConnection['pageInfo'];
-    pageInfo.endCursor = pageInfoJson['endCursor'] as String;
+    pageInfo.endCursor = pageInfoJson['endCursor'] as String?;
     pageInfo.hasNextPage = pageInfoJson['hasNextPage'] as bool;
 
     final edgesJson = contactsConnection['edges'];
-    for (var edgeJson in edgesJson) {
-      final cursor = edgeJson['cursor'] as String?;
-      final nodeJson = edgeJson['node'];
-      final id = nodeJson['id'] as String;
-      final remarkName = nodeJson['remarkName'] as String;
-      edges.add(ContactsEdge(ContactsNode(id, remarkName), cursor));
+    if (edgesJson != null) {
+      for (var edgeJson in edgesJson) {
+        final cursor = edgeJson['cursor'] as String?;
+        final nodeJson = edgeJson['node'];
+        final id = nodeJson['id'] as String;
+        final remarkName = nodeJson['remarkName'] as String;
+        edges.add(ContactsEdge(ContactsNode(id, remarkName), cursor));
+      }
     }
   } catch (e) {
     log(name: kLogSource, e.toString());

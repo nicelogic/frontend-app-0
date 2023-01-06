@@ -3,7 +3,7 @@ import 'package:contacts_repository/contacts_repository.dart'
     as contacts_repository;
 
 class PageInfo extends Equatable {
-  final String endCursor;
+  final String? endCursor;
   final bool hasNextPage;
 
   const PageInfo(this.endCursor, this.hasNextPage);
