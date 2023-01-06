@@ -125,10 +125,10 @@ class ContactsListView extends StatefulWidget {
 }
 
 class ContactsListViewState extends State<ContactsListView> {
-  static const _pageSize = 20;
+  static const _pageSize = 10;
 
   final PagingController<String, Contacts> _pagingController =
-      PagingController(firstPageKey: '');
+      PagingController(firstPageKey: '', invisibleItemsThreshold: _pageSize);
 
   @override
   void initState() {
