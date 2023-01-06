@@ -168,12 +168,19 @@ class ContactsListViewState extends State<ContactsListView> {
   @override
   Widget build(BuildContext context) =>
       PagedListView<String, Contacts>.separated(
-        separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
+        // separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
+        separatorBuilder: (context, index) => const Divider(),
+
+        padding: const EdgeInsets.all(16),
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<Contacts>(
           itemBuilder: (context, item, index) => contactItem(context, item),
           noItemsFoundIndicatorBuilder: ((context) =>
               const Center(child: Text(''))),
+          // firstPageErrorIndicatorBuilder: (context) => FirstPageErrorIndicator(
+          //   error: _pagingController.error,
+          //   onTryAgain: () => _pagingController.refresh(),
+          // ),
         ),
       );
 

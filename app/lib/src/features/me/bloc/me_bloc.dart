@@ -33,7 +33,9 @@ class MeBloc extends HydratedBloc<MeEvent, MeState> {
 
   _onFetchMe(event, emit) async {
     final me = await userRepository.me();
-    emit(MeState(me: Me.fromUser(me)));
+    me.error != user_repository.UserError.none
+        ? emit(state.copyWith(me: state.me.copyWith(error: me.error)))
+        : emit(MeState(me: Me.fromUser(me)));
   }
 
   _onUpdateAvatarUrl(UpdateAvatarUrl event, emit) async {

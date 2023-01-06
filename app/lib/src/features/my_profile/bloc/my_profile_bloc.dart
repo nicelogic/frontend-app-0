@@ -25,7 +25,10 @@ class MyProfileBloc extends HydratedBloc<MyProfileEvent, MyProfileState> {
 
   _onFetchMyProfile(event, emit) async {
     final me = await userRepository.me();
-    emit(MyProfileState(myProfile: MyProfile.fromUser(me)));
+    me.error != user_repository.UserError.none
+        ? emit(state.copyWith(
+            myProfile: state.myProfile.copyWith(error: me.error)))
+        : emit(MyProfileState(myProfile: MyProfile.fromUser(me)));
   }
 
   _onUpdateSignature(UpdateSignature event, emit) async {
