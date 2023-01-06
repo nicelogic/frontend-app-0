@@ -172,6 +172,8 @@ class ContactsListViewState extends State<ContactsListView> {
         pagingController: _pagingController,
         builderDelegate: PagedChildBuilderDelegate<Contacts>(
           itemBuilder: (context, item, index) => contactItem(context, item),
+          noItemsFoundIndicatorBuilder: ((context) =>
+              const Center(child: Text(''))),
         ),
       );
 
