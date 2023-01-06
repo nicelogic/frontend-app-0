@@ -74,4 +74,12 @@ class Config {
   double get profilePictureMaxWidth {
     return _uiConfigMap['profile_picture_max_width'] as double;
   }
+
+  int get contactsPageSize {
+    return _uiConfigMap['contactsPageSize'] as int;
+  }
+
+  int get contactsInvisibleItemsThreshold {
+    return _uiConfigMap['contactsInvisibleItemsThreshold'] as int;
+  }
 }

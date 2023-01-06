@@ -1,3 +1,4 @@
+import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 import 'package:app/src/features/auth/auth.dart';
 import 'package:app/src/features/contacts/contacts.dart';
@@ -125,10 +126,12 @@ class ContactsListView extends StatefulWidget {
 }
 
 class ContactsListViewState extends State<ContactsListView> {
-  static const _pageSize = 20;
+  static final _pageSize = Config.instance().contactsPageSize;
 
-  final PagingController<String, Contacts> _pagingController =
-      PagingController(firstPageKey: '', invisibleItemsThreshold: 10);
+  final PagingController<String, Contacts> _pagingController = PagingController(
+      firstPageKey: '',
+      invisibleItemsThreshold:
+          Config.instance().contactsInvisibleItemsThreshold);
 
   @override
   void initState() {
