@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:app/src/configs/config.dart';
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 import 'package:app/src/features/auth/auth.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:user_repository/user_repository.dart';
+
+const _kLogSource = 'ContactsScreen';
 
 class ContactsScreen extends StatelessWidget {
   const ContactsScreen({super.key});
@@ -145,6 +149,9 @@ class ContactsListViewState extends State<ContactsListView> {
     try {
       final newItemsConnection = await widget.contactsRepository
           .contacts(first: _pageSize, after: pageKey.isEmpty ? null : pageKey);
+      log(
+          name: _kLogSource,
+          'fetchPage, key($pageKey), count(${newItemsConnection.totalCount})');
       if (newItemsConnection.error != ContactsError.none) {
         throw newItemsConnection.error;
       }
