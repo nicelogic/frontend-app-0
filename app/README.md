@@ -2,6 +2,16 @@
 
 [toc]
 
+## todo
+
+* server need support federation to support get contacts avatar url without too much effort
+* restorationId 改造
+* settings controller -> bloc优化
+* l10n，当前都写死为英文字符串，后续所有功能都好了之后，全面进行改造
+* local config & net config 方案全面设计，当前只使用local config
+* flutter native splash
+* poc: graphql server & client support apq to save bandwidth(low priority)
+
 ## cmd
 
 flutter pub run build_runner build
@@ -112,14 +122,7 @@ oauth0.com:
 * 后续支持
 * 你没办法做到始终用云。。下载是可能失败的
 
-## todo
 
-* restorationId 改造
-* settings controller -> bloc优化
-* l10n，当前都写死为英文字符串，后续所有功能都好了之后，全面进行改造
-* local config & net config 方案全面设计，当前只使用local config
-* poc: graphql server & client support apq to save bandwidth
-* flutter native splash
 
 
 ## general state management mechanism
@@ -155,7 +158,24 @@ but can do state clear in fromJson. after load State,check state whether belong 
   而长期不用的情况才需要退到登录状态。启动的时候检测足矣。不必每个api都去判断一下.启动若能刷新到token,后面4小时到之前，3小时就开始刷了。刷不到token你退出去也
   登录不了了，用不了。还不如就是用户界面。可以看离线的消息。也就是用户TOken invalid/过期只影响他使用app新服务器功能。离线消息还是可以浏览。
   长时间不用的情况，登录的时候检测，退出到登录界面
-        
+
+### pagination
+
+page state:  map<pageKey: List<PageSize items>> //first pageKey always null
+            "": list<test1, test2> then fetchFrom server:
+                     list<test1, test3>, 
+                     check items is updated, then replace: "": list<test1, test3>
+                     check nextPageKey is changed, then need fetch
+                     new "pageKey": list<test4, 5> to replace old: dGVzdDEyfFU1bEFoV1pCRTdLeU15: list<test3, test4>
+                     recursive to load new
+                     if is not changed, not to do anything
+            dGVzdDEyfFU1bEFoV1pCRTdLeU15: list<test3, test4>
+            dGVzdDIyfHVNUU5vMG1mWHl0eU1O: list<test5, test6>
+
+test case:
+  mid insert:
+    1, 2, 4, 5
+    1, 2, 3, 4, 5
 
 ## s3 and logic
 
