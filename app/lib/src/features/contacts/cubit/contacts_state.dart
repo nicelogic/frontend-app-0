@@ -5,7 +5,7 @@ class ContactsState extends Equatable {
   final String userId;
   final List<List<Contacts>> cachedContacts;
   @JsonKey(ignore: true)
-  final List<Contacts>? contacts;
+  final List<List<Contacts>>? contacts;
   @JsonKey(ignore: true)
   final String? nextPageKey;
   final int? nextPageIndex;
@@ -25,7 +25,7 @@ class ContactsState extends Equatable {
 
   ContactsState copyWith({
     final List<List<Contacts>>? cachedContacts,
-    final List<Contacts>? contacts,
+    final List<List<Contacts>>? contacts,
     final String? nextPageKey,
     final int? nextPageIndex,
     final ContactsError? error,

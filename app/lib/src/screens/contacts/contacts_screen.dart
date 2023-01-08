@@ -147,8 +147,11 @@ class ContactsListViewState extends State<ContactsListView> {
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageKey) {
-      widget.contactsCubit.fetchPage(first: _pageSize, pageIndex: pageKey);
+    _pagingController.addPageRequestListener((pageIndex) {
+      log(
+          name: _kLogSource,
+          'begin fetch page, page size($_pageSize), pageindex($pageIndex)');
+      widget.contactsCubit.fetchPage(first: _pageSize, pageIndex: pageIndex);
     });
     super.initState();
   }
@@ -157,13 +160,15 @@ class ContactsListViewState extends State<ContactsListView> {
   Widget build(BuildContext context) {
     return BlocListener<ContactsCubit, ContactsState>(
         listener: (context, state) {
-          log(
-              name: _kLogSource,
-              'contacts listen state changed: nextPageKey(${state.nextPageKey}), nextPageIndex(${state.nextPageIndex}), contacts count(${state.contacts?.length ?? 0})');
+          final contacts =
+              state.contacts?.expand((element) => element).toList();
           _pagingController.value = PagingState(
               nextPageKey: state.nextPageIndex,
               error: state.error == ContactsError.none ? null : state.error,
-              itemList: state.contacts);
+              itemList: contacts);
+          log(
+              name: _kLogSource,
+              'contacts listen state changed: nextPageKey(${state.nextPageKey}), nextPageIndex(${state.nextPageIndex}), contacts count(${contacts?.length ?? 0})');
         },
         child: RefreshIndicator(
             onRefresh: () => Future.sync(
