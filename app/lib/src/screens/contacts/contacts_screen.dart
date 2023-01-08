@@ -33,6 +33,7 @@ class ContactsScreen extends StatelessWidget {
           create: (_) => ContactsCubit(
               contactsRepository:
                   context.read<RepositorysCubit>().contactsRepository,
+              userRepository: context.read<RepositorysCubit>().userRepository,
               authBloc: context.read<AuthBloc>()))
     ], child: _ContactsScreen());
   }
@@ -104,15 +105,20 @@ class _ContactsScreen extends StatelessWidget {
               Container(
                   color: Colors.grey[200],
                   padding: const EdgeInsets.fromLTRB(1, 10, 15, 10),
-                  child: const Center(
-                    child: Text('Contacts'),
-                  )),
+                  child: Builder(builder: (context) {
+                    final contactsState = context.watch<ContactsCubit>().state;
+                    return Center(
+                      child: Text(
+                          'Contacts(${contactsState.contacts?.length ?? 0})'),
+                    );
+                  })),
               Expanded(
                   child: ContactsListView(
-                contactsRepository:
-                    context.read<RepositorysCubit>().contactsRepository,
-                userRepository: context.read<RepositorysCubit>().userRepository,
-              )),
+                      contactsRepository:
+                          context.read<RepositorysCubit>().contactsRepository,
+                      userRepository:
+                          context.read<RepositorysCubit>().userRepository,
+                      contactsCubit: context.read<ContactsCubit>())),
             ])));
   }
 }
@@ -120,10 +126,12 @@ class _ContactsScreen extends StatelessWidget {
 class ContactsListView extends StatefulWidget {
   final ContactsRepository contactsRepository;
   final UserRepository userRepository;
+  final ContactsCubit contactsCubit;
   const ContactsListView(
       {super.key,
       required this.contactsRepository,
-      required this.userRepository});
+      required this.userRepository,
+      required this.contactsCubit});
 
   @override
   ContactsListViewState createState() => ContactsListViewState();
@@ -132,76 +140,59 @@ class ContactsListView extends StatefulWidget {
 class ContactsListViewState extends State<ContactsListView> {
   static final _pageSize = Config.instance().contactsPageSize;
 
-  final PagingController<String, Contacts> _pagingController = PagingController(
-      firstPageKey: '',
+  final PagingController<int, Contacts> _pagingController = PagingController(
+      firstPageKey: 0,
       invisibleItemsThreshold:
           Config.instance().contactsInvisibleItemsThreshold);
 
   @override
   void initState() {
     _pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
+      widget.contactsCubit.fetchPage(first: _pageSize, pageIndex: pageKey);
     });
     super.initState();
   }
 
-  Future<void> _fetchPage(String pageKey) async {
-    try {
-      final newItemsConnection = await widget.contactsRepository
-          .contacts(first: _pageSize, after: pageKey.isEmpty ? null : pageKey);
-      log(
-          name: _kLogSource,
-          'fetchPage, key($pageKey), count(${newItemsConnection.totalCount})');
-      if (newItemsConnection.error != ContactsError.none) {
-        throw newItemsConnection.error;
-      }
-      final newItems = await Stream.fromIterable(newItemsConnection.edges)
-          .asyncMap((e) async {
-        final users = await widget.userRepository.users(idOrName: e.node.id);
-        var avatarUrl = '';
-        if (users.users.isNotEmpty) {
-          final user = users.users[e.node.id] as User;
-          avatarUrl = user.avatarUrl;
-        }
-        return Contacts(
-            id: e.node.id, name: e.node.remarkName, avatarUrl: avatarUrl);
-      }).toList();
-      final hasNextPage = newItemsConnection.pageInfo.hasNextPage;
-      if (hasNextPage) {
-        final nextPageKey = newItemsConnection.pageInfo.endCursor;
-        _pagingController.appendPage(newItems, nextPageKey);
-      } else {
-        _pagingController.appendLastPage(newItems);
-      }
-    } catch (error) {
-      _pagingController.error = error;
-    }
-  }
-
   @override
-  Widget build(BuildContext context) => RefreshIndicator(
-      onRefresh: () => Future.sync(
-            () => _pagingController.refresh(),
-          ),
-      child: PagedListView<String, Contacts>.separated(
-        // separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
-        separatorBuilder: (context, index) => const Divider(),
-        padding: const EdgeInsets.all(16),
-        pagingController: _pagingController,
-        builderDelegate: PagedChildBuilderDelegate<Contacts>(
-          // animateTransitions: true,
-          itemBuilder: (context, item, index) => ContactsItem(contacts: item),
-          noItemsFoundIndicatorBuilder: ((context) =>
-              const widgets.FirstPageExceptionIndicator(
-                  title: "don't have any friends yet")),
-          firstPageErrorIndicatorBuilder: (context) =>
-              widgets.FirstPageExceptionIndicator(
-            title: 'Load contacts failed',
-            message: _pagingController.error.toString(),
-            onTryAgain: () => _pagingController.refresh(),
-          ),
-        ),
-      ));
+  Widget build(BuildContext context) {
+    return BlocListener<ContactsCubit, ContactsState>(
+        listener: (context, state) {
+          log(
+              name: _kLogSource,
+              'contacts listen state changed: nextPageKey(${state.nextPageKey}), nextPageIndex(${state.nextPageIndex}), contacts count(${state.contacts?.length ?? 0})');
+          _pagingController.value = PagingState(
+              nextPageKey: state.nextPageIndex,
+              error: state.error == ContactsError.none ? null : state.error,
+              itemList: state.contacts);
+        },
+        child: RefreshIndicator(
+            onRefresh: () => Future.sync(
+                  () {
+                    log(name: _kLogSource, 'trigger to refresh first page');
+                    _pagingController.refresh();
+                  },
+                ),
+            child: PagedListView<int, Contacts>.separated(
+              // separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
+              separatorBuilder: (context, index) => const Divider(),
+              padding: const EdgeInsets.all(16),
+              pagingController: _pagingController,
+              builderDelegate: PagedChildBuilderDelegate<Contacts>(
+                // animateTransitions: true,
+                itemBuilder: (context, item, index) =>
+                    ContactsItem(contacts: item),
+                noItemsFoundIndicatorBuilder: ((context) =>
+                    const widgets.FirstPageExceptionIndicator(
+                        title: "don't have any friends yet")),
+                firstPageErrorIndicatorBuilder: (context) =>
+                    widgets.FirstPageExceptionIndicator(
+                  title: 'Load contacts failed',
+                  message: _pagingController.error.toString(),
+                  onTryAgain: () => _pagingController.refresh(),
+                ),
+              ),
+            )));
+  }
 
   @override
   void dispose() {
