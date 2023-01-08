@@ -19,9 +19,3 @@ class Contacts extends Equatable {
       _$ContactsFromJson(json);
   Map<String, dynamic> toJson() => _$ContactsToJson(this);
 }
-
-enum NewContactsState {
-  notInContacts,
-  inConactsAndNotUpdated,
-  inContactsAndUpdated
-}

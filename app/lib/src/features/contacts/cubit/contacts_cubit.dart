@@ -42,16 +42,16 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
       final cachedNextPageIndex =
           cachedContactsHasNextPage ? pageIndex + 1 : null;
       final refreshTime = pageIndex == 0 ? DateTime.now() : state.refreshTime;
-      final cachedLastState = state.copyWith(
+      final cachedThisPageLastState = state.copyWith(
           contacts: cachedContacts.isEmpty ? null : cachedContacts,
           nextPageIndex: cachedNextPageIndex,
           refreshTime: refreshTime,
           error: ContactsError.none);
       log(
           name: _kLogSource,
-          'get from cached page, key($pageIndex), cached contacts count(${cachedContacts.length}), cached contacts has this page($cachedContactsHasThisPage) nextPageIndex($cachedNextPageIndex), refreshTime($refreshTime)');
+          'get from cached page, pageIndex($pageIndex), cached contacts count(${cachedContacts.length}), cached contacts has this page($cachedContactsHasThisPage) nextPageIndex($cachedNextPageIndex), refreshTime($refreshTime)');
       if (cachedContactsHasThisPage) {
-        emit(cachedLastState);
+        emit(cachedThisPageLastState);
       } else {
         log(
             name: _kLogSource,
@@ -81,32 +81,6 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
       }).toList();
       final lastCachedThisPageContacts =
           List<Contacts>.from(cachedThisPageContacts);
-      //if newItem id not in lastStateContacts, just push back
-      //if newItem id in lastStateContacts, and item not update anything, do nothing
-      //if newItem id in lastStateContacts, and item updated, remove old item and insert new item to right place
-      // for (final newItem in newItems) {
-      //   var newContactsState = NewContactsState.notInContacts;
-      //   for (var element in lastCachedThisPageContacts) {
-      //     if (newItem == element) {
-      //       newContactsState = NewContactsState.inConactsAndNotUpdated;
-      //       break;
-      //     } else if (newItem.id == element.id && newItem != element) {
-      //       newContactsState = NewContactsState.inContactsAndUpdated;
-      //       break;
-      //     }
-      //   }
-      //   if (newContactsState == NewContactsState.inConactsAndNotUpdated) {
-      //     log(
-      //         name: _kLogSource,
-      //         '${newItem.toString()} already in contacts and not updated');
-      //   } else if (newContactsState == NewContactsState.notInContacts) {
-      //     lastCachedThisPageContacts.add(newItem);
-      //   } else if (newContactsState == NewContactsState.inContactsAndUpdated) {
-      //     lastCachedThisPageContacts.removeWhere((element) => element.id == newItem.id);
-      //     // lastStateContacts.insert();
-      //     log(name: _kLogSource, 'remove contacts id(${newItem.id})');
-      //   }
-      // }
       if (lastCachedThisPageContacts == newItems) {
         log(
             name: _kLogSource,
@@ -163,7 +137,9 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
 
   @override
   Map<String, dynamic>? toJson(ContactsState state) {
-    log(name: _kLogSource, 'toJson($state)');
+    log(
+        name: _kLogSource,
+        'toJson, contactsNum(${state.contacts?.length ?? 0}), contacts(${state.contacts?.map((e) => e.id).toList()})');
     return _$ContactsStateToJson(state);
   }
 }
