@@ -3,12 +3,9 @@ part of 'contacts_cubit.dart';
 @JsonSerializable(explicitToJson: true)
 class ContactsState extends Equatable {
   final String userId;
-  final List<List<Contacts>> cachedContacts;
+  final Map<int, PagedContacts> cachedContacts;
   @JsonKey(ignore: true)
-  final List<List<Contacts>>? contacts;
-  @JsonKey(ignore: true)
-  final String? nextPageKey;
-  final int? nextPageIndex;
+  final Map<int, PagedContacts> uiContacts;
   final ContactsError error;
   @JsonKey(ignore: true)
   final DateTime? refreshTime;
@@ -16,48 +13,36 @@ class ContactsState extends Equatable {
   const ContactsState({
     required this.userId,
     required this.cachedContacts,
-    this.contacts,
-    this.nextPageKey,
-    required this.nextPageIndex,
+    this.uiContacts = const {},
     required this.error,
     this.refreshTime,
   });
 
   ContactsState copyWith({
-    final List<List<Contacts>>? cachedContacts,
-    final List<List<Contacts>>? contacts,
-    final String? nextPageKey,
-    final int? nextPageIndex,
+    final Map<int, PagedContacts>? cachedContacts,
+    final Map<int, PagedContacts>? uiContacts,
     final ContactsError? error,
     final DateTime? refreshTime,
   }) {
     return ContactsState(
         userId: userId,
         cachedContacts: cachedContacts ?? this.cachedContacts,
-        contacts: contacts ?? this.contacts,
-        nextPageKey: nextPageKey ?? this.nextPageKey,
-        nextPageIndex: nextPageIndex,
+        uiContacts: uiContacts ?? this.uiContacts,
         error: error ?? this.error,
         refreshTime: refreshTime ?? this.refreshTime);
   }
 
   @override
-  List<Object?> get props => [
-        cachedContacts,
-        nextPageKey,
-        contacts,
-        nextPageIndex,
-        error,
-        refreshTime
-      ];
+  List<Object?> get props => [cachedContacts, uiContacts, error, refreshTime];
+
+  @override
+  bool get stringify => true;
 }
 
 class ContactsInitial extends ContactsState {
   const ContactsInitial({required super.userId})
       : super(
-            cachedContacts: const [],
-            contacts: const [],
-            nextPageKey: null,
-            nextPageIndex: 0,
+            cachedContacts: const {},
+            uiContacts: const {},
             error: ContactsError.none);
 }

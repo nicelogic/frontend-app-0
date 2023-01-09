@@ -9,12 +9,10 @@ part of 'contacts_cubit.dart';
 ContactsState _$ContactsStateFromJson(Map<String, dynamic> json) =>
     ContactsState(
       userId: json['userId'] as String,
-      cachedContacts: (json['cachedContacts'] as List<dynamic>)
-          .map((e) => (e as List<dynamic>)
-              .map((e) => Contacts.fromJson(e as Map<String, dynamic>))
-              .toList())
-          .toList(),
-      nextPageIndex: json['nextPageIndex'] as int?,
+      cachedContacts: (json['cachedContacts'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(
+            int.parse(k), PagedContacts.fromJson(e as Map<String, dynamic>)),
+      ),
       error: $enumDecode(_$ContactsErrorEnumMap, json['error']),
     );
 
@@ -22,9 +20,7 @@ Map<String, dynamic> _$ContactsStateToJson(ContactsState instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'cachedContacts': instance.cachedContacts
-          .map((e) => e.map((e) => e.toJson()).toList())
-          .toList(),
-      'nextPageIndex': instance.nextPageIndex,
+          .map((k, e) => MapEntry(k.toString(), e.toJson())),
       'error': _$ContactsErrorEnumMap[instance.error]!,
     };
 

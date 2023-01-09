@@ -108,8 +108,8 @@ class _ContactsScreen extends StatelessWidget {
                   child: Builder(builder: (context) {
                     final contactsState = context.watch<ContactsCubit>().state;
                     return Center(
-                      child: Text(
-                          'Contacts(${contactsState.contacts?.length ?? 0})'),
+                      child:
+                          Text('Contacts(${contactsState.uiContacts.length})'),
                     );
                   })),
               Expanded(
@@ -140,18 +140,19 @@ class ContactsListView extends StatefulWidget {
 class ContactsListViewState extends State<ContactsListView> {
   static final _pageSize = Config.instance().contactsPageSize;
 
-  final PagingController<int, Contacts> _pagingController = PagingController(
-      firstPageKey: 0,
-      invisibleItemsThreshold:
-          Config.instance().contactsInvisibleItemsThreshold);
+  final PagingController<ContactsPageKey, Contacts> _pagingController =
+      PagingController(
+          firstPageKey: const ContactsPageKey(pageIndex: 0, pageCursor: ''),
+          invisibleItemsThreshold:
+              Config.instance().contactsInvisibleItemsThreshold);
 
   @override
   void initState() {
-    _pagingController.addPageRequestListener((pageIndex) {
+    _pagingController.addPageRequestListener((pageKey) {
       log(
           name: _kLogSource,
-          'begin fetch page, page size($_pageSize), pageindex($pageIndex)');
-      widget.contactsCubit.fetchPage(first: _pageSize, pageIndex: pageIndex);
+          'nextPageKey is not null, triger to fetch page($pageKey), page size($_pageSize)');
+      widget.contactsCubit.fetchPage(first: _pageSize, pageKey: pageKey);
     });
     super.initState();
   }
@@ -160,15 +161,19 @@ class ContactsListViewState extends State<ContactsListView> {
   Widget build(BuildContext context) {
     return BlocListener<ContactsCubit, ContactsState>(
         listener: (context, state) {
+          final pagedContactsList = state.uiContacts.values.toList()
+            ..sort((e1, e2) =>
+                e1.pageKey.pageIndex.compareTo(e2.pageKey.pageIndex));
           final contacts =
-              state.contacts?.expand((element) => element).toList();
+              pagedContactsList.expand((element) => element.contacts).toList();
+          final nextPageKey = pagedContactsList.last.nextPageKey;
           _pagingController.value = PagingState(
-              nextPageKey: state.nextPageIndex,
+              nextPageKey: nextPageKey,
               error: state.error == ContactsError.none ? null : state.error,
               itemList: contacts);
           log(
               name: _kLogSource,
-              'contacts listen state changed: nextPageKey(${state.nextPageKey}), nextPageIndex(${state.nextPageIndex}), contacts count(${contacts?.length ?? 0})');
+              'contacts ui update: contacts num(${contacts.length}), nextPageKey($nextPageKey)');
         },
         child: RefreshIndicator(
             onRefresh: () => Future.sync(
@@ -177,7 +182,7 @@ class ContactsListViewState extends State<ContactsListView> {
                     _pagingController.refresh();
                   },
                 ),
-            child: PagedListView<int, Contacts>.separated(
+            child: PagedListView<ContactsPageKey, Contacts>.separated(
               // separatorBuilder: (_, index) => const Divider(indent: 60, height: 0),
               separatorBuilder: (context, index) => const Divider(),
               padding: const EdgeInsets.all(16),

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:collection/collection.dart';
 import 'package:contacts_repository/contacts_repository.dart';
 import 'package:app/src/features/auth/auth.dart' as auth;
 import 'package:equatable/equatable.dart';
@@ -27,62 +26,21 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
           userId: authBloc.state.userId,
         ));
 
-  fetchPage({required final int first, required final int pageIndex}) async {
-    try {
-      final cachedContactsHasThisPage = pageIndex < state.cachedContacts.length;
-      final cachedThisPageContacts = cachedContactsHasThisPage
-          ? state.cachedContacts.elementAt(pageIndex)
-          : <Contacts>[];
-      var aheadThisPageContacts = <List<Contacts>>[];
-      for (int index = 0; index != pageIndex; ++index) {
-        final curScreenContactsLen = state.contacts?.length ?? 0;
-        if (index < curScreenContactsLen) {
-          aheadThisPageContacts.add(state.contacts?.elementAt(index) ?? []);
-        }
-      }
-      final addThisCachedPageCachedContacts = <List<Contacts>>[
-        ...aheadThisPageContacts,
-        cachedThisPageContacts
-      ];
-      final cachedContactsHasNextPage =
-          pageIndex + 1 < state.cachedContacts.length;
-      final cachedNextPageIndex =
-          cachedContactsHasNextPage ? pageIndex + 1 : null;
-      final refreshTime = pageIndex == 0 ? DateTime.now() : state.refreshTime;
-      final cachedThisPageLastState = state.copyWith(
-          contacts: addThisCachedPageCachedContacts,
-          nextPageIndex: cachedNextPageIndex,
-          refreshTime: refreshTime,
-          error: ContactsError.none);
-      log(
-          name: _kLogSource,
-          'get from cached page, pageIndex($pageIndex), cached contacts count(${addThisCachedPageCachedContacts.length}), cached contacts has this page($cachedContactsHasThisPage) nextPageIndex($cachedNextPageIndex), refreshTime($refreshTime)');
-      for (var pageIndex = 0;
-          pageIndex != addThisCachedPageCachedContacts.length;
-          ++pageIndex) {
-        final page = addThisCachedPageCachedContacts.elementAt(pageIndex);
-        log(
-            name: _kLogSource,
-            'get from cached page, page index($pageIndex), item num(${page.length})');
-      }
-      if (cachedContactsHasThisPage) {
-        emit(cachedThisPageLastState);
-      } else {
-        log(
-            name: _kLogSource,
-            'cached contacts has not this page, not update state and try to fetch from server');
-      }
+  PagedContacts? _fetchCachedPage(
+      {required final int first, required final ContactsPageKey pageKey}) {
+    return state.cachedContacts[pageKey.pageIndex];
+  }
 
-      final pageKey = state.nextPageKey;
-      final newItemsConnection =
-          await contactsRepository.contacts(first: first, after: pageKey);
+  Future<PagedContacts?> _fetchServerPage(
+      {required final int first,
+      required final ContactsPageKey pageKey}) async {
+    try {
+      final newItemsConnection = await contactsRepository.contacts(
+          first: first,
+          after: pageKey.pageCursor.isEmpty ? null : pageKey.pageCursor);
       if (newItemsConnection.error != ContactsError.none) {
         throw newItemsConnection.error;
       }
-      final nextPageKey = newItemsConnection.pageInfo.endCursor;
-      log(
-          name: _kLogSource,
-          'fetchPage, key($pageKey), count(${newItemsConnection.totalCount}), nextPageKey($nextPageKey)');
       final newItems = await Stream.fromIterable(newItemsConnection.edges)
           .asyncMap((e) async {
         final users = await userRepository.users(idOrName: e.node.id);
@@ -94,48 +52,82 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
         return Contacts(
             id: e.node.id, name: e.node.remarkName, avatarUrl: avatarUrl);
       }).toList();
-      final lastCachedThisPageContacts =
-          List<Contacts>.from(cachedThisPageContacts);
-
-      if (const ListEquality().equals(lastCachedThisPageContacts, newItems)) {
-        log(
-            name: _kLogSource,
-            'fetched this page(pageIndex($pageIndex)) state == cached this page state, do nothing');
-      } else {
-        final contacts = <List<Contacts>>[...aheadThisPageContacts, newItems];
-        var updatedCachedContacts =
-            List<List<Contacts>>.from(state.cachedContacts);
-        if (pageIndex < updatedCachedContacts.length) {
-          updatedCachedContacts[pageIndex] = newItems;
-        } else {
-          updatedCachedContacts.add(newItems);
-        }
-        final nextPageIndex =
-            newItemsConnection.pageInfo.hasNextPage ? pageIndex + 1 : null;
-        log(
-            name: _kLogSource,
-            'fetched this page(pageIndex($pageIndex)) state != cached this page state, update this page state, nextPageKey($nextPageKey), nextPageIndex($nextPageIndex), cached contacts num(${updatedCachedContacts.length}, contacts num(${contacts.length}))');
-        for (var pageIndex = 0;
-            pageIndex != updatedCachedContacts.length;
-            ++pageIndex) {
-          final page = updatedCachedContacts.elementAt(pageIndex);
-          log(
-              name: _kLogSource,
-              'fetched this page, page index($pageIndex), item num(${page.length})');
-        }
-        emit(state.copyWith(
-            nextPageKey: nextPageKey,
-            nextPageIndex: nextPageIndex,
-            cachedContacts: updatedCachedContacts,
-            contacts: contacts));
-      }
+      final hasNextPage = newItemsConnection.pageInfo.hasNextPage;
+      final nextPageCursor =
+          hasNextPage ? newItemsConnection.pageInfo.endCursor ?? '' : '';
+      final nextPageKey = hasNextPage
+          ? ContactsPageKey(
+              pageIndex: pageKey.pageIndex + 1, pageCursor: nextPageCursor)
+          : null;
+      final serverPage = PagedContacts(
+          pageKey: pageKey, contacts: newItems, nextPageKey: nextPageKey);
+      log(
+          name: _kLogSource,
+          '_upsertCachedPage, fetched by key($pageKey), ${serverPage.toSimpleString()}');
+      return serverPage;
     } on ContactsError catch (e) {
-      emit(state.copyWith(error: e));
+      log(name: _kLogSource, '_fetchServerPage contacts error($e)');
+      return null;
     } catch (error) {
-      log(name: _kLogSource, 'fetch page unknown error($error)');
+      log(name: _kLogSource, '_fetchServerPage unknown error($error)');
+      return null;
+    }
+  }
+
+  fetchPage(
+      {required final int first,
+      required final ContactsPageKey pageKey}) async {
+    try {
+      final cachedPage = _fetchCachedPage(first: first, pageKey: pageKey);
+      if (cachedPage != null) {
+        log(
+            name: _kLogSource,
+            '_fetchCachedPage(${cachedPage.toSimpleString()})');
+        var emptyContacts = <int, PagedContacts>{};
+        final uiContacts = pageKey.pageIndex == 0
+            ? emptyContacts
+            : Map<int, PagedContacts>.from(state.uiContacts);
+        uiContacts[pageKey.pageIndex] = cachedPage;
+        final refreshTime =
+            pageKey.pageIndex == 0 ? DateTime.now() : state.refreshTime;
+        emit(state.copyWith(
+            uiContacts: uiContacts,
+            refreshTime: refreshTime,
+            error: ContactsError.none));
+        log(
+            name: _kLogSource,
+            '_fetchCachedPage, emit state(ui page num(${uiContacts.length})) ');
+      } else {
+        log(name: _kLogSource, '_fetchCachedPage, page($pageKey) not cached');
+      }
+
+      final serverPage = await _fetchServerPage(first: first, pageKey: pageKey);
+      if (cachedPage == serverPage) {
+        log(
+            name: _kLogSource,
+            '_fetchServerPage($pageKey), cachedPage == serverPage, do nothing');
+        return;
+      }
+      log(
+          name: _kLogSource,
+          '_fetchServerPage(pageIndex($pageKey)) cachedPage != serverPage, serverPage(${serverPage?.toSimpleString()})');
+
+      final nullPagedContacts = PagedContacts(
+          pageKey: pageKey, contacts: const [], nextPageKey: null);
+      final newCachedContacts =
+          Map<int, PagedContacts>.from(state.cachedContacts);
+      newCachedContacts[pageKey.pageIndex] = serverPage ?? nullPagedContacts;
+      final newUiContacts = Map<int, PagedContacts>.from(state.uiContacts);
+      newUiContacts[pageKey.pageIndex] = serverPage ?? nullPagedContacts;
       emit(state.copyWith(
-        error: ContactsError.clientInternalError,
-      ));
+          uiContacts: newUiContacts,
+          cachedContacts: newCachedContacts,
+          error: ContactsError.none));
+    } catch (error) {
+      log(name: _kLogSource, 'fetchPage unknown error($error)');
+      return state.copyWith(
+          error: ContactsError.clientInternalError,
+          uiContacts: state.uiContacts);
     }
   }
 
@@ -162,14 +154,11 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
     log(
         name: _kLogSource,
         'toJson($toJsonState), cached contacts page num(${state.cachedContacts.length})');
-    for (var pageIndex = 0;
-        pageIndex != state.cachedContacts.length;
-        ++pageIndex) {
-      final page = state.cachedContacts.elementAt(pageIndex);
+    state.cachedContacts.forEach((key, value) {
       log(
           name: _kLogSource,
-          'toJson, cached contacts page index($pageIndex), item num(${page.length})');
-    }
+          'toJson, cached contacts($key), item num(${value.contacts.length})');
+    });
     return toJsonState;
   }
 }
