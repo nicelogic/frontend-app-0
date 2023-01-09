@@ -63,7 +63,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
           pageKey: pageKey, contacts: newItems, nextPageKey: nextPageKey);
       log(
           name: _kLogSource,
-          '_upsertCachedPage, fetched by key($pageKey), ${serverPage.toSimpleString()}');
+          '_fetchServerPage, fetched by key($pageKey), ${serverPage.toSimpleString()}');
       return serverPage;
     } on ContactsError catch (e) {
       log(name: _kLogSource, '_fetchServerPage contacts error($e)');
