@@ -60,6 +60,6 @@ class PagedContacts extends Equatable {
   bool get stringify => true;
 
   String toSimpleString() {
-    return 'PagedContacts[pageKey($pageKey), nextPageKey($nextPageKey), contactsNum(${contacts.length})]';
+    return 'PagedContacts{pageKey($pageKey), nextPageKey($nextPageKey), contactsNum(${contacts.length})}';
   }
 }

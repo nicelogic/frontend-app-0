@@ -151,7 +151,7 @@ class ContactsListViewState extends State<ContactsListView> {
     _pagingController.addPageRequestListener((pageKey) {
       log(
           name: _kLogSource,
-          'nextPageKey is not null, triger to fetch page($pageKey), page size($_pageSize)');
+          'triger to fetch page($pageKey), page size($_pageSize)');
       widget.contactsCubit.fetchPage(first: _pageSize, pageKey: pageKey);
     });
     super.initState();
