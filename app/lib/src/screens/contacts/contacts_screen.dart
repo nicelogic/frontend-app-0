@@ -173,7 +173,14 @@ class ContactsListViewState extends State<ContactsListView> {
               itemList: contacts);
           log(
               name: _kLogSource,
-              'contacts ui update: contacts num(${contacts.length}), nextPageKey($nextPageKey)');
+              'contacts ui update: contacts num(${contacts.length}), nextPageKey($nextPageKey), error(${state.error})');
+          if (state.error != ContactsError.none) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                  content:
+                      Text('load server contacts error(${state.error.name})')));
+          }
         },
         child: RefreshIndicator(
             onRefresh: () => Future.sync(
@@ -199,6 +206,11 @@ class ContactsListViewState extends State<ContactsListView> {
                   title: 'Load contacts failed',
                   message: _pagingController.error.toString(),
                   onTryAgain: () => _pagingController.refresh(),
+                ),
+                newPageErrorIndicatorBuilder: (context) =>
+                    widgets.NewPageErrorIndicator(
+                  tip: 'Something went wrong. Tap to try again',
+                  onTap: () => _pagingController.refresh(),
                 ),
               ),
             )));
