@@ -88,6 +88,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
         log(name: _kLogSource, 'fetchPage, page($pageKey) not cached');
       }
 
+      //pagekey need optimize to previous server page's next page key
       final serverPage = await _fetchServerPage(first: first, pageKey: pageKey);
       if (cachedPage == serverPage) {
         log(
