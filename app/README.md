@@ -162,7 +162,7 @@ but can do state clear in fromJson. after load State,check state whether belong 
 ### pagination
 
 潜在问题： 当前server page fetch依赖的是cached page next page cursor,应该要依赖previous server page's next page cursor
-每一页挺大的。。这样，下一页要刷的时候，上一页已经更新了server page
+当前解决方案： 每一页挺大的。。这样，下一页要刷的时候，上一页已经更新了server page
 
 ## s3 and logic
 
