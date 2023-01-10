@@ -161,21 +161,8 @@ but can do state clear in fromJson. after load State,check state whether belong 
 
 ### pagination
 
-page state:  map<pageKey: List<PageSize items>> //first pageKey always null
-            "": list<test1, test2> then fetchFrom server:
-                     list<test1, test3>, 
-                     check items is updated, then replace: "": list<test1, test3>
-                     check nextPageKey is changed, then need fetch
-                     new "pageKey": list<test4, 5> to replace old: dGVzdDEyfFU1bEFoV1pCRTdLeU15: list<test3, test4>
-                     recursive to load new
-                     if is not changed, not to do anything
-            dGVzdDEyfFU1bEFoV1pCRTdLeU15: list<test3, test4>
-            dGVzdDIyfHVNUU5vMG1mWHl0eU1O: list<test5, test6>
-
-test case:
-  mid insert:
-    1, 2, 4, 5
-    1, 2, 3, 4, 5
+潜在问题： 当前server page fetch依赖的是cached page next page cursor,应该要依赖previous server page's next page cursor
+每一页挺大的。。这样，下一页要刷的时候，上一页已经更新了server page
 
 ## s3 and logic
 

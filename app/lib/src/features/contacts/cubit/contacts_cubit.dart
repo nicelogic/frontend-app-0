@@ -139,11 +139,27 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
     // log(
     //     name: _kLogSource,
     //     'toJson($toJsonState), cached contacts page num(${state.cachedContacts.length})');
+    int? lastPageIndex;
     state.cachedContacts.forEach((key, value) {
       log(
           name: _kLogSource,
           'toJson, cached contacts($key), item num(${value.contacts.length})');
+      if (lastPageIndex == null && value.nextPageKey == null) {
+        lastPageIndex = key;
+        log(name: _kLogSource, 'toJson, last page index($lastPageIndex)');
+      }
     });
+    final cachedContactsLastPageIndex = state.cachedContacts.isNotEmpty
+        ? state.cachedContacts.length - 1
+        : null;
+    if (lastPageIndex != null &&
+        cachedContactsLastPageIndex != null &&
+        lastPageIndex! < cachedContactsLastPageIndex) {
+      log(
+          name: _kLogSource,
+          'toJson, last page index($lastPageIndex) < cached page last page index($cachedContactsLastPageIndex), remove subsequent cached page');
+      state.cachedContacts.removeWhere((key, value) => key > lastPageIndex!);
+    }
     return toJsonState;
   }
 }

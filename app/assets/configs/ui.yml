@@ -3,4 +3,4 @@ profile_picture_max_height: 200.0
 profile_picture_max_width: 200.0
 
 contactsPageSize: 6
-contactsInvisibleItemsThreshold: 1 #must > 0
+contactsInvisibleItemsThreshold: 3 #must > 0
