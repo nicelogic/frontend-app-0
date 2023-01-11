@@ -177,6 +177,16 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
         log(name: _kLogSource, 'toJson, last page index($lastPageIndex)');
       }
     });
+    /*
+    [
+      page 0
+      page 1, next page key is null
+      page 2
+      page 3, next page key is null
+      page 4
+    ]
+    handle this condition, remove first next page key is null's page's subsequence page
+    */
     final cachedContactsLastPageIndex = state.cachedContacts.isNotEmpty
         ? state.cachedContacts.length - 1
         : null;
