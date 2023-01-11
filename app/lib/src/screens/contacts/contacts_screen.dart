@@ -34,7 +34,8 @@ class ContactsScreen extends StatelessWidget {
               contactsRepository:
                   context.read<RepositorysCubit>().contactsRepository,
               userRepository: context.read<RepositorysCubit>().userRepository,
-              authBloc: context.read<AuthBloc>()))
+              authBloc: context.read<AuthBloc>(),
+              pageSize: Config.instance().contactsPageSize))
     ], child: _ContactsScreen());
   }
 }
@@ -138,7 +139,6 @@ class ContactsListView extends StatefulWidget {
 }
 
 class ContactsListViewState extends State<ContactsListView> {
-  static final _pageSize = Config.instance().contactsPageSize;
 
   final PagingController<ContactsPageKey, Contacts> _pagingController =
       PagingController(
@@ -151,8 +151,8 @@ class ContactsListViewState extends State<ContactsListView> {
     _pagingController.addPageRequestListener((pageKey) {
       log(
           name: _kLogSource,
-          'triger to fetch page($pageKey), page size($_pageSize)');
-      widget.contactsCubit.fetchPage(first: _pageSize, pageKey: pageKey);
+          'triger to fetch page($pageKey)');
+      widget.contactsCubit.fetchPage(pageKey: pageKey);
     });
     super.initState();
   }

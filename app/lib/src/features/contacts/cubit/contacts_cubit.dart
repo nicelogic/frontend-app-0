@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:contacts_repository/contacts_repository.dart';
@@ -17,102 +18,123 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
   final ContactsRepository contactsRepository;
   final UserRepository userRepository;
   final auth.AuthBloc authBloc;
+  final int pageSize;
+  final pageKeyStreamController = StreamController<int>();
+  ContactsError refreshPageError;
 
   ContactsCubit(
       {required this.contactsRepository,
       required this.userRepository,
-      required this.authBloc})
-      : super(ContactsInitial(
+      required this.authBloc,
+      required this.pageSize})
+      : refreshPageError = ContactsError.none,
+        super(ContactsInitial(
           userId: authBloc.state.userId,
-        ));
-
-  PagedContacts? _fetchCachedPage(
-      {required final int first, required final ContactsPageKey pageKey}) {
-    return state.cachedContacts[pageKey.pageIndex];
+        )) {
+    pageKeyStreamController.stream.listen((pageIndex) async {
+      await _refreshPage(pageIndex: pageIndex);
+    }, onDone: () {
+      log(name: _kLogSource, 'pageKeyStreamController is done');
+    }, onError: (error) {
+      log(name: _kLogSource, '$error');
+    });
   }
 
-  Future<PagedContacts> _fetchServerPage(
-      {required final int first,
-      required final ContactsPageKey pageKey}) async {
-    final newItemsConnection = await contactsRepository.contacts(
-        first: first,
-        after: pageKey.pageCursor.isEmpty ? null : pageKey.pageCursor);
-    if (newItemsConnection.error != ContactsError.none) {
-      throw newItemsConnection.error;
+  fetchPage({required final ContactsPageKey pageKey}) async {
+    final cachedPage = state.cachedContacts[pageKey.pageIndex];
+    if (cachedPage != null) {
+      log(
+          name: _kLogSource,
+          '_fetched CachedPage(${cachedPage.toSimpleString()})');
+      var uiContacts = Map<int, PagedContacts>.from(state.uiContacts);
+      if (pageKey.pageIndex == 0) {
+        log(name: _kLogSource, 'begin to refresh contacts');
+        uiContacts = <int, PagedContacts>{};
+      }
+      uiContacts[pageKey.pageIndex] = cachedPage;
+      emit(state.copyWith(
+          uiContacts: uiContacts,
+          refreshTime:
+              pageKey.pageIndex == 0 ? DateTime.now() : state.refreshTime,
+          error: ContactsError.none));
+    } else {
+      log(name: _kLogSource, 'fetchPage, page($pageKey) not cached');
     }
-    final newItems =
-        await Stream.fromIterable(newItemsConnection.edges).asyncMap((e) async {
-      final users = await userRepository.users(idOrName: e.node.id);
-      var avatarUrl = '';
-      if (users.users.isNotEmpty) {
-        final user = users.users[e.node.id] as User;
-        avatarUrl = user.avatarUrl;
-      }
-      return Contacts(
-          id: e.node.id, name: e.node.remarkName, avatarUrl: avatarUrl);
-    }).toList();
-    final hasNextPage = newItemsConnection.pageInfo.hasNextPage;
-    final nextPageCursor =
-        hasNextPage ? newItemsConnection.pageInfo.endCursor ?? '' : '';
-    final nextPageKey = hasNextPage
-        ? ContactsPageKey(
-            pageIndex: pageKey.pageIndex + 1, pageCursor: nextPageCursor)
-        : null;
-    final serverPage = PagedContacts(
-        pageKey: pageKey, contacts: newItems, nextPageKey: nextPageKey);
-    log(name: _kLogSource, '_fetchServerPage, ${serverPage.toSimpleString()}');
-    return serverPage;
+    pageKeyStreamController.add(pageKey.pageIndex);
   }
 
-  fetchPage(
-      {required final int first,
-      required final ContactsPageKey pageKey}) async {
+  _refreshPage({required final int pageIndex}) async {
     try {
-      final cachedPage = _fetchCachedPage(first: first, pageKey: pageKey);
-      if (cachedPage != null) {
-        log(
-            name: _kLogSource,
-            '_fetched CachedPage(${cachedPage.toSimpleString()})');
-        var emptyContacts = <int, PagedContacts>{};
-        final uiContacts = pageKey.pageIndex == 0
-            ? emptyContacts
-            : Map<int, PagedContacts>.from(state.uiContacts);
-        uiContacts[pageKey.pageIndex] = cachedPage;
-        final refreshTime =
-            pageKey.pageIndex == 0 ? DateTime.now() : state.refreshTime;
-        emit(state.copyWith(
-            uiContacts: uiContacts,
-            refreshTime: refreshTime,
-            error: ContactsError.none));
+      log(name: _kLogSource, '_refreshPage pageIndex($pageIndex)');
+      var pageCursor = '';
+      if (pageIndex != 0) {
+        if (refreshPageError != ContactsError.none) {
+          log(
+              name: _kLogSource,
+              "_refreshPage, previous page refresh error, need'nt fresh subsequnce page");
+          return;
+        }
+        pageCursor = state.uiContacts[pageIndex - 1]!.nextPageKey!.pageCursor;
+        log(name: _kLogSource, '_refreshPage pageCursor($pageCursor)');
       } else {
-        log(name: _kLogSource, 'fetchPage, page($pageKey) not cached');
+        refreshPageError = ContactsError.none;
       }
+      final newItemsConnection = await contactsRepository.contacts(
+          first: pageSize, after: pageCursor.isEmpty ? null : pageCursor);
+      if (newItemsConnection.error != ContactsError.none) {
+        throw newItemsConnection.error;
+      }
+      final newItems = await Stream.fromIterable(newItemsConnection.edges)
+          .asyncMap((e) async {
+        final users = await userRepository.users(idOrName: e.node.id);
+        var avatarUrl = '';
+        if (users.users.isNotEmpty) {
+          final user = users.users[e.node.id] as User;
+          avatarUrl = user.avatarUrl;
+        }
+        return Contacts(
+            id: e.node.id, name: e.node.remarkName, avatarUrl: avatarUrl);
+      }).toList();
+      final hasNextPage = newItemsConnection.pageInfo.hasNextPage;
+      final nextPageCursor =
+          hasNextPage ? newItemsConnection.pageInfo.endCursor ?? '' : '';
+      final nextPageKey = hasNextPage
+          ? ContactsPageKey(
+              pageIndex: pageIndex + 1, pageCursor: nextPageCursor)
+          : null;
+      final serverPage = PagedContacts(
+          pageKey:
+              ContactsPageKey(pageIndex: pageIndex, pageCursor: pageCursor),
+          contacts: newItems,
+          nextPageKey: nextPageKey);
+      log(name: _kLogSource, '_refreshPage, ${serverPage.toSimpleString()}');
 
-      //pagekey need optimize to previous server page's next page key
-      final serverPage = await _fetchServerPage(first: first, pageKey: pageKey);
+      final cachedPage = state.cachedContacts[pageIndex];
       if (cachedPage == serverPage) {
         log(
             name: _kLogSource,
-            'fetchPage($pageKey), fetched server page == cachedPage, do nothing');
+            '_refreshPage($pageIndex), fetched server page == cachedPage, do nothing');
         return;
       }
       log(
           name: _kLogSource,
-          'fetchPage, fetched server page(${serverPage.toSimpleString()}) != cachedPage');
+          '_refreshPage, fetched server page(${serverPage.toSimpleString()}) != cachedPage');
       final newCachedContacts =
           Map<int, PagedContacts>.from(state.cachedContacts);
-      newCachedContacts[pageKey.pageIndex] = serverPage;
+      newCachedContacts[pageIndex] = serverPage;
       final newUiContacts = Map<int, PagedContacts>.from(state.uiContacts);
-      newUiContacts[pageKey.pageIndex] = serverPage;
+      newUiContacts[pageIndex] = serverPage;
       emit(state.copyWith(
           uiContacts: newUiContacts,
           cachedContacts: newCachedContacts,
           error: ContactsError.none));
     } on ContactsError catch (e) {
-      log(name: _kLogSource, 'fetchPage contacts error($e)');
+      refreshPageError = e;
+      log(name: _kLogSource, '_refreshPage, has error($e)');
       emit(state.copyWith(error: e));
     } catch (error) {
-      log(name: _kLogSource, 'fetchPage unknown error($error)');
+      refreshPageError = ContactsError.clientInternalError;
+      log(name: _kLogSource, '_refreshPage, has unknown error($error)');
       emit(state.copyWith(error: ContactsError.clientInternalError));
     }
   }

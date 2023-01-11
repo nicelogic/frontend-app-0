@@ -11,6 +11,41 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:app/src/features/add_contacts_applys/add_contacts_applys.dart';
 
 void main() {
+  test('dart basic test', () async {
+    Stream<int> countStream(int to) async* {
+      for (int i = 1; i <= to; i++) {
+        yield i;
+      }
+    }
+
+    Future<int> changeValue(int value) async {
+      if (kDebugMode) {
+        print('change value($value)');
+      }
+      await Future.delayed(const Duration(seconds: 2));
+      final changedValue = value + 1;
+      if (kDebugMode) {
+        print('change value($value) to $changedValue');
+      }
+      return changedValue;
+    }
+
+    Future<int> sumStream(Stream<int> stream) async {
+      var sum = 0;
+      await for (final value in stream) {
+        final changedValue = await changeValue(value);
+        sum += changedValue;
+      }
+      return sum;
+    }
+
+    var stream = countStream(10);
+    var sum = await sumStream(stream);
+    if (kDebugMode) {
+      print(sum);
+    } // 55
+  });
+
   group('Plus Operator', () {
     test('should add two numbers together', () {
       expect(1 + 1, 2);

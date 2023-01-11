@@ -163,6 +163,22 @@ but can do state clear in fromJson. after load State,check state whether belong 
 
 潜在问题： 当前server page fetch依赖的是cached page next page cursor,应该要依赖previous server page's next page cursor
 当前解决方案： 每一页挺大的。。这样，下一页要刷的时候，上一页已经更新了server page
+增加异常处理： 遇到上一页server page未fetch 情况， 有个定时器处理这种情况,直到上一页获取到为止
+上一页获取异常，则也会不断重新去获取.这样只要有异常，就会不断获取每一页数据
+
+1. 刷新的任务在于刷新cached和ui
+2. 只有滑动到具体页面才需要刷新
+3. 肯定是现刷到前面的页面才会到后面的页面
+
+这样可以搞个刷新队列: stream.listen(event)，肯定是按照顺序发送 刷新事件
+处理也是按照顺序处理的
+关于异常：
+如果前面的事件失败了。需要感知到
+只要失败了，后续处理都失败
+每次刷新获取的时候，重制失败错误码
+
+todo: load cached page..if page size not equal to cached page size. adjust cached page to new page size(low priority)
+
 
 ## s3 and logic
 
