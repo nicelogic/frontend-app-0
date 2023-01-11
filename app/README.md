@@ -170,15 +170,19 @@ but can do state clear in fromJson. after load State,check state whether belong 
 2. 只有滑动到具体页面才需要刷新
 3. 肯定是现刷到前面的页面才会到后面的页面
 
-这样可以搞个刷新队列: stream.listen(event)，肯定是按照顺序发送 刷新事件
-处理也是按照顺序处理的
+这样可以搞个刷新队列: await for(只能是await for,不可以是stream listen)，按照顺序处理刷新事件
 关于异常：
 如果前面的事件失败了。需要感知到
 只要失败了，后续处理都失败
 每次刷新获取的时候，重制失败错误码
 
-todo: load cached page..if page size not equal to cached page size. adjust cached page to new page size(low priority)
+一个重要的知识点： （await for vs stream listen)
+A more imporant difference is that await for serializes the consumption of the stream items while listen will process them concurrently.
 
+
+
+needn't: load cached page..if page size not equal to cached page size. adjust cached page to new page size(low priority)
+will auto frefresh by refresh pag
 
 ## s3 and logic
 

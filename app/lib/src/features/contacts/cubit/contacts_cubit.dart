@@ -31,13 +31,14 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
         super(ContactsInitial(
           userId: authBloc.state.userId,
         )) {
-    pageKeyStreamController.stream.listen((pageIndex) async {
-      await _refreshPage(pageIndex: pageIndex);
-    }, onDone: () {
-      log(name: _kLogSource, 'pageKeyStreamController is done');
-    }, onError: (error) {
-      log(name: _kLogSource, '$error');
-    });
+    _sequentialRefreshPage();
+  }
+
+  _sequentialRefreshPage() async {
+    await for (final pageIndex in pageKeyStreamController.stream) {
+      final success = await _refreshPage(pageIndex: pageIndex);
+      log(name: _kLogSource, '_refreshPage, pageIndex($pageIndex), is success($success)');
+    }
   }
 
   fetchPage({required final ContactsPageKey pageKey}) async {
@@ -63,19 +64,21 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
     pageKeyStreamController.add(pageKey.pageIndex);
   }
 
-  _refreshPage({required final int pageIndex}) async {
+  Future<bool> _refreshPage({required final int pageIndex}) async {
     try {
-      log(name: _kLogSource, '_refreshPage pageIndex($pageIndex)');
+      log(name: _kLogSource, '_refreshPage, begin, pageIndex($pageIndex)');
       var pageCursor = '';
       if (pageIndex != 0) {
         if (refreshPageError != ContactsError.none) {
           log(
               name: _kLogSource,
               "_refreshPage, previous page refresh error, need'nt fresh subsequnce page");
-          return;
+          throw ContactsError.clientInternalError;
         }
         pageCursor = state.uiContacts[pageIndex - 1]!.nextPageKey!.pageCursor;
-        log(name: _kLogSource, '_refreshPage pageCursor($pageCursor)');
+        log(
+            name: _kLogSource,
+            '_refreshPage, pageIndex($pageIndex), pageCursor($pageCursor)');
       } else {
         refreshPageError = ContactsError.none;
       }
@@ -114,7 +117,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
         log(
             name: _kLogSource,
             '_refreshPage($pageIndex), fetched server page == cachedPage, do nothing');
-        return;
+        return true;
       }
       log(
           name: _kLogSource,
@@ -128,6 +131,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
           uiContacts: newUiContacts,
           cachedContacts: newCachedContacts,
           error: ContactsError.none));
+      return true;
     } on ContactsError catch (e) {
       refreshPageError = e;
       log(name: _kLogSource, '_refreshPage, has error($e)');
@@ -137,6 +141,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
       log(name: _kLogSource, '_refreshPage, has unknown error($error)');
       emit(state.copyWith(error: ContactsError.clientInternalError));
     }
+    return false;
   }
 
   @override
