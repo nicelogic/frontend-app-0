@@ -37,7 +37,9 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
   _sequentialRefreshPage() async {
     await for (final pageIndex in pageKeyStreamController.stream) {
       final success = await _refreshPage(pageIndex: pageIndex);
-      log(name: _kLogSource, '_refreshPage, pageIndex($pageIndex), is success($success)');
+      log(
+          name: _kLogSource,
+          '_refreshPage, pageIndex($pageIndex), is success($success)');
     }
   }
 
