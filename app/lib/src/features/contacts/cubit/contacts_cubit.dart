@@ -19,7 +19,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
   final UserRepository userRepository;
   final auth.AuthBloc authBloc;
   final int pageSize;
-  final pageKeyStreamController = StreamController<int>();
+  final pageIndexStreamController = StreamController<int>();
   ContactsError refreshPageError;
 
   ContactsCubit(
@@ -34,8 +34,14 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
     _sequentialRefreshPage();
   }
 
+  @override
+  close() async {
+    super.close();
+    pageIndexStreamController.close();
+  }
+
   _sequentialRefreshPage() async {
-    await for (final pageIndex in pageKeyStreamController.stream) {
+    await for (final pageIndex in pageIndexStreamController.stream) {
       final success = await _refreshPage(pageIndex: pageIndex);
       log(
           name: _kLogSource,
@@ -63,7 +69,7 @@ class ContactsCubit extends HydratedCubit<ContactsState> {
     } else {
       log(name: _kLogSource, 'fetchPage, page($pageKey) not cached');
     }
-    pageKeyStreamController.add(pageKey.pageIndex);
+    pageIndexStreamController.add(pageKey.pageIndex);
   }
 
   Future<bool> _refreshPage({required final int pageIndex}) async {
